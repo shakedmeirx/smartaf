@@ -202,7 +202,7 @@ export const BabyCityChipTones = {
 export const BabyCityRoleThemes = {
   parent: {
     screenBackground: '#f4f6ff',
-    headerBackground: '#f4f6ff',
+    headerBackground: 'rgba(244, 246, 255, 0.92)',
     headerBorder: 'transparent',
     menuBackground: '#dee8ff',
     title: '#242f41',
@@ -217,7 +217,7 @@ export const BabyCityRoleThemes = {
   },
   babysitter: {
     screenBackground: '#f4f6ff',
-    headerBackground: '#f4f6ff',
+    headerBackground: 'rgba(244, 246, 255, 0.92)',
     headerBorder: 'transparent',
     menuBackground: '#dee8ff',
     title: '#242f41',
