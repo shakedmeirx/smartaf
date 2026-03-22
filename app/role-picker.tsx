@@ -1,21 +1,12 @@
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { strings } from '@/locales';
 import { useAuth } from '@/context/AuthContext';
 import { UserRole } from '@/types/user';
 import { BabyCityGeometry, BabyCityPalette, BabyCityShadows } from '@/constants/theme';
 import AppText from '@/components/ui/AppText';
-
-// Auth-screen local palette — shared visual language across the auth flow
-const AUTH = {
-  bg: '#ecf1ff',
-  parentIconBg: BabyCityPalette.primarySoft,
-  parentIconColor: BabyCityPalette.primary,
-  sitterIconBg: BabyCityPalette.secondaryContainer,
-  sitterIconColor: BabyCityPalette.onSecondaryContainer,
-} as const;
 
 export default function RolePickerScreen() {
   const { dbUser, setActiveRole } = useAuth();
@@ -66,18 +57,14 @@ export default function RolePickerScreen() {
         </View>
 
         <RoleCard
-          icon="people-outline"
-          iconBg={AUTH.parentIconBg}
-          iconColor={AUTH.parentIconColor}
+          role="parent"
           title={strings.continueAsParent}
           subtitle={strings.parentRoleSubtitle}
           onPress={() => handleSelect('parent')}
         />
 
         <RoleCard
-          icon="briefcase-outline"
-          iconBg={AUTH.sitterIconBg}
-          iconColor={AUTH.sitterIconColor}
+          role="babysitter"
           title={strings.continueAsBabysitter}
           subtitle={strings.babysitterRoleSubtitle}
           onPress={() => handleSelect('babysitter')}
@@ -88,19 +75,25 @@ export default function RolePickerScreen() {
 }
 
 type RoleCardProps = {
-  icon: keyof typeof Ionicons.glyphMap;
-  iconBg: string;
-  iconColor: string;
+  role: 'parent' | 'babysitter';
   title: string;
   subtitle: string;
   onPress: () => void;
 };
 
-function RoleCard({ icon, iconBg, iconColor, title, subtitle, onPress }: RoleCardProps) {
+function RoleCard({ role, title, subtitle, onPress }: RoleCardProps) {
+  const isParent = role === 'parent';
   return (
     <TouchableOpacity style={styles.roleCard} onPress={onPress} activeOpacity={0.78}>
-      <View style={[styles.roleIconWrap, { backgroundColor: iconBg }]}>
-        <Ionicons name={icon} size={26} color={iconColor} />
+      {/* Icon circle */}
+      <View style={[styles.roleIconWrap, isParent ? styles.roleIconWrapParent : styles.roleIconWrapSitter]}>
+        <MaterialIcons
+          name={isParent ? 'child-care' : 'work'}
+          size={32}
+          color={isParent ? BabyCityPalette.primary : BabyCityPalette.textSecondary}
+        />
+        {/* Decorative badge dot (parent only) */}
+        {isParent ? <View style={styles.roleIconDot} /> : null}
       </View>
       <View style={styles.roleTextWrap}>
         <AppText variant="bodyLarge" weight="800" style={styles.roleCardTitle}>
@@ -110,7 +103,7 @@ function RoleCard({ icon, iconBg, iconColor, title, subtitle, onPress }: RoleCar
           {subtitle}
         </AppText>
       </View>
-      <Ionicons name="chevron-back" size={20} color={BabyCityPalette.textTertiary} />
+      <MaterialIcons name="arrow-back-ios" size={18} color={BabyCityPalette.textTertiary} />
     </TouchableOpacity>
   );
 }
@@ -118,7 +111,7 @@ function RoleCard({ icon, iconBg, iconColor, title, subtitle, onPress }: RoleCar
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: AUTH.bg,
+    backgroundColor: BabyCityPalette.canvas,
   },
   topBar: {
     paddingHorizontal: 20,
@@ -162,21 +155,40 @@ const styles = StyleSheet.create({
   },
   // ── Role cards ───────────────────────────────────────────────────────────────
   roleCard: {
-    backgroundColor: BabyCityPalette.surface,
+    backgroundColor: BabyCityPalette.surfaceLowest,
     borderRadius: BabyCityGeometry.radius.card,
     paddingHorizontal: 20,
     paddingVertical: 22,
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: 14,
+    gap: 16,
+    overflow: 'hidden',
     ...BabyCityShadows.soft,
   },
   roleIconWrap: {
-    width: 52,
-    height: 52,
-    borderRadius: BabyCityGeometry.radius.control,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
+  },
+  roleIconWrapParent: {
+    backgroundColor: BabyCityPalette.secondaryContainer,
+  },
+  roleIconWrapSitter: {
+    backgroundColor: BabyCityPalette.surfaceContainer,
+  },
+  roleIconDot: {
+    position: 'absolute',
+    top: -2,
+    left: -2,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: BabyCityPalette.tertiaryContainer,
+    borderWidth: 3,
+    borderColor: BabyCityPalette.surfaceLowest,
   },
   roleTextWrap: {
     flex: 1,
