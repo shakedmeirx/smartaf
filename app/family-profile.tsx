@@ -32,6 +32,10 @@ import { BabyCityGeometry, BabyCityPalette, getRoleTheme } from '@/constants/the
 import { ParentPost } from '@/types/post';
 import type { ParentProfileDetails, ParentProfileSummary } from '@/types/parent';
 
+// Stitch placeholder pet photo (golden retriever from parent-profile design)
+const STITCH_PET_PHOTO =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDbFElj7KL9ShwrwkKuj8-1IeUa5yZIS6zsKxSq0O4b5_lZDMTCEVtaCrc3rreUsqIcZkyx9xHmjjRV07Yy2ykwv4EwwOXUFZ4mhRv-p2hU_HqrubX0cAXNJGp6zaLLWDyuudgZ2Q4uEBsLHqR96OlxAZ76QkepJ9Az9ZVki2YQ8aqoGSt6-lubeffgbUhSQsbWh0YDK9D_rNCnwITQ-nYkSkGcIHUKcGflY75eM7LBXDhieHd2xumc8wrwRSrdH2OHMyKRvgiPDRiQ';
+
 const CARD_SHADOW = {
   shadowColor: '#242f41',
   shadowOpacity: 0.04,
@@ -248,7 +252,12 @@ export default function FamilyProfileScreen() {
                 </View>
                 <View style={styles.petsRow}>
                   {family.pets.map((pet, i) => (
-                    <AppChip key={`pet-${i}`} label={pet} tone="primary" size="sm" />
+                    <View key={`pet-${i}`} style={styles.petItem}>
+                      <View style={styles.petImageWrap}>
+                        <Image source={{ uri: STITCH_PET_PHOTO }} style={styles.petImage} resizeMode="cover" />
+                      </View>
+                      <AppText variant="caption" weight="600" align="center" style={styles.petLabel}>{pet}</AppText>
+                    </View>
                   ))}
                 </View>
               </Animated.View>
@@ -498,7 +507,25 @@ const styles = StyleSheet.create({
   petsRow: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 16,
+  },
+  petItem: {
+    alignItems: 'center',
+    gap: 6,
+  },
+  petImageWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    overflow: 'hidden',
+  },
+  petImage: {
+    width: '100%',
+    height: '100%',
+  },
+  petLabel: {
+    color: BabyCityPalette.textPrimary,
+    maxWidth: 72,
   },
   pillRow: {
     flexDirection: 'row-reverse',

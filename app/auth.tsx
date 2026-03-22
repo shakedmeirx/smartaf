@@ -41,6 +41,7 @@ const C = {
 const SOCIAL_PROOF_AVATARS = [
   'https://lh3.googleusercontent.com/aida-public/AB6AXuA-s0dD1m_2cLBvEul9elsR3TKyH2N0BAM7_oEHYNiNGGNN5xfO0AdwumMkiC4lsj8eg_LR-ok8N0Ve_dQwpvkIgl4aGtp3HbYUTpOpiv6noDzUP790JN2LS7Z_D0uX6j4oRhVe8KFy4tPzHqsL5yKpqgnwFAHyCTlhxQoVtgM6FgiOs-mzylBLStS49vySfqtxhaG_mTmTPgjHyeAEj9u04uRyrQ1stdlJHLhkjY1CiOAuLdR7KlV1LqsP4tgqYdymeXHqSa8tlSde',
   'https://lh3.googleusercontent.com/aida-public/AB6AXuCFWRFrYQlCYvwwuvkMm4cJXQSaL51bK4nMDy2Mzc8eI1cRtCMtacTKicSD3OjH0UEZAX_sSjCQZopC15rmi7OfpV_63OVU7sZlORwDYyIG2UkO05kJzlVswerDXXQHwa2dEgGCmxTYtKPlSCWLfxdvvb6VDd63wS0N_pMAcWhtDLpo5qh34yv9POGufReSz2wiyqe-FcS_umdN8oG-ykIpmdmmUJNOq51r8bq--ELfZgPGJjyUr4xA7W-UxJB0l2Qnv3IFeivRXHeP',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuBg3omT9gk1KeJQWBkLyUOPAkP_727811xj79lBDcE4batU4M5EQ1GFdDqbJKknWPEZbWSQ0HSWHacPKeLoCxy3HKemiRGzYWfQ4lSDkafzBnAQrIPtAn7LxSVntaZ6O31BaAUQwpbDEAREroKZLyhPcE-dPoQofSpqds7yU_ooSEdv9M0vW9eLtGhdRMEFk5XkSi9SRgtOWENdulgYs94ZFiCXIxn48jeolxlQC6Y8l-8_Y5e3L8WGaibBaEH0VpmChBygl2Hr_wcX',
   'https://lh3.googleusercontent.com/aida-public/AB6AXuAAer5Nml7VFmRJpAoc1NAtneSlOl-iJH8VRWyTOAOQOAP-KPiICTvaZGSCLJ9d7CyNGKoXXSPsfw7TR8dVEE07qg5xZrpt5z3zaXJl33N9V4vDZFNLoMcmWz7Nfv-nVvBnCmdP9RT5HH6DxBOPBKcP7nWtE_Fh_PGtFrFcVErGut6yS5CrQhoZdUbEBxGqUk2LdLPJTrH9MiiC9EhudWlMqC25rwY1eAyJ-l1_ruQqZMvqDqLEs5bywOg2-7SHJC29K6o-0Y9AbNGP',
 ] as const;
 
@@ -225,7 +226,7 @@ export default function AuthScreen() {
                 />
               ))}
               {/* +15K badge */}
-              <View style={[styles.avatar, styles.avatarBadge, { right: 3 * 24 }]}>
+              <View style={[styles.avatar, styles.avatarBadge, { right: 4 * 24 }]}>
                 <AppText style={styles.avatarBadgeText}>{'15K+'}</AppText>
               </View>
             </View>
@@ -502,8 +503,8 @@ const styles = StyleSheet.create({
   },
   avatarCluster: {
     flexDirection: 'row-reverse',
-    // 4 overlapping avatars at 24px offset each → total width ~48+24+24+24 = 120
-    width: 120,
+    // 4 real avatars + badge at 24px offset each → total width ~48+24+24+24+24 = 144
+    width: 144,
     height: 48,
     position: 'relative',
   },
