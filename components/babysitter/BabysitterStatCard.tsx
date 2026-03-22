@@ -5,6 +5,7 @@ import AppText from '@/components/ui/AppText';
 import {
   BabyCityChipTones,
   BabyCityPalette,
+  BabyCityShadows,
   BabysitterDesignTokens,
   BabyCityGeometry,
 } from '@/constants/theme';
@@ -124,9 +125,12 @@ const styles = StyleSheet.create({
   card: {
     minHeight: 72,
     justifyContent: 'center',
-    backgroundColor: BabyCityPalette.surfaceContainer,
-    borderRadius: BabyCityGeometry.radius.control,
-    padding: BabyCityGeometry.spacing.md,
+    backgroundColor: BabyCityPalette.surfaceLowest,
+    borderRadius: BabyCityGeometry.radius.card,
+    padding: BabyCityGeometry.spacing.lg,
+    borderWidth: 1,
+    borderColor: `${BabyCityPalette.outline}22`,
+    ...BabyCityShadows.soft,
   },
   fillCard: {
     flex: 1,
@@ -146,9 +150,9 @@ const styles = StyleSheet.create({
     gap: BabyCityGeometry.spacing.sm,
   },
   iconWrap: {
-    width: 42,
-    height: 42,
-    borderRadius: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
