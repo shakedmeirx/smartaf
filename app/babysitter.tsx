@@ -9,7 +9,7 @@ import {
 import { useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import Animated, {
   FadeInDown,
 } from 'react-native-reanimated';
@@ -20,6 +20,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useAppState } from '@/context/AppContext';
 import NearbyRadiusCard from '@/components/discovery/NearbyRadiusCard';
 import ParentPostCard from '@/components/babysitter/ParentPostCard';
+import AppCard from '@/components/ui/AppCard';
 import AppText from '@/components/ui/AppText';
 import ScreenStateCard from '@/components/ui/ScreenStateCard';
 import SearchField from '@/components/ui/SearchField';
@@ -28,6 +29,12 @@ import { Coordinates } from '@/lib/location';
 import { findPairChatThread } from '@/lib/requestLookup';
 import { BabysitterDesignTokens, BabyCityPalette, getRoleTheme } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
+
+const FEED_PARENT_IMAGES = [
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDrbdUAIjTjSz450qMXEav2OMpERhvInkUd0KkEFTV2MyTRsaxwwtpfzScVgiWYaX328_3LCr9jCFj6Hzi51WoPeUqYFiryt35a_fpQuWO59rso5bbLEQ2PGMvT4JNBphChmhSTNYnCAfTuAhz-rGWNYVpsDPLissI9j1b9G6lD_cHYmDKqoj7w-GEdW3iyF8xNM7lfMW8Izf5COkGrt3JFyHvfybVjK-9mtBTcRceV7E3B6bHmEJ2HyRa_14mAPdQhJDv-2tfGuNFm',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAranGxhOrHk3S5OSTp9T2ox_AzoygCwUhbemhefioPahEDRWRDapcrswdL5F5SWfM59eWXennnMz0yR7NN4aqbACo2dvsDM0Ck1GGkqOUTZKfUjWQynyWmjow51quqD4Jupc9X6axK64RmNyDvBtZqHSeLMTPHPA3psPWlGE24-elXbgFbQXsqpXekjDMMxFSR8zNWU-mQj5y0QYbVz7qIVKpgyvaqLLl2kThU6JLTqTUsnT_jnvsBbBSiXqcHrPqWz2eTYQnO_SqM',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuCDq2TnWNXKt0RQRTeqzS16ixeRillm83aHIOkXfHV0XOWAsITZt4pXSyOcRvi4Im9MKUBusZLCtuLZuinsUFl0IXCkSuL405UnxVhnmtRR7LWnH1AQOH3K3pac8y3ZfwVZFVl5XDoKsCROY45cVcKswYv-74NEiGVg4bJcfpeg3gmvHiIn6atZCo9pu9W8qaPxMID2qCfoNZdP9P5udvkLJNV_clpjDQIZ53JI41HK0vIr8nCnyvJvRaFNfJhrsH9eY52gr6eWE0z_',
+];
 
 export default function BabysitterScreen() {
   const { dbUser } = useAuth();
@@ -310,13 +317,13 @@ export default function BabysitterScreen() {
             }}
             activeOpacity={0.85}
           >
-            <Ionicons name="notifications" size={18} color={BabyCityPalette.surface} />
+            <MaterialIcons name="notifications" size={18} color={BabyCityPalette.surface} />
             <AppText variant="bodyLarge" weight="700" style={styles.pendingBannerText}>
               {newPendingCount === 1
                 ? strings.pendingRequestsBannerOne
                 : `${newPendingCount} ${strings.pendingRequestsBannerMany}`}
             </AppText>
-            <Ionicons name="chevron-back" size={16} color="rgba(255,255,255,0.7)" />
+            <MaterialIcons name="chevron-right" size={16} color="rgba(255,255,255,0.7)" />
           </TouchableOpacity>
         ) : null}
 
@@ -357,8 +364,8 @@ export default function BabysitterScreen() {
               onPress={() => setShowLocationFilter(v => !v)}
             >
               <View style={styles.locationTriggerChevron}>
-                <Ionicons
-                  name={showLocationFilter ? 'chevron-up' : 'chevron-down'}
+                <MaterialIcons
+                  name={showLocationFilter ? 'expand-less' : 'expand-more'}
                   size={18}
                   color={theme.filterAccent}
                 />
@@ -416,6 +423,7 @@ export default function BabysitterScreen() {
                 <ParentPostCard
                   post={post}
                   index={index}
+                  photoUrl={FEED_PARENT_IMAGES[index % FEED_PARENT_IMAGES.length]}
                   highlighted={highlightedPostId === post.id}
                   onViewProfile={async () => {
                     if (post.parentProfileId) {

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html class="light" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error-dim": "#a70138",
+              "inverse-primary": "#a476ff",
+              "surface-container-lowest": "#ffffff",
+              "outline-variant": "#a2adc4",
+              "inverse-surface": "#040e1f",
+              "inverse-on-surface": "#929db4",
+              "on-background": "#242f41",
+              "surface-container-high": "#d5e3ff",
+              "surface-dim": "#c3d5f8",
+              "on-primary-container": "#2e006c",
+              "on-primary-fixed": "#000000",
+              "on-tertiary-fixed": "#380016",
+              "surface-bright": "#f4f6ff",
+              "surface-container-highest": "#cdddfe",
+              "secondary-fixed-dim": "#dbd0e7",
+              "on-tertiary": "#ffeff1",
+              "secondary-dim": "#534c5f",
+              "error": "#b41340",
+              "on-secondary-fixed": "#433c4e",
+              "on-primary": "#f8f0ff",
+              "tertiary-fixed": "#ff8eac",
+              "surface": "#f4f6ff",
+              "on-secondary-fixed-variant": "#60586b",
+              "primary": "#702ae1",
+              "tertiary-container": "#ff8eac",
+              "on-surface-variant": "#515c70",
+              "surface-container-low": "#ecf1ff",
+              "on-tertiary-fixed-variant": "#711036",
+              "on-secondary-container": "#564f61",
+              "tertiary-dim": "#8e294c",
+              "secondary-container": "#e9def5",
+              "on-tertiary-container": "#64042d",
+              "primary-container": "#b28cff",
+              "on-primary-fixed-variant": "#390083",
+              "primary-fixed": "#b28cff",
+              "surface-container": "#dee8ff",
+              "on-error-container": "#510017",
+              "on-error": "#ffefef",
+              "on-secondary": "#f8efff",
+              "tertiary-fixed-dim": "#f77c9e",
+              "surface-tint": "#702ae1",
+              "background": "#f4f6ff",
+              "tertiary": "#9e3657",
+              "secondary-fixed": "#e9def5",
+              "outline": "#6c778c",
+              "error-container": "#f74b6d",
+              "primary-fixed-dim": "#a67aff",
+              "secondary": "#60586b",
+              "primary-dim": "#6411d5",
+              "on-surface": "#242f41",
+              "surface-variant": "#cdddfe"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Be Vietnam Pro', sans-serif;
+        background-color: #f4f6ff;
+      }
+      .editorial-title {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-[#f4f6ff]/80 backdrop-blur-xl docked full-width top-0 z-50 flex flex-row-reverse justify-between items-center w-full px-6 py-4 sticky">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center hover:bg-[#ecf1ff] transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[#242f41]" data-icon="menu">menu</span>
+</button>
+<h1 class="editorial-title font-bold text-right tracking-tight text-[#242f41] text-xl">הודעות</h1>
+</div>
+<div class="flex items-center">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+<img alt="פרופיל משתמש" class="w-full h-full object-cover" data-alt="Female user profile portrait smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc6iYsifyWdqkjpPBA27Gq3V7pPA6uGp6r_EmBad4LbYxeauBgC29MvFH0JxzDO4JNQ7lptnU2FynTu47kVRMo4z89MHU6xYSdiIbuFWkoxP8jnoxCChliw5xR8MECIkFH4tjOuUPqPaZP7TCIdZGEaOWqbOwxT1nnn6djdf3p-F_te7GBnwphiq6Xi9WTthjB2zg9GIkja6QW6ivzOYdqh7o24tGAJNMrLUYnFwAKfXGDyLBs_17FnWX3M1HS59gRzWPlsNY70IF1"/>
+</div>
+</div>
+</header>
+<main class="px-6 py-4 max-w-2xl mx-auto">
+<!-- Search Bar - Intentional Asymmetry -->
+<div class="mb-8 relative group">
+<div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+</div>
+<input class="w-full bg-surface-container-high border-none rounded-lg py-4 pr-12 pl-4 focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all placeholder:text-outline" placeholder="חיפוש שיחות..." type="text"/>
+</div>
+<!-- Chat List -->
+<div class="space-y-4">
+<!-- Active/Unread Chat Card -->
+<div class="bg-surface-container-lowest rounded-lg p-5 shadow-[0_-8px_44px_rgba(36,47,65,0.06)] flex items-center justify-between gap-4 cursor-pointer hover:bg-surface-container-low transition-all active:scale-[0.98]">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative">
+<img alt="מאיה לוי" class="w-16 h-16 rounded-full object-cover" data-alt="Professional childcare provider portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvsPzgy88QrOjx7xvUeGthrcXa6o1N6iqWn4YvVVpN3PaOm05WCiUoOgb3yLxFc-r8ZvJto-jTB1EdPmRgPlKKwpyvGamkRFkYZzrSPqYoAtT0u5AW5lBtkeMRuAyGQDEaiI12lSBlbBTjgbjJB1RFLctOXnKMsyZTZVSCNlEin-J1lAdHjdKjTT2A3e7Yj1fuL0nX-djGY-TKGy4jAw0JKbfhg0hJj3ARqXnC1J5rRTa2GsxG0A-0MKGHXm8RLCKV7VA2Fgui19xP"/>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-primary border-2 border-white rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0 text-right">
+<h3 class="editorial-title font-bold text-on-background text-lg truncate">מאיה לוי</h3>
+<p class="text-on-surface-variant text-sm font-medium truncate">נשמע מעולה, אשמח לתאם פגישה לשבוע הבא.</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="text-xs text-outline font-medium">14:20</span>
+<div class="w-2.5 h-2.5 bg-primary rounded-full"></div>
+</div>
+</div>
+<!-- Read Chat Card -->
+<div class="bg-surface-container-lowest rounded-lg p-5 shadow-[0_-8px_44px_rgba(36,47,65,0.06)] flex items-center justify-between gap-4 cursor-pointer hover:bg-surface-container-low transition-all active:scale-[0.98]">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative">
+<img alt="דנה כהן" class="w-16 h-16 rounded-full object-cover grayscale-[20%]" data-alt="Warm smiling older woman profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrjIaW_F_IrY0lFjQwb3MjkE7ln-QUf0YB6yO64decjijcJq7z74GPvpgh5SZ2qYsmwt24aXBAxQXly9uZCFTbZhCtlLOpYAib3S3Z9I4ypgzyyXcKLVYqnEOlNx-98K2MvhP3xF7g9gEzxsGdDTuiKx5ye1d_AXzlknjJh91FGsSNn_iT6dWCq3Wk-cif4NWmlfjqwK_7-wQERlw79y38X9J4N_00T-3gw_CrC29W9g9GeK5OGTjcJ-aPvC8mF80QQe_Ja9iFK-_Z"/>
+</div>
+<div class="flex-1 min-w-0 text-right">
+<h3 class="editorial-title font-bold text-on-background text-lg truncate">דנה כהן</h3>
+<p class="text-outline text-sm truncate">תודה רבה על העדכון!</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="text-xs text-outline font-medium">אתמול</span>
+</div>
+</div>
+<!-- Read Chat Card -->
+<div class="bg-surface-container-lowest rounded-lg p-5 shadow-[0_-8px_44px_rgba(36,47,65,0.06)] flex items-center justify-between gap-4 cursor-pointer hover:bg-surface-container-low transition-all active:scale-[0.98]">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative">
+<img alt="רוני אברהם" class="w-16 h-16 rounded-full object-cover" data-alt="Young energetic nanny portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByZn1dLEWfZ4nvUnlddg1W3PMtOtsTOIxR6vggHy-NB-2tsrwh5J-tTueevwpJUAxZ7i_c9z-QKzvd-wqssFQ3wPAz5lRcIl0vHxMhCU_Xeswse-QuZYqSw3Eo6kn04xcMnViims6cizVV37ROdc7ExWGyHPlZBUMdraneA0sjqeqBO48Awf8Ih1UmpOZeJ5RmVEGPs3dYWwYEnNR1Ixn7C7xW64lcFBNQwIJViGqWhFKJ_8TmI44evTtLPgqQdL_axIJZ9OR4xo9u"/>
+</div>
+<div class="flex-1 min-w-0 text-right">
+<h3 class="editorial-title font-bold text-on-background text-lg truncate">רוני אברהם</h3>
+<p class="text-outline text-sm truncate">האם עדיין רלוונטי ליום שלישי?</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="text-xs text-outline font-medium">12.08</span>
+</div>
+</div>
+</div>
+<!-- Empty State (Optional Visibility - showing for completeness as requested in logic) -->
+<div class="mt-16 text-center hidden">
+<div class="bg-surface-container-low w-32 h-32 rounded-full mx-auto flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary text-5xl" data-icon="forum">forum</span>
+</div>
+<h2 class="editorial-title font-bold text-2xl text-on-background mb-2">אין הודעות עדיין</h2>
+<p class="text-on-surface-variant max-w-xs mx-auto">כאן יופיעו כל השיחות שלך עם המטפלות. התחילי בחיפוש המטפלת המושלמת עבורך!</p>
+<button class="mt-8 bg-gradient-to-br from-primary to-primary-dim text-on-primary px-8 py-3 rounded-md font-bold shadow-lg shadow-primary/20 active:scale-95 transition-all">
+                חיפוש מטפלות
+            </button>
+</div>
+</main>
+<!-- FAB for New Message -->
+<button class="fixed bottom-24 left-6 w-16 h-16 bg-gradient-to-br from-primary to-primary-dim text-on-primary rounded-full shadow-[0_8px_44px_rgba(112,42,225,0.3)] flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40">
+<span class="material-symbols-outlined text-3xl" data-icon="edit">edit</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 right-0 w-full h-20 bg-white/90 backdrop-blur-md flex flex-row-reverse justify-around items-center px-4 pb-safe shadow-[0_-8px_44px_rgba(36,47,65,0.06)] rounded-t-[2rem] border-t border-[#a2adc4]/15 z-50">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-[#242f41] opacity-60 hover:opacity-100 transition-opacity active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">בית</span>
+</a>
+<!-- Messages (Active) -->
+<a class="flex flex-col items-center justify-center text-[#7C3AED] bg-[#e9def5] rounded-full px-4 py-1 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">הודעות</span>
+</a>
+<!-- Favorites -->
+<a class="flex flex-col items-center justify-center text-[#242f41] opacity-60 hover:opacity-100 transition-opacity active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">מועדפים</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-[#242f41] opacity-60 hover:opacity-100 transition-opacity active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">פרופיל</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-container": "#b28cff",
+              "on-background": "#242f41",
+              "surface-container-high": "#d5e3ff",
+              "on-tertiary-container": "#64042d",
+              "outline-variant": "#a2adc4",
+              "on-primary-container": "#2e006c",
+              "inverse-on-surface": "#929db4",
+              "secondary": "#60586b",
+              "inverse-surface": "#040e1f",
+              "surface-bright": "#f4f6ff",
+              "primary-dim": "#6411d5",
+              "secondary-container": "#e9def5",
+              "surface-container-low": "#ecf1ff",
+              "surface-variant": "#cdddfe",
+              "surface-tint": "#702ae1",
+              "secondary-fixed": "#e9def5",
+              "secondary-fixed-dim": "#dbd0e7",
+              "tertiary-fixed-dim": "#f77c9e",
+              "outline": "#6c778c",
+              "primary-fixed": "#b28cff",
+              "tertiary-fixed": "#ff8eac",
+              "tertiary-container": "#ff8eac",
+              "tertiary": "#9e3657",
+              "error-dim": "#a70138",
+              "on-tertiary-fixed": "#380016",
+              "on-primary": "#f8f0ff",
+              "primary-fixed-dim": "#a67aff",
+              "surface-container-highest": "#cdddfe",
+              "on-tertiary-fixed-variant": "#711036",
+              "on-primary-fixed": "#000000",
+              "surface": "#f4f6ff",
+              "on-surface": "#242f41",
+              "error": "#b41340",
+              "tertiary-dim": "#8e294c",
+              "surface-container": "#dee8ff",
+              "inverse-primary": "#a476ff",
+              "on-tertiary": "#ffeff1",
+              "on-error": "#ffefef",
+              "surface-dim": "#c3d5f8",
+              "on-secondary-fixed-variant": "#60586b",
+              "on-primary-fixed-variant": "#390083",
+              "background": "#f4f6ff",
+              "on-surface-variant": "#515c70",
+              "on-error-container": "#510017",
+              "primary": "#702ae1",
+              "error-container": "#f74b6d",
+              "on-secondary-container": "#564f61",
+              "on-secondary": "#f8efff",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-fixed": "#433c4e",
+              "secondary-dim": "#534c5f"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .signature-gradient {
+        background: linear-gradient(135deg, #702ae1 0%, #6411d5 100%);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased overflow-x-hidden">
+<!-- Hero Content Area -->
+<main class="relative min-h-screen flex flex-col items-center justify-between p-6 md:p-12 max-w-2xl mx-auto">
+<!-- Top Bar (Logo Only for Onboarding) -->
+<header class="w-full flex justify-center py-4">
+<div class="font-headline font-black text-2xl tracking-tight text-primary">Smartaf</div>
+</header>
+<!-- Illustration & Visual Anchor -->
+<div class="relative w-full aspect-square max-w-[400px] flex items-center justify-center">
+<!-- Background Shape Layering -->
+<div class="absolute inset-0 bg-surface-container-low rounded-full scale-90 translate-x-4 -translate-y-4"></div>
+<div class="absolute inset-0 bg-secondary-container/30 rounded-full scale-95 -translate-x-2 translate-y-2"></div>
+<!-- Main Illustration -->
+<div class="relative z-10 w-full h-full rounded-xl overflow-hidden shadow-2xl shadow-on-surface/5">
+<img alt="Happy baby and parent playing" class="w-full h-full object-cover" data-alt="Happy parent holding a smiling baby in a bright nursery" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5wfqxzhnrq9X-rWgu93gAkoCCF6Slk7LPdDPHyxoUb5XQ7FeWinBlNQ1b1jovjfnqz_gnk1BpggjfyM4AB7Hfj2mOAjowhr7QXqdCcJftoRY2iAmU-WEIhinLjNsIyzjKrj_IIDPQGDgLqO71oY4FRYpaohir7eFEU73qcLVQ5L9ae1CWoOicMwZ-MPVsAVJsQKH78RP1duR2SVTJumpJwgwSaUBP8v7HoAubImaKo4TWsCGCNGoXP472KsNluUysQ7vTTPguPfpq"/>
+</div>
+<!-- Floating Trust Element -->
+<div class="absolute -bottom-6 -right-4 bg-surface-container-lowest p-4 rounded-lg shadow-xl shadow-on-surface/5 flex items-center gap-3 z-20">
+<div class="w-10 h-10 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">verified</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline font-bold text-sm">ביטחון מלא</span>
+<span class="text-xs text-on-surface-variant">מטפלות מוסמכות בלבד</span>
+</div>
+</div>
+</div>
+<!-- Typography & Copy -->
+<div class="w-full text-center space-y-6 mt-8">
+<h1 class="font-headline text-4xl md:text-5xl font-extrabold text-on-surface tracking-tight leading-tight">
+                ברוכים הבאים למשפחת Smartaf
+            </h1>
+<p class="text-on-surface-variant text-lg md:text-xl leading-relaxed max-w-md mx-auto">
+                המקום שבו ביטחון, רוגע וטיפול מסור נפגשים. אנחנו כאן כדי לעזור לכם למצוא את המעטפת המושלמת עבור הקטנטנים שלכם.
+            </p>
+</div>
+<!-- Action Area -->
+<div class="w-full space-y-4 pb-12 pt-8">
+<button class="w-full signature-gradient text-on-primary font-headline font-bold text-lg py-5 rounded-lg transition-transform active:scale-95 shadow-lg shadow-primary/20">
+                מתחילים
+            </button>
+<button class="w-full text-primary font-body font-semibold text-base py-3 transition-opacity hover:opacity-80">
+                כבר יש לי חשבון? התחברות
+            </button>
+</div>
+<!-- Atmosphere Bubbles (Design Tokens in Action) -->
+<div class="fixed -top-20 -left-20 w-64 h-64 bg-surface-container rounded-full blur-[80px] opacity-60 pointer-events-none"></div>
+<div class="fixed top-1/2 -right-32 w-80 h-80 bg-secondary-container rounded-full blur-[100px] opacity-40 pointer-events-none"></div>
+</main>
+<!-- Semantic Shell Suppression Logic: No Nav Bars for Onboarding per instructions -->
+</body></html>

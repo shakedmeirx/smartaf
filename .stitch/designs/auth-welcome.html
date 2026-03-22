@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html class="light" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-on-surface": "#929db4",
+              "on-background": "#242f41",
+              "inverse-surface": "#040e1f",
+              "surface-container-high": "#d5e3ff",
+              "error-dim": "#a70138",
+              "inverse-primary": "#a476ff",
+              "surface-container-lowest": "#ffffff",
+              "outline-variant": "#a2adc4",
+              "error": "#b41340",
+              "secondary-dim": "#534c5f",
+              "on-primary": "#f8f0ff",
+              "on-secondary-fixed": "#433c4e",
+              "tertiary-fixed": "#ff8eac",
+              "on-secondary-fixed-variant": "#60586b",
+              "primary": "#702ae1",
+              "surface": "#f4f6ff",
+              "surface-dim": "#c3d5f8",
+              "on-primary-container": "#2e006c",
+              "on-tertiary-fixed": "#380016",
+              "on-primary-fixed": "#000000",
+              "surface-bright": "#f4f6ff",
+              "on-tertiary": "#ffeff1",
+              "surface-container-highest": "#cdddfe",
+              "secondary-fixed-dim": "#dbd0e7",
+              "primary-container": "#b28cff",
+              "on-primary-fixed-variant": "#390083",
+              "primary-fixed": "#b28cff",
+              "on-tertiary-container": "#64042d",
+              "on-error": "#ffefef",
+              "on-error-container": "#510017",
+              "surface-container": "#dee8ff",
+              "on-secondary": "#f8efff",
+              "on-secondary-container": "#564f61",
+              "surface-container-low": "#ecf1ff",
+              "on-tertiary-fixed-variant": "#711036",
+              "tertiary-container": "#ff8eac",
+              "on-surface-variant": "#515c70",
+              "tertiary-dim": "#8e294c",
+              "secondary-container": "#e9def5",
+              "primary-fixed-dim": "#a67aff",
+              "on-surface": "#242f41",
+              "secondary": "#60586b",
+              "primary-dim": "#6411d5",
+              "surface-variant": "#cdddfe",
+              "surface-tint": "#702ae1",
+              "tertiary-fixed-dim": "#f77c9e",
+              "background": "#f4f6ff",
+              "tertiary": "#9e3657",
+              "error-container": "#f74b6d",
+              "secondary-fixed": "#e9def5",
+              "outline": "#6c778c"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .bg-gradient-primary {
+        background: linear-gradient(135deg, #702ae1 0%, #6411d5 100%);
+      }
+      .asymmetric-shape {
+        clip-path: polygon(0 0, 100% 10%, 100% 100%, 0 90%);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col">
+<!-- Top Navigation (Shell suppressed for transactional screen) -->
+<header class="fixed top-0 w-full z-50 bg-[#f4f6ff]/80 backdrop-blur-md px-6 h-20 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">child_care</span>
+</div>
+<span class="font-headline font-black text-2xl tracking-tight text-on-surface">Smartaf</span>
+</div>
+<button class="font-label font-semibold text-primary hover:opacity-80 transition-opacity">עברית</button>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center px-6 pt-24 pb-12 max-w-lg mx-auto w-full">
+<!-- Hero Section with Intentional Asymmetry -->
+<div class="relative w-full mb-12">
+<div class="absolute -top-10 -right-10 w-40 h-40 bg-primary-container/20 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-10 -left-10 w-40 h-40 bg-secondary-container/30 rounded-full blur-3xl"></div>
+<div class="relative z-10 text-right space-y-4">
+<h1 class="font-headline text-4xl md:text-5xl font-extrabold text-on-surface leading-[1.1] tracking-tight">Smartaf - <br/>
+<span class="text-primary">למצוא את הטיפול הטוב ביותר בביטחון.</span></h1>
+<p class="text-on-surface-variant text-lg font-medium max-w-xs ml-auto">
+                    הצטרפו לקהילת ההורים והמטפלות הגדולה בישראל. שקט נפשי מתחיל כאן.
+                </p>
+</div>
+</div>
+<!-- Glassmorphism Card for Entry Options -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-8 shadow-[0_20px_50px_rgba(36,47,65,0.08)] space-y-6">
+<!-- Primary Action -->
+<button class="w-full h-14 bg-gradient-primary text-on-primary rounded-lg font-headline font-bold text-lg flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md">
+                מתחילים עכשיו
+                <span class="material-symbols-outlined">arrow_back</span>
+</button>
+<!-- Secondary Action -->
+<button class="w-full h-14 bg-secondary-container text-on-secondary-container rounded-lg font-headline font-bold text-lg flex items-center justify-center active:scale-95 transition-all">
+                התחברות
+            </button>
+<!-- Divider with Text -->
+<div class="flex items-center gap-4 py-2">
+<div class="h-[1px] flex-grow bg-outline-variant/20"></div>
+<span class="text-on-surface-variant text-sm font-medium">או באמצעות</span>
+<div class="h-[1px] flex-grow bg-outline-variant/20"></div>
+</div>
+<!-- Social Logins (Editorial Grid) -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 h-14 bg-surface-container-low border border-outline-variant/10 rounded-lg hover:bg-surface-container-high transition-colors">
+<img alt="Google" class="w-5 h-5" data-alt="Google colorful G logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-s0dD1m_2cLBvEul9elsR3TKyH2N0BAM7_oEHYNiNGGNN5xfO0AdwumMkiC4lsj8eg_LR-ok8N0Ve_dQwpvkIgl4aGtp3HbYUTpOpiv6noDzUP790JN2LS7Z_D0uX6j4oRhVe8KFy4tPzHqsL5yKpqgnwFAHyCTlhxQoVtgM6FgiOs-mzylBLStS49vySfqtxhaG_mTmTPgjHyeAEj9u04uRyrQ1stdlJHLhkjY1CiOAuLdR7KlV1LqsP4tgqYdymeXHqSa8tlSde"/>
+<span class="font-label font-semibold text-on-surface">Google</span>
+</button>
+<button class="flex items-center justify-center gap-3 h-14 bg-on-background text-white rounded-lg hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">ios</span>
+<span class="font-label font-semibold">Apple</span>
+</button>
+</div>
+</div>
+<!-- Trust Markers (Editorial Style) -->
+<div class="mt-12 flex flex-col items-center gap-6 w-full">
+<div class="flex -space-x-3 space-x-reverse">
+<div class="w-12 h-12 rounded-full border-4 border-surface overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close up of a smiling mother" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFWRFrYQlCYvwwuvkMm4cJXQSaL51bK4nMDy2Mzc8eI1cRtCMtacTKicSD3OjH0UEZAX_sSjCQZopC15rmi7OfpV_63OVU7sZlORwDYyIG2UkO05kJzlVswerDXXQHwa2dEgGCmxTYtKPlSCWLfxdvvb6VDd63wS0N_pMAcWhtDLpo5qh34yv9POGufReSz2wiyqe-FcS_umdN8oG-ykIpmdmmUJNOq51r8bq--ELfZgPGJjyUr4xA7W-UxJB0l2Qnv3IFeivRXHeP"/>
+</div>
+<div class="w-12 h-12 rounded-full border-4 border-surface overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Happy child looking up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBg3omT9gk1KeJQWBkLyUOPAkP_727811xj79lBDcE4batU4M5EQ1GFdDqbJKknWPEZbWSQ0HSWHacPKeLoCxy3HKemiRGzYWfQ4lSDkafzBnAQrIPtAn7LxSVntaZ6O31BaAUQwpbDEAREroKZLyhPcE-dPoQofSpqds7yU_ooSEdv9M0vW9eLtGhdRMEFk5XkSi9SRgtOWENdulgYs94ZFiCXIxn48jeolxlQC6Y8l-8_Y5e3L8WGaibBaEH0VpmChBygl2Hr_wcX"/>
+</div>
+<div class="w-12 h-12 rounded-full border-4 border-surface overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Professional babysitter smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAer5Nml7VFmRJpAoc1NAtneSlOl-iJH8VRWyTOAOQOAP-KPiICTvaZGSCLJ9d7CyNGKoXXSPsfw7TR8dVEE07qg5xZrpt5z3zaXJl33N9V4vDZFNLoMcmWz7Nfv-nVvBnCmdP9RT5HH6DxBOPBKcP7nWtE_Fh_PGtFrFcVErGut6yS5CrQhoZdUbEBxGqUk2LdLPJTrH9MiiC9EhudWlMqC25rwY1eAyJ-l1_ruQqZMvqDqLEs5bywOg2-7SHJC29K6o-0Y9AbNGP"/>
+</div>
+<div class="w-12 h-12 rounded-full border-4 border-surface bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">
+                    +15K
+                </div>
+</div>
+<p class="text-on-surface-variant font-medium text-sm text-center">
+                מעל 15,000 הורים כבר מצאו את המטפלת המושלמת
+            </p>
+</div>
+<!-- Bottom Feature Teaser (Editorial Layout) -->
+<div class="mt-16 grid grid-cols-2 gap-4 w-full">
+<div class="bg-surface-container-low p-6 rounded-lg space-y-3">
+<span class="material-symbols-outlined text-primary text-3xl">verified_user</span>
+<h3 class="font-headline font-bold text-on-surface">פרופילים מאומתים</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">אנחנו בודקים כל מטפלת כדי להבטיח ביטחון מלא.</p>
+</div>
+<div class="bg-secondary-container/50 p-6 rounded-lg space-y-3 mt-4">
+<span class="material-symbols-outlined text-on-secondary-container text-3xl">distance</span>
+<h3 class="font-headline font-bold text-on-surface">קרוב לבית</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">חיפוש חכם מבוסס מיקום למציאת פתרון מהיר.</p>
+</div>
+</div>
+</main>
+<!-- Simple Footer for Transactional Screen -->
+<footer class="mt-auto py-8 text-center text-on-surface-variant/60 text-xs font-label">
+<div class="flex justify-center gap-6 mb-4 text-sm font-medium text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#">תנאי שימוש</a>
+<a class="hover:text-primary transition-colors" href="#">מדיניות פרטיות</a>
+<a class="hover:text-primary transition-colors" href="#">צור קשר</a>
+</div>
+<p>© 2024 Smartaf. כל הזכויות שמורות.</p>
+</footer>
+</body></html>

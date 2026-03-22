@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import LabeledInput from '@/components/onboarding/LabeledInput';
 import TagSelector from '@/components/onboarding/TagSelector';
@@ -464,12 +464,12 @@ export default function ParentOnboardingScreen() {
           {/* Feature cards */}
           <View style={styles.welcomeFeatureRow}>
             {[
-              { icon: 'shield-checkmark-outline' as const, title: 'בטיחות', body: 'כל בייביסיטר עובר בדיקה ואימות' },
-              { icon: 'search-outline' as const, title: 'התאמה חכמה', body: 'מציאת הבייביסיטר הקרוב אליכם' },
-              { icon: 'heart-outline' as const, title: 'תמיכה אישית', body: 'אנחנו כאן לכל שאלה' },
+              { icon: 'verified-user' as keyof typeof MaterialIcons.glyphMap, title: 'בטיחות', body: 'כל בייביסיטר עובר בדיקה ואימות' },
+              { icon: 'search' as keyof typeof MaterialIcons.glyphMap, title: 'התאמה חכמה', body: 'מציאת הבייביסיטר הקרוב אליכם' },
+              { icon: 'favorite' as keyof typeof MaterialIcons.glyphMap, title: 'תמיכה אישית', body: 'אנחנו כאן לכל שאלה' },
             ].map(f => (
               <View key={f.title} style={styles.welcomeFeatureCard}>
-                <Ionicons name={f.icon} size={24} color={BabyCityPalette.primary} />
+                <MaterialIcons name={f.icon} size={24} color={BabyCityPalette.primary} />
                 <AppText variant="caption" weight="700" align="center" style={{ marginTop: 8 }}>{f.title}</AppText>
                 <AppText variant="caption" tone="muted" align="center" style={{ lineHeight: 18 }}>{f.body}</AppText>
               </View>
@@ -519,7 +519,7 @@ export default function ParentOnboardingScreen() {
           {data.city ? (
             <AppCard style={styles.reviewCard}>
               <View style={styles.reviewRow}>
-                <Ionicons name="location-outline" size={18} color={BabyCityPalette.primary} />
+                <MaterialIcons name="location-on" size={18} color={BabyCityPalette.primary} />
                 <AppText variant="bodyLarge" weight="700" style={styles.reviewRowText}>{data.city}</AppText>
               </View>
             </AppCard>
@@ -605,7 +605,7 @@ export default function ParentOnboardingScreen() {
               onPress={handleBack}
               activeOpacity={0.86}
             >
-              <Ionicons name="chevron-forward" size={18} color={BabyCityPalette.primary} />
+              <MaterialIcons name="arrow-forward-ios" size={18} color={BabyCityPalette.primary} />
               <AppText variant="caption" weight="700" style={{ color: BabyCityPalette.primary }}>
                 {strings.back}
               </AppText>
@@ -687,7 +687,7 @@ export default function ParentOnboardingScreen() {
                         <ActivityIndicator color={BabyCityPalette.primary} />
                       ) : (
                         <>
-                          <Ionicons name="camera-outline" size={26} color={BabyCityPalette.primary} />
+                          <MaterialIcons name="camera-alt" size={26} color={BabyCityPalette.primary} />
                           <AppText variant="body" weight="700" style={styles.photoPlaceholderText}>{strings.parentProfilePhotoAdd}</AppText>
                         </>
                       )}

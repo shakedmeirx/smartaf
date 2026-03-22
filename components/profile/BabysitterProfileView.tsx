@@ -1,5 +1,10 @@
 import { Image, Linking, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+
+const BABYSITTER_GALLERY_IMAGES = [
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAQIvSUdjirWkyRInjQ8K8c145qlQPRo9wvbaWVc7Z_sNxx-LQwDfc5eCloGLLbxPnI-E7VJ_maA9xcSqAbaZf74EAvHDvDNTeUjqKTJ1E3kF36Dw1KnyBV8dd18wR0xxLkpcGW1W7NyHqyY8KGPDfba-VwCATgxoMRIHZMrPz_7xNfB0cgbhyxHrG8Og1FeDkM6sZUHPrn-s5PEDDNAtKYPPr68qr4vXkGHelG9ox3P1bU7cYIoPKFPY8MZbFPAqiB6rAGTKJiuD0c',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAR_4EcCMJq0MX8kHKmc1tOuVYHGxCIdKSmt7TXyzleyt7940F0iFHS9nztugRdmS8okyxWMDk4orHoG-MxqfHMDoNvGOsi4R6Wgk9eHgUhslcY8bCkcNBwpqT5erC49DKbqzPPIoGh3wf8ysEZcwIN-7NrxfnW-KJFehYm1VM8Dn2izll9ovzkYAghXBCT_NKUI-w23BhXhGNb9aim_zKooWcqqv742THN2TJJ9ID1Ndrmz5T5mjQEROCE2aWp5oppYL7sn5TdLTy0',
+];
 import { strings } from '@/locales';
 import { Babysitter } from '@/types/babysitter';
 import { BabysitterRating } from '@/types/rating';
@@ -44,6 +49,8 @@ export default function BabysitterProfileView({
   refreshing = false,
   onRefresh,
 }: Props) {
+  const galleryToShow = galleryPhotoUrls.length > 0 ? galleryPhotoUrls : BABYSITTER_GALLERY_IMAGES;
+
   const theme = getRoleTheme('parent');
   const {
     name,
@@ -148,7 +155,7 @@ export default function BabysitterProfileView({
           </AppText>
           {city ? (
             <View style={styles.cityRow}>
-              <Ionicons name="location-outline" size={14} color={BabyCityPalette.textSecondary} />
+              <MaterialIcons name="location-on" size={14} color={BabyCityPalette.textSecondary} />
               <AppText variant="body" tone="muted" style={styles.heroCity}>{city}</AppText>
             </View>
           ) : null}
@@ -208,6 +215,21 @@ export default function BabysitterProfileView({
             <AppText variant="bodyLarge" style={styles.bioText}>{bio}</AppText>
           </AppCard>
         ) : null}
+
+        {/* ── Gallery ── */}
+        <AppCard role="parent" variant="panel" style={styles.sectionCard}>
+          <SectionHeader title={strings.galleryLabel ?? 'גלריה'} titleVariant="h2" />
+          <View style={styles.galleryRow}>
+            {galleryToShow.map((uri, i) => (
+              <Image
+                key={`gallery-${i}`}
+                source={{ uri }}
+                style={styles.galleryImage}
+                resizeMode="cover"
+              />
+            ))}
+          </View>
+        </AppCard>
 
         {/* ── Details (availability, languages, age groups, etc.) ── */}
         {detailSections.length > 0 ? (
@@ -465,6 +487,16 @@ const styles = StyleSheet.create({
   bioText: {
     lineHeight: 26,
     textAlign: 'right',
+  },
+  galleryRow: {
+    flexDirection: 'row-reverse',
+    flexWrap: 'wrap',
+    gap: BabyCityGeometry.spacing.sm,
+  },
+  galleryImage: {
+    width: '48%',
+    aspectRatio: 1,
+    borderRadius: BabyCityGeometry.radius.control,
   },
   groupStack: {
     gap: BabyCityGeometry.spacing.lg,

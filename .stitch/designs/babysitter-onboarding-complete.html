@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-high": "#d5e3ff",
+              "inverse-on-surface": "#929db4",
+              "on-background": "#242f41",
+              "inverse-surface": "#040e1f",
+              "surface-container-lowest": "#ffffff",
+              "error-dim": "#a70138",
+              "inverse-primary": "#a476ff",
+              "outline-variant": "#a2adc4",
+              "on-primary": "#f8f0ff",
+              "on-secondary-fixed": "#433c4e",
+              "error": "#b41340",
+              "secondary-dim": "#534c5f",
+              "on-secondary-fixed-variant": "#60586b",
+              "primary": "#702ae1",
+              "surface": "#f4f6ff",
+              "tertiary-fixed": "#ff8eac",
+              "on-tertiary-fixed": "#380016",
+              "on-primary-fixed": "#000000",
+              "surface-dim": "#c3d5f8",
+              "on-primary-container": "#2e006c",
+              "on-tertiary": "#ffeff1",
+              "surface-container-highest": "#cdddfe",
+              "secondary-fixed-dim": "#dbd0e7",
+              "surface-bright": "#f4f6ff",
+              "on-error-container": "#510017",
+              "on-error": "#ffefef",
+              "surface-container": "#dee8ff",
+              "primary-container": "#b28cff",
+              "on-primary-fixed-variant": "#390083",
+              "primary-fixed": "#b28cff",
+              "on-tertiary-container": "#64042d",
+              "on-secondary": "#f8efff",
+              "tertiary-dim": "#8e294c",
+              "surface-container-low": "#ecf1ff",
+              "on-tertiary-fixed-variant": "#711036",
+              "on-secondary-container": "#564f61",
+              "tertiary-container": "#ff8eac",
+              "on-surface-variant": "#515c70",
+              "secondary-container": "#e9def5",
+              "primary-fixed-dim": "#a67aff",
+              "surface-variant": "#cdddfe",
+              "on-surface": "#242f41",
+              "secondary": "#60586b",
+              "primary-dim": "#6411d5",
+              "background": "#f4f6ff",
+              "tertiary-fixed-dim": "#f77c9e",
+              "surface-tint": "#702ae1",
+              "error-container": "#f74b6d",
+              "secondary-fixed": "#e9def5",
+              "outline": "#6c778c",
+              "tertiary": "#9e3657"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .bg-signature-gradient {
+        background: linear-gradient(135deg, #702ae1 0%, #6411d5 100%);
+      }
+      .ambient-shadow {
+        box-shadow: 0 2.75rem 0 0 rgba(36, 47, 65, 0.06);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface font-body text-on-surface min-h-screen flex flex-col items-center">
+<!-- Header Suppression: Following the "Transactional/Focused Journey" rule from the blueprint -->
+<main class="w-full max-w-md flex-grow flex flex-col items-center px-6 pt-12 pb-24 text-center">
+<!-- Success State Header -->
+<div class="mb-10 relative">
+<div class="w-24 h-24 rounded-full bg-primary flex items-center justify-center relative z-10 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-on-primary text-5xl" data-icon="check">check</span>
+</div>
+<!-- Decorative atmospheric element -->
+<div class="absolute -top-4 -right-4 w-12 h-12 bg-tertiary-container rounded-full opacity-40 blur-xl"></div>
+<div class="absolute -bottom-2 -left-6 w-16 h-16 bg-primary-container rounded-full opacity-30 blur-xl"></div>
+</div>
+<h1 class="font-headline text-3xl font-bold tracking-tight mb-3 text-on-background">הפרופיל שלך מוכן!</h1>
+<p class="text-on-surface-variant text-lg leading-relaxed mb-10 max-w-[280px]">מעכשיו הורים יוכלו למצוא אותך ולהציע לך עבודות ב-Smartaf.</p>
+<!-- Profile Preview Card (High-End Editorial Layout) -->
+<div class="w-full bg-surface-container-low rounded-lg p-1 pt-0 relative overflow-visible mb-12">
+<!-- Asymmetrical Overlapping Avatar -->
+<div class="absolute -top-8 right-6">
+<div class="w-20 h-20 rounded-full border-[6px] border-surface-container-low overflow-hidden shadow-sm">
+<img alt="Provider Avatar" class="w-full h-full object-cover" data-alt="Close up portrait of a smiling young woman with professional attire" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAYq3z43IEF7wzINRBjv-HjOCTAez46mbFz_TM5w25NKGS6FzF-V8Y8X2y98p2Md-De8etwaMb312fW3LW6Vc1khRr7YGQCNoVY3GQB9wMuWRMFjXvIQnQA9vDq5lTQ9pTVcEjclhBR1LRqqFDfoAiiIJk17pCJUaAW-ulyYnWirdUwy-I4tAYTc22nIjK2yhQD7-P5n4GeoRrXWv6wL5WMjUwEUa76hNuX1-P9c1xZW1YqjE0VVLMfFACs2XWhSnq2_2_RbiLCtKX"/>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-6 pt-14 text-right">
+<div class="flex flex-col gap-1 mb-6">
+<h2 class="font-headline text-xl font-bold text-on-surface">נועה לוי</h2>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-medium">חדשה בקהילת Smartaf</span>
+</div>
+</div>
+<!-- Bento-style info bits -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low rounded-lg p-4 flex flex-col gap-1 items-start">
+<span class="material-symbols-outlined text-on-surface-variant text-lg" data-icon="location_on">location_on</span>
+<span class="text-xs text-on-surface-variant">מיקום</span>
+<span class="text-sm font-semibold text-on-surface">תל אביב</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-4 flex flex-col gap-1 items-start">
+<span class="material-symbols-outlined text-on-surface-variant text-lg" data-icon="payments">payments</span>
+<span class="text-xs text-on-surface-variant">תעריף שעתי</span>
+<span class="text-sm font-semibold text-on-surface">₪55</span>
+</div>
+</div>
+<!-- Editorial Detail -->
+<div class="mt-6 flex items-center justify-between">
+<div class="flex -space-x-2 space-x-reverse">
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center border-2 border-surface-container-lowest">
+<span class="material-symbols-outlined text-xs text-on-tertiary-container" data-icon="verified_user">verified_user</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center border-2 border-surface-container-lowest">
+<span class="material-symbols-outlined text-xs text-on-secondary-container" data-icon="medical_services">medical_services</span>
+</div>
+</div>
+<span class="text-xs text-on-surface-variant font-medium">פרופיל מאומת</span>
+</div>
+</div>
+</div>
+<!-- Action Section -->
+<div class="w-full space-y-4">
+<button class="w-full bg-signature-gradient text-on-primary py-5 rounded-md font-headline font-bold text-lg shadow-lg shadow-primary/20 active:scale-[0.98] transition-all">
+                מעבר ללוח הבקרה
+            </button>
+<button class="w-full text-primary font-bold py-3 hover:bg-surface-container-low rounded-md transition-colors">
+                צפייה בפרופיל הציבורי שלי
+            </button>
+</div>
+</main>
+<!-- Navigation Suppressed for Onboarding Completion Focus -->
+<!-- Ambient background glows -->
+<div class="fixed top-[-10%] left-[-20%] w-[60%] h-[40%] bg-primary/5 rounded-full blur-[120px] -z-10"></div>
+<div class="fixed bottom-[-10%] right-[-20%] w-[60%] h-[40%] bg-tertiary/5 rounded-full blur-[120px] -z-10"></div>
+</body></html>

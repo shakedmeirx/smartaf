@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="light" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#60586b",
+              "secondary-fixed": "#e9def5",
+              "on-secondary": "#f8efff",
+              "outline-variant": "#a2adc4",
+              "on-background": "#242f41",
+              "secondary-dim": "#534c5f",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-low": "#ecf1ff",
+              "surface": "#f4f6ff",
+              "secondary-fixed-dim": "#dbd0e7",
+              "on-primary-fixed-variant": "#390083",
+              "tertiary": "#9e3657",
+              "inverse-surface": "#040e1f",
+              "inverse-primary": "#a476ff",
+              "primary-fixed-dim": "#a67aff",
+              "on-surface-variant": "#515c70",
+              "tertiary-dim": "#8e294c",
+              "on-primary": "#f8f0ff",
+              "on-tertiary-fixed": "#380016",
+              "secondary-container": "#e9def5",
+              "on-surface": "#242f41",
+              "primary-container": "#b28cff",
+              "on-tertiary": "#ffeff1",
+              "error-container": "#f74b6d",
+              "primary-dim": "#6411d5",
+              "error": "#b41340",
+              "surface-container-highest": "#cdddfe",
+              "on-error-container": "#510017",
+              "surface-container": "#dee8ff",
+              "on-secondary-fixed": "#433c4e",
+              "tertiary-fixed-dim": "#f77c9e",
+              "secondary": "#60586b",
+              "on-primary-fixed": "#000000",
+              "on-primary-container": "#2e006c",
+              "surface-dim": "#c3d5f8",
+              "on-tertiary-fixed-variant": "#711036",
+              "outline": "#6c778c",
+              "background": "#f4f6ff",
+              "on-secondary-container": "#564f61",
+              "surface-variant": "#cdddfe",
+              "surface-container-high": "#d5e3ff",
+              "surface-bright": "#f4f6ff",
+              "primary-fixed": "#b28cff",
+              "error-dim": "#a70138",
+              "tertiary-container": "#ff8eac",
+              "surface-tint": "#702ae1",
+              "inverse-on-surface": "#929db4",
+              "tertiary-fixed": "#ff8eac",
+              "primary": "#702ae1",
+              "on-tertiary-container": "#64042d",
+              "on-error": "#ffefef"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f4f6ff;
+            color: #242f41;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+        .editorial-shadow {
+            box-shadow: 0 44px 44px -20px rgba(36, 47, 65, 0.06);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface min-h-screen pb-32">
+<!-- TopAppBar Navigation Shell -->
+<header class="docked w-full top-0 sticky z-50 bg-[#f4f6ff]/80 backdrop-blur-xl no-border tonal-layering bg-[#ecf1ff] flat no-shadows">
+<div class="flex flex-row-reverse justify-between items-center w-full px-6 py-4">
+<div class="flex items-center gap-4">
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-right text-2xl font-black text-[#242f41]">חיפוש בייביסיטר</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-[#ffffff]/50 transition-colors active:scale-95 duration-200 ease-in-out text-[#7C3AED]">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+</button>
+<button class="p-2 rounded-full hover:bg-[#ffffff]/50 transition-colors active:scale-95 duration-200 ease-in-out text-[#7C3AED]">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-3xl mx-auto px-6 pt-8">
+<!-- Hero Section / Search Status -->
+<section class="mb-10">
+<h2 class="font-headline text-3xl font-extrabold tracking-tight mb-2">עבודות מחכות לך</h2>
+<p class="font-body text-on-surface-variant text-lg">מצאנו 12 משפחות שמחפשות בייביסיטר באזור שלך</p>
+</section>
+<!-- Jobs Feed -->
+<div class="space-y-8">
+<!-- Job Card 1 -->
+<article class="relative bg-surface-container-lowest rounded-lg p-7 editorial-shadow border-none">
+<!-- High-end Asymmetric Avatar -->
+<div class="absolute -top-6 -right-2">
+<div class="w-16 h-16 rounded-full border-4 border-surface overflow-hidden shadow-lg">
+<img alt="Parent Profile" class="w-full h-full object-cover" data-alt="Close up portrait of a smiling mother" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrbdUAIjTjSz450qMXEav2OMpERhvInkUd0KkEFTV2MyTRsaxwwtpfzScVgiWYaX328_3LCr9jCFj6Hzi51WoPeUqYFiryt35a_fpQuWO59rso5bbLEQ2PGMvT4JNBphChmhSTNYnCAfTuAhz-rGWNYVpsDPLissI9j1b9G6lD_cHYmDKqoj7w-GEdW3iyF8xNM7lfMW8Izf5COkGrt3JFyHvfybVjK-9mtBTcRceV7E3B6bHmEJ2HyRa_14mAPdQhJDv-2tfGuNFm"/>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<header class="flex justify-between items-start">
+<div class="pr-16">
+<h3 class="font-headline text-xl font-bold text-on-surface">משפחת לוי</h3>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm mt-1">
+<span class="material-symbols-outlined text-[18px]" data-icon="location_on">location_on</span>
+<span>תל אביב - צפון</span>
+</div>
+</div>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold">חדש!</span>
+</header>
+<div class="grid grid-cols-2 gap-4 my-2">
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl">
+<span class="material-symbols-outlined text-primary" data-icon="calendar_today">calendar_today</span>
+<div>
+<p class="text-[10px] text-on-surface-variant leading-none mb-1">תאריך</p>
+<p class="text-sm font-semibold">מחר, 18:00 - 22:00</p>
+</div>
+</div>
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl">
+<span class="material-symbols-outlined text-primary" data-icon="child_care">child_care</span>
+<div>
+<p class="text-[10px] text-on-surface-variant leading-none mb-1">ילדים</p>
+<p class="text-sm font-semibold">2 ילדים, גילאי 3 ו-5</p>
+</div>
+</div>
+</div>
+<p class="font-body text-on-surface-variant leading-relaxed line-clamp-2">
+                        מחפשים בייביסיטר אחראית וסבלנית לערב חמישי. הילדים מקסימים ואוהבים סיפורים לפני השינה. דרושה עזרה קלה בארוחת ערב.
+                    </p>
+<footer class="mt-4">
+<button class="w-full py-4 rounded-md font-bold text-on-primary bg-gradient-to-tr from-primary to-primary-dim shadow-lg active:scale-95 transition-transform">
+                            לפרטים ושליחת בקשה
+                        </button>
+</footer>
+</div>
+</article>
+<!-- Job Card 2 -->
+<article class="relative bg-surface-container-lowest rounded-lg p-7 editorial-shadow border-none">
+<div class="absolute -top-6 -right-2">
+<div class="w-16 h-16 rounded-full border-4 border-surface overflow-hidden shadow-lg">
+<img alt="Parent Profile" class="w-full h-full object-cover" data-alt="Portrait of a friendly looking father smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAranGxhOrHk3S5OSTp9T2ox_AzoygCwUhbemhefioPahEDRWRDapcrswdL5F5SWfM59eWXennnMz0yR7NN4aqbACo2dvsDM0Ck1GGkqOUTZKfUjWQynyWmjow51quqD4Jupc9X6axK64RmNyDvBtZqHSeLMTPHPA3psPWlGE24-elXbgFbQXsqpXekjDMMxFSR8zNWU-mQj5y0QYbVz7qIVKpgyvaqLLl2kThU6JLTqTUsnT_jnvsBbBSiXqcHrPqWz2eTYQnO_SqM"/>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<header class="flex justify-between items-start">
+<div class="pr-16">
+<h3 class="font-headline text-xl font-bold text-on-surface">משפחת כהן</h3>
+<div class="flex items-center gap-1 text-on-surface-variant text-sm mt-1">
+<span class="material-symbols-outlined text-[18px]" data-icon="location_on">location_on</span>
+<span>רמת גן - מרום נווה</span>
+</div>
+</div>
+</header>
+<div class="grid grid-cols-2 gap-4 my-2">
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl">
+<span class="material-symbols-outlined text-primary" data-icon="event_repeat">event_repeat</span>
+<div>
+<p class="text-[10px] text-on-surface-variant leading-none mb-1">קבוע</p>
+<p class="text-sm font-semibold">כל יום ג', 16:00 - 19:00</p>
+</div>
+</div>
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl">
+<span class="material-symbols-outlined text-primary" data-icon="face">face</span>
+<div>
+<p class="text-[10px] text-on-surface-variant leading-none mb-1">ילדים</p>
+<p class="text-sm font-semibold">תינוק בן 8 חודשים</p>
+</div>
+</div>
+</div>
+<p class="font-body text-on-surface-variant leading-relaxed">
+                        דרוש ניסיון עם תינוקות. המשרה היא קבועה לשעות אחה"צ. כולל טיול קצר בעגלה ומשחקי התפתחות.
+                    </p>
+<footer class="mt-4">
+<button class="w-full py-4 rounded-md font-bold text-on-primary bg-gradient-to-tr from-primary to-primary-dim shadow-lg active:scale-95 transition-transform">
+                            לפרטים ושליחת בקשה
+                        </button>
+</footer>
+</div>
+</article>
+<!-- Map-style Teaser (Asymmetric Layout) -->
+<section class="bg-surface-container rounded-lg p-6 relative overflow-hidden">
+<div class="relative z-10 flex flex-col gap-2 max-w-[60%]">
+<h4 class="font-headline text-lg font-bold">צפי במפה</h4>
+<p class="text-sm text-on-surface-variant">יש 4 משרות נוספות ברדיוס של קילומטר אחד ממך</p>
+<button class="mt-2 text-primary font-bold text-sm flex items-center gap-1">
+                        לפתיחת המפה
+                        <span class="material-symbols-outlined text-sm" data-icon="arrow_back">arrow_back</span>
+</button>
+</div>
+<div class="absolute -left-10 -top-10 w-48 h-48 opacity-40">
+<img class="w-full h-full object-cover rounded-full rotate-12" data-alt="A stylized map layout showing residential streets" data-location="Tel Aviv" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDq2TnWNXKt0RQRTeqzS16ixeRillm83aHIOkXfHV0XOWAsITZt4pXSyOcRvi4Im9MKUBusZLCtuLZuinsUFl0IXCkSuL405UnxVhnmtRR7LWnH1AQOH3K3pac8y3ZfwVZFVl5XDoKsCROY45cVcKswYv-74NEiGVg4bJcfpeg3gmvHiIn6atZCo9pu9W8qaPxMID2qCfoNZdP9P5udvkLJNV_clpjDQIZ53JI41HK0vIr8nCnyvJvRaFNfJhrsH9eY52gr6eWE0z_"/>
+</div>
+</section>
+<!-- Empty State Concept (Footer-ish) -->
+<div class="py-12 flex flex-col items-center text-center">
+<div class="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-on-surface-variant text-3xl" data-icon="search_off">search_off</span>
+</div>
+<h4 class="font-headline font-bold text-on-surface">לא מצאת את מה שחיפשת?</h4>
+<p class="text-sm text-on-surface-variant max-w-[240px] mt-2">הגדירי התראות וקבלי הודעה ברגע שמשפחה חדשה באזור מחפשת בייביסיטר</p>
+<button class="mt-6 px-8 py-3 rounded-md font-bold text-primary border-2 border-primary active:scale-95 transition-transform">
+                    הפעלת התראות
+                </button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex flex-row-reverse justify-around items-center px-4 pb-6 pt-3 bg-[#ffffff]/90 backdrop-blur-lg tonal-shift shadow-[0_-4px_20px_0_rgba(36,47,65,0.06)] rounded-t-[2rem]">
+<!-- Active Nav: Home/Search -->
+<a class="flex flex-col items-center justify-center text-[#7C3AED] bg-[#e9def5] rounded-[1.5rem] px-5 py-2 active:scale-90 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-semibold text-right mt-1">ראשי</span>
+</a>
+<!-- Inactive Nav: Messages -->
+<a class="flex flex-col items-center justify-center text-[#242f41] px-5 py-2 hover:bg-[#f4f6ff] rounded-full active:scale-90 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-semibold text-right mt-1">הודעות</span>
+</a>
+<!-- Inactive Nav: Favorites -->
+<a class="flex flex-col items-center justify-center text-[#242f41] px-5 py-2 hover:bg-[#f4f6ff] rounded-full active:scale-90 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-semibold text-right mt-1">מועדפים</span>
+</a>
+<!-- Inactive Nav: Profile -->
+<a class="flex flex-col items-center justify-center text-[#242f41] px-5 py-2 hover:bg-[#f4f6ff] rounded-full active:scale-90 transition-transform duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-semibold text-right mt-1">פרופיל</span>
+</a>
+</nav>
+<!-- Floating Action Button (FAB) - Relevant for Feed Search -->
+<button class="fixed bottom-24 left-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined text-2xl" data-icon="add">add</span>
+</button>
+</body></html>

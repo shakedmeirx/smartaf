@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -27,6 +31,26 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#7C6FE0",
+          "defaultChannel": "default"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "האפליקציה מבקשת גישה לתמונות כדי שתוכלו להעלות תמונת פרופיל ותמונות נוספות."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "האפליקציה משתמשת במיקום שלך כדי למצוא הורים ובייביסיטרים קרובים לפי רדיוס."
+        }
+      ],
       [
         "expo-splash-screen",
         {

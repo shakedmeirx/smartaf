@@ -27,6 +27,7 @@ type Props = {
   deleting?: boolean;
   paymentUpdating?: boolean;
   editing?: boolean;
+  placeholderPhotoUrl?: string;
 };
 
 function formatShiftDate(dateValue: string) {
@@ -46,6 +47,7 @@ export default function BabysitterShiftEntryCard({
   deleting = false,
   paymentUpdating = false,
   editing = false,
+  placeholderPhotoUrl,
 }: Props) {
   const isPaid = shift.paymentStatus === 'paid';
 
@@ -57,7 +59,7 @@ export default function BabysitterShiftEntryCard({
       borderColor={editing ? BabyCityPalette.primary : undefined}
     >
       <View style={styles.headerRow}>
-        <AvatarCircle name={shift.parentName} size={44} />
+        <AvatarCircle name={shift.parentName} photoUrl={placeholderPhotoUrl} size={44} />
 
         <View style={styles.identity}>
           <AppText variant="h3" weight="800" numberOfLines={1}>

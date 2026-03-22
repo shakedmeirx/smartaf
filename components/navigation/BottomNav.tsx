@@ -1,14 +1,14 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import AppText from '@/components/ui/AppText';
 import { BabyCityPalette, BabyCityGeometry } from '@/constants/theme';
 
 export type BottomNavItem = {
   key: string;
   label: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  activeIcon?: keyof typeof Ionicons.glyphMap;
+  icon: keyof typeof MaterialIcons.glyphMap;
+  activeIcon?: keyof typeof MaterialIcons.glyphMap;
   onPress: () => void;
   badgeCount?: number;
 };
@@ -54,7 +54,7 @@ export default function BottomNav({
                 active && { backgroundColor: activeBackground },
               ]}
             >
-              <Ionicons
+              <MaterialIcons
                 name={active && item.activeIcon ? item.activeIcon : item.icon}
                 size={22}
                 color={active ? activeColor : inactiveColor}

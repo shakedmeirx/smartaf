@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { strings } from '@/locales';
 import { useAuth } from '@/context/AuthContext';
@@ -40,7 +40,7 @@ type AppShellProps = {
 
 type DrawerActionRowProps = {
   label: string;
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: keyof typeof MaterialIcons.glyphMap;
   iconColor: string;
   iconBackground: string;
   onPress: () => void;
@@ -70,7 +70,7 @@ function DrawerActionRow({
         {label}
       </AppText>
       <View style={[styles.drawerRowIconWrap, { backgroundColor: iconBackground }]}>
-        <Ionicons name={icon} size={18} color={danger ? BabyCityPalette.error : iconColor} />
+        <MaterialIcons name={icon} size={18} color={danger ? BabyCityPalette.error : iconColor} />
       </View>
     </TouchableOpacity>
   );
@@ -255,27 +255,26 @@ export default function AppShell({
         {
           key: 'home',
           label: strings.navHome,
-          icon: 'home-outline',
+          icon: 'home' as const,
           onPress: () => router.replace('/parent'),
         },
         {
           key: 'favorites',
           label: strings.navFavorites,
-          icon: 'heart-outline',
-          activeIcon: 'heart',
+          icon: 'favorite' as const,
           onPress: () => router.replace('/parent-favorites'),
         },
         {
           key: 'chats',
           label: strings.navChats,
-          icon: 'chatbubbles-outline',
+          icon: 'chat-bubble' as const,
           onPress: () => router.replace('/parent-requests'),
           badgeCount: chatsBadgeCount,
         },
         {
           key: 'profile',
           label: strings.navProfile,
-          icon: 'people-outline',
+          icon: 'person' as const,
           onPress: () => router.replace('/my-profile'),
         },
       ];
@@ -285,27 +284,26 @@ export default function AppShell({
       {
         key: 'home',
         label: strings.navHome,
-        icon: 'home-outline',
+        icon: 'home' as const,
         onPress: () => router.replace('/babysitter'),
       },
       {
         key: 'saved',
         label: strings.navSaved,
-        icon: 'bookmark-outline',
-        activeIcon: 'bookmark',
+        icon: 'bookmark' as const,
         onPress: () => router.replace('/babysitter-saved'),
       },
       {
         key: 'chats',
         label: strings.navChats,
-        icon: 'chatbubbles-outline',
+        icon: 'chat-bubble' as const,
         onPress: () => router.replace('/babysitter-inbox'),
         badgeCount: chatsBadgeCount,
       },
       {
         key: 'profile',
         label: strings.navProfile,
-        icon: 'person-outline',
+        icon: 'person' as const,
         onPress: () => router.replace('/my-profile'),
       },
     ];
@@ -402,35 +400,35 @@ export default function AppShell({
               <View style={styles.drawerSection}>
                 <DrawerActionRow
                   label={strings.drawerCalendar}
-                  icon="calendar-number-outline"
+                  icon="calendar-today"
                   iconColor={theme.inactiveColor}
                   iconBackground={theme.drawerFutureBackground}
                   onPress={() => closeMenuAndRun(() => router.push('/babysitter-calendar'))}
                 />
                 <DrawerActionRow
                   label={strings.drawerStatistics}
-                  icon="stats-chart-outline"
+                  icon="bar-chart"
                   iconColor={theme.inactiveColor}
                   iconBackground={theme.drawerFutureBackground}
                   onPress={() => closeMenuAndRun(() => router.push('/babysitter-stats'))}
                 />
                 <DrawerActionRow
                   label={strings.drawerShiftManager}
-                  icon="cash-outline"
+                  icon="payments"
                   iconColor={theme.inactiveColor}
                   iconBackground={theme.drawerFutureBackground}
                   onPress={() => closeMenuAndRun(() => router.push('/babysitter-shifts'))}
                 />
                 <DrawerActionRow
                   label={strings.drawerAvailability}
-                  icon="calendar-outline"
+                  icon="event-available"
                   iconColor={theme.inactiveColor}
                   iconBackground={theme.drawerFutureBackground}
                   onPress={() => closeMenuAndRun(() => router.push('/babysitter-availability'))}
                 />
                 <DrawerActionRow
                   label={strings.drawerEditProfile}
-                  icon="create-outline"
+                  icon="edit"
                   iconColor={theme.inactiveColor}
                   iconBackground={theme.drawerFutureBackground}
                   onPress={handleEditProfile}
@@ -443,7 +441,7 @@ export default function AppShell({
               <View style={styles.drawerSection}>
                 <DrawerActionRow
                   label={strings.drawerEditProfile}
-                  icon="create-outline"
+                  icon="edit"
                   iconColor={theme.inactiveColor}
                   iconBackground={theme.drawerFutureBackground}
                   onPress={handleEditProfile}
@@ -455,7 +453,7 @@ export default function AppShell({
             <View style={styles.drawerSection}>
               <DrawerActionRow
                 label={strings.navSettings}
-                icon="settings-outline"
+                icon="settings"
                 iconColor={theme.inactiveColor}
                 iconBackground={theme.drawerFutureBackground}
                 onPress={() => closeMenuAndRun(() => router.push('/settings'))}
@@ -466,7 +464,7 @@ export default function AppShell({
             <View style={[styles.drawerSection, styles.drawerDangerSection]}>
               <DrawerActionRow
                 label={strings.signOut}
-                icon="log-out-outline"
+                icon="logout"
                 iconColor={BabyCityPalette.error}
                 iconBackground={BabyCityPalette.errorSoft}
                 onPress={handleSignOut}

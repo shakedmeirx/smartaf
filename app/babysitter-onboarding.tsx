@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import AppText from '@/components/ui/AppText';
@@ -521,7 +521,7 @@ export default function BabysitterOnboarding() {
           {/* Success icon */}
           <View style={styles.completeIconWrap}>
             <LinearGradient colors={['#702ae1', '#6411d5']} style={styles.completeIconGradient}>
-              <Ionicons name="checkmark" size={40} color="#ffffff" />
+              <MaterialIcons name="check" size={40} color="#ffffff" />
             </LinearGradient>
           </View>
 
@@ -541,14 +541,14 @@ export default function BabysitterOnboarding() {
                   {savedProfile.name}
                 </AppText>
                 <View style={styles.completeNewBadge}>
-                  <Ionicons name="star" size={12} color={BabyCityPalette.primary} />
+                  <MaterialIcons name="star" size={12} color={BabyCityPalette.primary} />
                   <AppText variant="caption" weight="700" style={styles.completeNewBadgeText}>
                     {'חדשה בקהילת Smartaf'}
                   </AppText>
                 </View>
                 {savedProfile.city ? (
                   <View style={styles.completeCityRow}>
-                    <Ionicons name="location-outline" size={12} color={BabyCityPalette.textSecondary} />
+                    <MaterialIcons name="location-on" size={12} color={BabyCityPalette.textSecondary} />
                     <AppText variant="caption" tone="muted">{savedProfile.city}</AppText>
                   </View>
                 ) : null}
@@ -600,7 +600,7 @@ export default function BabysitterOnboarding() {
               onPress={handleBack}
               activeOpacity={0.86}
             >
-              <Ionicons name="chevron-forward" size={18} color={BabyCityPalette.primary} />
+              <MaterialIcons name="arrow-forward-ios" size={18} color={BabyCityPalette.primary} />
               <AppText variant="caption" weight="700" style={{ color: BabyCityPalette.primary }}>
                 {strings.back}
               </AppText>

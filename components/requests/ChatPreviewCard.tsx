@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
 import { useAuth } from '@/context/AuthContext';
 import AppCard from '@/components/ui/AppCard';
@@ -20,9 +20,10 @@ import { confirmHideRequest, formatPreviewTimestamp } from '@/components/request
 export type ChatPreviewCardProps = {
   thread: ChatThread;
   onHide: (id: string) => Promise<void>;
+  placeholderPhotoUrl?: string;
 };
 
-export default function ChatPreviewCard({ thread, onHide }: ChatPreviewCardProps) {
+export default function ChatPreviewCard({ thread, onHide, placeholderPhotoUrl }: ChatPreviewCardProps) {
   const { activeRole } = useAuth();
   const swipeableRef = useRef<Swipeable | null>(null);
   const role = activeRole ?? 'parent';
@@ -48,7 +49,7 @@ export default function ChatPreviewCard({ thread, onHide }: ChatPreviewCardProps
             })
           }
         >
-          <Ionicons name="trash-outline" size={18} color={BabyCityPalette.surface} />
+          <MaterialIcons name="delete-outline" size={18} color={BabyCityPalette.surface} />
           <AppText variant="caption" weight="800" style={styles.deleteActionText}>
             {strings.inboxDeleteAction}
           </AppText>
@@ -77,7 +78,7 @@ export default function ChatPreviewCard({ thread, onHide }: ChatPreviewCardProps
           <View style={styles.row}>
             <AvatarCircle
               name={thread.counterpartName}
-              photoUrl={thread.counterpartPhotoUrl}
+              photoUrl={thread.counterpartPhotoUrl || placeholderPhotoUrl}
               size={44}
             />
 

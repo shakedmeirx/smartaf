@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Share, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import Animated, {
   FadeInDown,
   useAnimatedStyle,
@@ -32,6 +32,7 @@ type ParentPostCardProps = {
   onToggleSave?: () => void;
   highlighted?: boolean;
   index?: number;
+  photoUrl?: string;
 };
 
 export default function ParentPostCard({
@@ -43,6 +44,7 @@ export default function ParentPostCard({
   onToggleSave,
   highlighted = false,
   index = 0,
+  photoUrl,
 }: ParentPostCardProps) {
   const scale = useSharedValue(1);
   const translateY = useSharedValue(0);
@@ -82,34 +84,34 @@ export default function ParentPostCard({
   const metaItems = [
     post.area
       ? {
-          icon: 'location-outline' as const,
+          icon: 'location-on' as keyof typeof MaterialIcons.glyphMap,
           label: strings.cityLabel,
           value: post.area,
         }
       : null,
     post.date
       ? {
-          icon: 'calendar-outline' as const,
+          icon: 'calendar-today' as keyof typeof MaterialIcons.glyphMap,
           label: strings.birthDate,
           value: post.date,
         }
       : null,
     post.time
       ? {
-          icon: 'time-outline' as const,
+          icon: 'schedule' as keyof typeof MaterialIcons.glyphMap,
           label: strings.postTime,
           value: post.time,
         }
       : null,
     post.numChildren !== null
       ? {
-          icon: 'people-outline' as const,
+          icon: 'group' as keyof typeof MaterialIcons.glyphMap,
           label: strings.parentChildrenCount,
           value: `${post.numChildren} ${strings.familyFeedChildrenSuffix}`,
         }
       : null,
   ].filter(Boolean) as Array<{
-    icon: keyof typeof Ionicons.glyphMap;
+    icon: keyof typeof MaterialIcons.glyphMap;
     label: string;
     value: string;
   }>;
@@ -132,7 +134,7 @@ export default function ParentPostCard({
             >
               <AvatarCircle
                 name={post.parentName || strings.familyFeedAnonymous}
-                photoUrl={post.parentProfilePhotoUrl}
+                photoUrl={post.parentProfilePhotoUrl || photoUrl}
                 size={56}
                 tone="accent"
               />
@@ -201,8 +203,8 @@ export default function ParentPostCard({
                 }}
                 activeOpacity={0.85}
               >
-                <Ionicons
-                  name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                <MaterialIcons
+                  name={isSaved ? 'bookmark' : 'bookmark-border'}
                   size={20}
                   color={BabyCityPalette.primary}
                 />
@@ -216,7 +218,7 @@ export default function ParentPostCard({
               }}
               activeOpacity={0.85}
             >
-              <Ionicons name="share-outline" size={20} color={BabyCityPalette.primary} />
+              <MaterialIcons name="share" size={20} color={BabyCityPalette.primary} />
             </TouchableOpacity>
           </View>
         </AppCard>
@@ -230,13 +232,13 @@ function MetaPill({
   label,
   value,
 }: {
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: keyof typeof MaterialIcons.glyphMap;
   label: string;
   value: string;
 }) {
   return (
     <View style={styles.metaPill}>
-      <Ionicons name={icon} size={16} color={BabyCityPalette.textSecondary} />
+      <MaterialIcons name={icon} size={16} color={BabyCityPalette.textSecondary} />
       <View style={styles.metaPillText}>
         <AppText variant="caption" tone="muted" style={styles.metaPillLabel}>
           {label}

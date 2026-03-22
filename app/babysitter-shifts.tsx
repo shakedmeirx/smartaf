@@ -37,6 +37,12 @@ import {
 import { normalizeTimeValue } from '@/lib/time';
 import { BabysitterShift, ShiftPaymentStatus } from '@/types/shift';
 
+const SHIFT_FAMILY_IMAGES = [
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAqVsYFTDUnJWlFWgko1vEfVw_xad7Xiew1NS4o7z4Ac12F8h5iv716CFHylH0BSOIfomArBhyOWw77B87oyJGGjgZ-b28PQiqM6DNo-Nzl0V9aLpjExscerdZNwBuEy8-cixnVyRS9AZGpCWoaw6rmbP2Z2UPXopkkXeXlGjPyXbdTOXJfGnWLpxFr-wXLj3gkVcaI7UtKk39UvpjQ3LWVJqDFAFuDVcGUxGE1dubRG42EMvJhxNZHEQ9TKUH5HFUM54tUxM-CB1xK',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuCuiIGiNiwHVGw15yEQTvyW3U8u3H_0vlJDnJjLWVjGB9lyRb_WnBdvgkXiiIKE4fY3pLJYth0Y5lY-JdRvvKdJOnsShk8NpH0rFefkK7Q43kMCf74OU0FQIimo24PnZEzQNmUtUqErKKtAXmtvKTVdN9Adu3UnSF-CFrEgbOWN0ksS0ug2c3_S3nmwGXkXNEbX1rYUGO1Tmp_T4rY3kUccF_uhOEzlpWYJuYHFcjm--ma1OiGs4Z5PL5jbeFtzdTlO7PMR3-AIj8xU',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuBJ4E_unPKUBzl7P-_z05fvyZUIa6T3hX_gSETAFJ87F0KUDMGSg5ZkOaKLd5cSWYZP6ZWW6MrJdLGrc1zjFADFWhJKcagWVjpvbou9rVddfwzX-iZSo_M7ZMO2Ll1bckUlSp8x6uusKyoZhZQHyAplCbaQaxo9A-EuljvdMkFTmx5-PO49AG9Be-T30rzbnh3QkdRuCdf6tlMgqPQtRNUmhu28JnUkdx6y2bvANNFDfpUsoBZnpRNuKQB0KRJAc9A_mXIW9YDxSIco',
+];
+
 type KnownFamily = {
   parentId: string;
   parentName: string;
@@ -1098,23 +1104,30 @@ export default function BabysitterShiftsScreen() {
             onActionPress={resetHistoryFilters}
           />
         ) : (
-          groupShiftsByMonth(filteredShifts).map(({ month, shifts: monthShifts }) => (
-            <View key={month}>
-              <AppText variant="bodyLarge" weight="800" style={styles.monthHeader}>{month}</AppText>
-              {monthShifts.map(shift => (
-                <BabysitterShiftEntryCard
-                  key={shift.id}
-                  shift={shift}
-                  onEditPress={startEditingShift}
-                  onDeletePress={handleDeleteShift}
-                  onTogglePaymentPress={handleTogglePaymentStatus}
-                  deleting={deletingShiftId === shift.id}
-                  paymentUpdating={paymentUpdatingShiftId === shift.id}
-                  editing={editingShiftId === shift.id}
-                />
-              ))}
-            </View>
-          ))
+          (() => {
+            let shiftCounter = 0;
+            return groupShiftsByMonth(filteredShifts).map(({ month, shifts: monthShifts }) => (
+              <View key={month}>
+                <AppText variant="bodyLarge" weight="800" style={styles.monthHeader}>{month}</AppText>
+                {monthShifts.map(shift => {
+                  const photoIndex = shiftCounter++;
+                  return (
+                    <BabysitterShiftEntryCard
+                      key={shift.id}
+                      shift={shift}
+                      placeholderPhotoUrl={SHIFT_FAMILY_IMAGES[photoIndex % SHIFT_FAMILY_IMAGES.length]}
+                      onEditPress={startEditingShift}
+                      onDeletePress={handleDeleteShift}
+                      onTogglePaymentPress={handleTogglePaymentStatus}
+                      deleting={deletingShiftId === shift.id}
+                      paymentUpdating={paymentUpdatingShiftId === shift.id}
+                      editing={editingShiftId === shift.id}
+                    />
+                  );
+                })}
+              </View>
+            ));
+          })()
         )}
       </AppScreen>
     </AppShell>
