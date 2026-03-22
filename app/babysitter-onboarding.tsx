@@ -510,63 +510,97 @@ export default function BabysitterOnboarding() {
   if (showComplete && savedProfile) {
     return (
       <SafeAreaView style={styles.completeSafe}>
-        <ScrollView contentContainerStyle={styles.completeScroll} showsVerticalScrollIndicator={false}>
-          {/* Hero banner */}
-          <Image
-            source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAAYq3z43IEF7wzINRBjv-HjOCTAez46mbFz_TM5w25NKGS6FzF-V8Y8X2y98p2Md-De8etwaMb312fW3LW6Vc1khRr7YGQCNoVY3GQB9wMuWRMFjXvIQnQA9vDq5lTQ9pTVcEjclhBR1LRqqFDfoAiiIJk17pCJUaAW-ulyYnWirdUwy-I4tAYTc22nIjK2yhQD7-P5n4GeoRrXWv6wL5WMjUwEUa76hNuX1-P9c1xZW1YqjE0VVLMfFACs2XWhSnq2_2_RbiLCtKX' }}
-            style={styles.completeBanner}
-            resizeMode="cover"
-          />
+        {/* Ambient background decorative blobs */}
+        <View style={styles.blobTopLeft} pointerEvents="none" />
+        <View style={styles.blobBottomRight} pointerEvents="none" />
 
-          {/* Success icon */}
+        <ScrollView contentContainerStyle={styles.completeScroll} showsVerticalScrollIndicator={false}>
+          {/* Gradient check circle */}
           <View style={styles.completeIconWrap}>
             <LinearGradient colors={['#702ae1', '#6411d5']} style={styles.completeIconGradient}>
               <MaterialIcons name="check" size={40} color="#ffffff" />
             </LinearGradient>
+            {/* Decorative atmospheric blobs around icon */}
+            <View style={styles.iconBlobTopRight} pointerEvents="none" />
+            <View style={styles.iconBlobBottomLeft} pointerEvents="none" />
           </View>
 
           <AppText variant="h1" weight="800" align="center" style={styles.completeHeading}>
-            {'ברוכה הבאה לקהילת Smartaf! 🎉'}
+            {'הפרופיל שלך מוכן!'}
           </AppText>
           <AppText variant="body" tone="muted" align="center" style={styles.completeSubtitle}>
-            {'הפרופיל שלך נוצר בהצלחה'}
+            {'מעכשיו הורים יוכלו למצוא אותך ולהציע לך עבודות ב-Smartaf.'}
           </AppText>
 
-          {/* Profile preview card */}
-          <AppCard style={styles.completeCard}>
-            <View style={styles.completeCardRow}>
-              <AvatarCircle name={savedProfile.name} photoUrl={savedProfile.photoUrl} size={64} />
-              <View style={styles.completeCardInfo}>
+          {/* Profile preview card — avatar overlaps top-right */}
+          <View style={styles.completeCardOuter}>
+            {/* Overlapping avatar — absolutely positioned */}
+            <View style={styles.completeAvatarOverlap}>
+              <View style={styles.completeAvatarBorder}>
+                <AvatarCircle
+                  name={savedProfile.name}
+                  photoUrl={savedProfile.photoUrl}
+                  size={72}
+                />
+              </View>
+            </View>
+
+            {/* Inner white card */}
+            <View style={styles.completeCardInner}>
+              {/* Name + new badge */}
+              <View style={styles.completeCardHeader}>
                 <AppText variant="h3" weight="800" style={styles.completeCardName}>
                   {savedProfile.name}
                 </AppText>
                 <View style={styles.completeNewBadge}>
-                  <MaterialIcons name="star" size={12} color={BabyCityPalette.primary} />
+                  <MaterialIcons name="star" size={13} color={BabyCityPalette.primary} style={{ marginLeft: 3 }} />
                   <AppText variant="caption" weight="700" style={styles.completeNewBadgeText}>
                     {'חדשה בקהילת Smartaf'}
                   </AppText>
                 </View>
-                {savedProfile.city ? (
-                  <View style={styles.completeCityRow}>
-                    <MaterialIcons name="location-on" size={12} color={BabyCityPalette.textSecondary} />
-                    <AppText variant="caption" tone="muted">{savedProfile.city}</AppText>
+              </View>
+
+              {/* Bento grid: location + rate */}
+              <View style={styles.completeBentoGrid}>
+                <View style={styles.completeBentoCell}>
+                  <MaterialIcons name="location-on" size={18} color="#515c70" />
+                  <AppText variant="caption" tone="muted">{'מיקום'}</AppText>
+                  <AppText variant="body" weight="700" style={styles.completeBentoCellValue}>
+                    {savedProfile.city || '—'}
+                  </AppText>
+                </View>
+                <View style={styles.completeBentoCell}>
+                  <MaterialIcons name="payments" size={18} color="#515c70" />
+                  <AppText variant="caption" tone="muted">{'תעריף שעתי'}</AppText>
+                  <AppText variant="body" weight="700" style={styles.completeBentoCellValue}>
+                    {`₪${savedProfile.hourlyRate}`}
+                  </AppText>
+                </View>
+              </View>
+
+              {/* Trust markers row */}
+              <View style={styles.completeTrustRow}>
+                <AppText variant="caption" tone="muted" weight="600">{'פרופיל מאומת'}</AppText>
+                <View style={styles.completeTrustIcons}>
+                  <View style={[styles.completeTrustIcon, { backgroundColor: '#ff8eac33' }]}>
+                    <MaterialIcons name="verified-user" size={14} color="#64042d" />
                   </View>
-                ) : null}
-                <AppText variant="caption" tone="muted">
-                  {`₪${savedProfile.hourlyRate} ${strings.perHour}`}
-                </AppText>
+                  <View style={[styles.completeTrustIcon, { backgroundColor: '#e9def5' }]}>
+                    <MaterialIcons name="medical-services" size={14} color="#564f61" />
+                  </View>
+                </View>
               </View>
             </View>
-          </AppCard>
+          </View>
 
           {/* Actions */}
           <AppPrimaryButton
-            label={'עבור ללוח הבקרה'}
+            label={'מעבר ללוח הבקרה'}
             onPress={() => router.replace('/babysitter')}
             style={styles.completeBtn}
           />
           <AppButton
-            label={'הצג פרופיל ציבורי'}
+            label={'צפייה בפרופיל הציבורי שלי'}
             variant="secondary"
             onPress={() => router.push('/my-profile')}
             style={styles.completeBtn}
@@ -720,28 +754,156 @@ export default function BabysitterOnboarding() {
 
 const styles = StyleSheet.create({
   // Completion screen
-  completeSafe: { flex: 1, backgroundColor: BabyCityPalette.canvas },
-  completeScroll: { paddingHorizontal: 24, paddingTop: 0, paddingBottom: 40, alignItems: 'center' },
-  completeBanner: { alignSelf: 'stretch', height: 220, marginHorizontal: -24, marginBottom: 32 },
-  completeIconWrap: { marginBottom: 24 },
-  completeIconGradient: { width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center' },
-  completeHeading: { marginBottom: 8 },
-  completeSubtitle: { marginBottom: 24 },
-  completeCard: { width: '100%', marginBottom: 24 },
-  completeCardRow: { flexDirection: 'row-reverse', alignItems: 'center', gap: 14 },
-  completeCardInfo: { flex: 1, alignItems: 'flex-end', gap: 4 },
-  completeCardName: { textAlign: 'right' },
+  completeSafe: { flex: 1, backgroundColor: '#f4f6ff' },
+  completeScroll: { paddingHorizontal: 24, paddingTop: 48, paddingBottom: 40, alignItems: 'center' },
+  // Ambient background blobs
+  blobTopLeft: {
+    position: 'absolute',
+    top: '-10%',
+    left: '-20%',
+    width: '60%',
+    height: '40%',
+    backgroundColor: 'rgba(112,42,225,0.05)',
+    borderRadius: 999,
+    // blur not supported in RN without library — using soft opacity instead
+  } as any,
+  blobBottomRight: {
+    position: 'absolute',
+    bottom: '-10%',
+    right: '-20%',
+    width: '60%',
+    height: '40%',
+    backgroundColor: 'rgba(158,54,87,0.04)',
+    borderRadius: 999,
+  } as any,
+  completeIconWrap: { marginBottom: 28, position: 'relative', alignItems: 'center', justifyContent: 'center' },
+  completeIconGradient: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#702ae1',
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 6,
+  },
+  iconBlobTopRight: {
+    position: 'absolute',
+    top: -16,
+    right: -16,
+    width: 48,
+    height: 48,
+    backgroundColor: 'rgba(255,142,172,0.4)',
+    borderRadius: 24,
+  },
+  iconBlobBottomLeft: {
+    position: 'absolute',
+    bottom: -8,
+    left: -24,
+    width: 64,
+    height: 64,
+    backgroundColor: 'rgba(178,140,255,0.3)',
+    borderRadius: 32,
+  },
+  completeHeading: { marginBottom: 10 },
+  completeSubtitle: { marginBottom: 32, maxWidth: 280 },
+  // Profile card with overlapping avatar
+  completeCardOuter: {
+    width: '100%',
+    backgroundColor: '#ecf1ff',
+    borderRadius: 16,
+    paddingTop: 4,
+    paddingBottom: 4,
+    marginBottom: 28,
+    position: 'relative',
+    overflow: 'visible',
+    marginTop: 48, // space for overlapping avatar
+  },
+  completeAvatarOverlap: {
+    position: 'absolute',
+    top: -40,
+    right: 20,
+    zIndex: 10,
+  },
+  completeAvatarBorder: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 6,
+    borderColor: '#ecf1ff',
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  completeCardInner: {
+    backgroundColor: '#ffffff',
+    borderRadius: 14,
+    paddingHorizontal: 20,
+    paddingTop: 52, // space for avatar overlap
+    paddingBottom: 20,
+    alignItems: 'flex-end',
+  },
+  completeCardHeader: {
+    alignItems: 'flex-end',
+    marginBottom: 20,
+    gap: 6,
+  },
+  completeCardName: { textAlign: 'right', color: '#242f41' },
   completeNewBadge: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: BabyCityPalette.primarySoft,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: BabyCityGeometry.radius.pill,
+    backgroundColor: '#ecf1ff',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
   },
   completeNewBadgeText: { color: BabyCityPalette.primary },
-  completeCityRow: { flexDirection: 'row-reverse', alignItems: 'center', gap: 3 },
+  completeBentoGrid: {
+    flexDirection: 'row-reverse',
+    gap: 12,
+    width: '100%',
+    marginBottom: 20,
+  },
+  completeBentoCell: {
+    flex: 1,
+    backgroundColor: '#ecf1ff',
+    borderRadius: 12,
+    padding: 14,
+    alignItems: 'flex-start',
+    gap: 3,
+  },
+  completeBentoCellValue: {
+    color: '#242f41',
+    textAlign: 'left',
+  },
+  completeTrustRow: {
+    width: '100%',
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  completeTrustIcons: {
+    flexDirection: 'row-reverse',
+    gap: -8,
+  },
+  completeTrustIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#ffffff',
+    marginLeft: -8,
+  },
   completeBtn: { marginBottom: 12, width: '100%' },
   container: {
     flex: 1,
