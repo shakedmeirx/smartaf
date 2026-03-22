@@ -52,33 +52,70 @@ export const Fonts = Platform.select({
   },
 });
 
+// ─── Font name constants (fonts are loaded in app/_layout.tsx) ──────────────
+export const BabyCityFonts = {
+  /** Plus Jakarta Sans 800 — used for all headings h1/h2/h3 */
+  headingExtraBold: 'PlusJakartaSans_800ExtraBold',
+  /** Plus Jakarta Sans 700 — used for bold headings */
+  headingBold: 'PlusJakartaSans_700Bold',
+  /** Be Vietnam Pro 400 — base body text */
+  bodyRegular: 'BeVietnamPro_400Regular',
+  /** Be Vietnam Pro 500 — medium body / caption */
+  bodyMedium: 'BeVietnamPro_500Medium',
+  /** Be Vietnam Pro 600 — semibold body / labels */
+  bodySemiBold: 'BeVietnamPro_600SemiBold',
+} as const;
+
 export type AppRole = 'parent' | 'babysitter';
 
 export const BabyCityPalette = {
+  // Core on-surface
   textPrimary: '#242f41',
   textSecondary: '#515c70',
   textTertiary: '#9ca7b8',
+  // Surfaces
   canvas: '#f4f6ff',
   surface: '#f4f6ff',
   surfaceMuted: '#f4f6ff',
   surfaceLowest: '#ffffff',
   surfaceLow: '#ecf1ff',
   surfaceContainer: '#dee8ff',
+  surfaceVariant: '#cdddfe',
+  surfaceDim: '#c3d5f8',
+  // Inputs
   inputRecessedBg: '#d5e3ff',
+  // Borders / outlines
   border: '#dbe6f5',
   borderSoft: '#e8eef8',
+  outline: '#6c778c',
+  outlineVariant: '#a2adc4',
+  // Shadows
   shadow: '#242f41',
+  // Primary (purple)
   primary: '#702ae1',
   primaryPressed: '#6411d5',
   primarySoft: '#ede9f5',
+  primaryContainer: '#b28cff',
+  onPrimary: '#f8f0ff',
+  inversePrimary: '#a476ff',
+  // Accent (cyan — kept for legacy accent chips only)
   accent: '#58c3ef',
   accentSoft: '#e8f8ff',
+  // Tertiary (pink — Stitch uses for decorative accents)
+  tertiary: '#9e3657',
+  tertiaryContainer: '#ff8eac',
+  // Success
   success: '#31b5a2',
   successSoft: '#e8f9f5',
+  // Error
   error: '#db5f7e',
   errorSoft: '#fdecf1',
+  // Secondary container (used for secondary buttons, muted highlights)
   secondaryContainer: '#e9def5',
   onSecondaryContainer: '#564f61',
+  // Inverse (used for dark overlays)
+  inverseSurface: '#040e1f',
+  inverseOnSurface: '#929db4',
 };
 
 export const BabyCityGeometry = {
@@ -222,13 +259,14 @@ export const BabyCityRoleThemes = {
     menuBackground: '#dee8ff',
     title: '#242f41',
     subtitle: '#515c70',
-    activeBackground: '#dee8ff',
-    activeColor: '#2ea2cf',
+    // Stitch uses the same primary purple (#702ae1) for both parent and babysitter active states
+    activeBackground: '#ede9f5',
+    activeColor: '#702ae1',
     inactiveColor: '#7e8ea2',
     drawerFutureBackground: '#f4f6ff',
-    highlightedSurface: '#dee8ff',
+    highlightedSurface: '#ecf1ff',
     highlightedBorder: 'transparent',
-    filterAccent: '#2ea2cf',
+    filterAccent: '#702ae1',
   },
 } as const satisfies Record<AppRole, {
   screenBackground: string;
