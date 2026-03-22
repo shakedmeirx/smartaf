@@ -45,16 +45,18 @@ export default function BottomNav({
         return (
           <TouchableOpacity
             key={item.key}
-            style={[
-              styles.bottomItem,
-              active && [styles.bottomItemActive, { backgroundColor: activeBackground }],
-            ]}
+            style={styles.bottomItem}
             onPress={item.onPress}
           >
-            <View style={styles.bottomIconWrap}>
+            <View
+              style={[
+                styles.iconPill,
+                active && { backgroundColor: activeBackground },
+              ]}
+            >
               <Ionicons
                 name={active && item.activeIcon ? item.activeIcon : item.icon}
-                size={24}
+                size={22}
                 color={active ? activeColor : inactiveColor}
               />
               {item.badgeCount ? (
@@ -105,25 +107,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
-    minHeight: 68,
-    borderRadius: BabyCityGeometry.radius.control,
-    paddingHorizontal: 8,
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
-  bottomItemActive: {
-    flex: 1.05,
-  },
-  bottomIconWrap: {
-    minWidth: 34,
-    height: 28,
+  iconPill: {
+    width: 64,
+    height: 32,
+    borderRadius: BabyCityGeometry.radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
   bottomBadge: {
     position: 'absolute',
-    top: -10,
-    right: -14,
+    top: -4,
+    right: 4,
     minWidth: 20,
     height: 20,
     borderRadius: 10,

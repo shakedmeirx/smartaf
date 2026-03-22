@@ -89,8 +89,7 @@ export default function AppButton({
         activeOpacity={activeOpacity}
         disabled={isDisabled}
         style={[
-          styles.base,
-          sizeStyle,
+          styles.primaryOuter,
           fullWidth && styles.fullWidth,
           styles.primaryShadow,
           isDisabled && styles.disabled,
@@ -139,6 +138,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: BabyCityGeometry.radius.pill,
     paddingHorizontal: 18,
+  },
+  primaryOuter: {
+    borderRadius: BabyCityGeometry.radius.pill,
     overflow: 'hidden',
   },
   gradient: {

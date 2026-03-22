@@ -84,7 +84,7 @@ export const BabyCityPalette = {
 export const BabyCityGeometry = {
   radius: {
     hero: 32,
-    card: 28,
+    card: 20,
     control: 16,
     chip: 999,
     pill: 999,
@@ -160,8 +160,8 @@ export const BabyCityShadows = {
   editorial: {
     shadowColor: '#242f41',
     shadowOpacity: 0.06,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 44,
+    shadowOffset: { width: 0, height: 12 },
     elevation: 3,
   },
 } as const;
@@ -202,8 +202,8 @@ export const BabyCityChipTones = {
 export const BabyCityRoleThemes = {
   parent: {
     screenBackground: '#f4f6ff',
-    headerBackground: 'rgba(244, 246, 255, 0.92)',
-    headerBorder: 'transparent',
+    headerBackground: 'rgba(244, 246, 255, 0.95)',
+    headerBorder: '#dde5f5',
     menuBackground: '#dee8ff',
     title: '#242f41',
     subtitle: '#515c70',
@@ -211,14 +211,14 @@ export const BabyCityRoleThemes = {
     activeColor: '#702ae1',
     inactiveColor: '#8392a8',
     drawerFutureBackground: '#f4f6ff',
-    highlightedSurface: '#f4f6ff',
+    highlightedSurface: '#ecf1ff',
     highlightedBorder: 'transparent',
     filterAccent: '#702ae1',
   },
   babysitter: {
     screenBackground: '#f4f6ff',
-    headerBackground: 'rgba(244, 246, 255, 0.92)',
-    headerBorder: 'transparent',
+    headerBackground: 'rgba(244, 246, 255, 0.95)',
+    headerBorder: '#dde5f5',
     menuBackground: '#dee8ff',
     title: '#242f41',
     subtitle: '#515c70',
@@ -226,7 +226,7 @@ export const BabyCityRoleThemes = {
     activeColor: '#2ea2cf',
     inactiveColor: '#7e8ea2',
     drawerFutureBackground: '#f4f6ff',
-    highlightedSurface: '#f4f6ff',
+    highlightedSurface: '#dee8ff',
     highlightedBorder: 'transparent',
     filterAccent: '#2ea2cf',
   },

@@ -49,7 +49,7 @@ const AppInput = forwardRef<TextInput, Props>(function AppInput(
   return (
     <View style={containerStyle}>
       {label ? (
-        <AppText variant="body" weight="700" style={styles.label}>
+        <AppText variant="caption" weight="700" style={styles.label}>
           {label}
         </AppText>
       ) : null}
@@ -96,6 +96,8 @@ export default AppInput;
 const styles = StyleSheet.create({
   label: {
     marginBottom: BabyCityGeometry.spacing.sm,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
   },
   inputWrap: {
     minHeight: BabyCityGeometry.controlHeights.input,

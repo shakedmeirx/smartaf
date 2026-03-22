@@ -61,7 +61,7 @@ export default function AppPrimaryButton({
       activeOpacity={0.85}
       style={[
         styles.base,
-        sizeStyle,
+        !useGradient && sizeStyle,
         !useGradient && { backgroundColor },
         borderColor ? { borderWidth: 1, borderColor } : null,
         useGradient && styles.primaryShadow,
