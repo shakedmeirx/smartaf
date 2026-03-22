@@ -1,0 +1,168 @@
+import React, { useMemo, useState } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { strings } from '@/locales';
+import { useAppState } from '@/context/AppContext';
+import AppShell from '@/components/navigation/AppShell';
+import {
+  ChatThreadCard,
+  RequestInboxTab,
+  SegmentTabs,
+} from '@/components/requests/RequestSurface';
+import IncomingRequestCard from '@/components/babysitter/IncomingRequestCard';
+import ScreenStateCard from '@/components/ui/ScreenStateCard';
+import SearchField from '@/components/ui/SearchField';
+import { BabysitterDesignTokens, getRoleTheme } from '@/constants/theme';
+import { Request } from '@/types/request';
+
+export default function BabysitterInboxScreen() {
+  const {
+    incomingRequests,
+    chatThreads,
+    updateRequestStatus,
+    refreshBabysitterData,
+    hideRequest,
+  } = useAppState();
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<RequestInboxTab>('chats');
+  const [searchQuery, setSearchQuery] = useState('');
+  const theme = getRoleTheme('babysitter');
+
+  const incomingOnlyRequests = useMemo(
+    () => buildIncomingRequests(incomingRequests),
+    [incomingRequests]
+  );
+
+  const filteredThreads = useMemo(
+    () => searchQuery.trim()
+      ? chatThreads.filter(t =>
+          t.counterpartName.toLowerCase().includes(searchQuery.trim().toLowerCase())
+        )
+      : chatThreads,
+    [chatThreads, searchQuery]
+  );
+
+  async function handleRefresh() {
+    try {
+      setRefreshing(true);
+      await refreshBabysitterData();
+    } finally {
+      setRefreshing(false);
+    }
+  }
+
+  return (
+    <AppShell
+      title={strings.navChats}
+      activeTab="chats"
+      backgroundColor={theme.screenBackground}
+      enableRootTabSwipe
+    >
+      <View style={styles.container}>
+        <View style={styles.searchField}>
+          <SearchField
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder={'חיפוש שיחות'}
+            filterLabel={strings.filterButton}
+            onFilterPress={() => {}}
+          />
+        </View>
+
+        <SegmentTabs
+          role="babysitter"
+          segment={selectedTab}
+          onChange={setSelectedTab}
+          chatsCount={filteredThreads.length}
+          incomingCount={incomingOnlyRequests.length}
+        />
+
+        {selectedTab === 'chats' ? (
+          <FlatList
+            data={filteredThreads}
+            keyExtractor={item => item.requestId}
+            contentContainerStyle={styles.list}
+            keyboardShouldPersistTaps="handled"
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            renderItem={({ item }) => (
+              <ChatThreadCard
+                thread={item}
+                onHide={hideRequest}
+              />
+            )}
+            ListEmptyComponent={
+              <View style={styles.emptyWrap}>
+                <ScreenStateCard
+                  role="babysitter"
+                  icon="chatbubbles-outline"
+                  title={strings.requestsChatsEmpty}
+                />
+              </View>
+            }
+          />
+        ) : (
+          <FlatList
+            data={incomingOnlyRequests}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.list}
+            keyboardShouldPersistTaps="handled"
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            renderItem={({ item }) => (
+              <IncomingRequestCard
+                request={item}
+                canRespond
+                onUpdateStatus={updateRequestStatus}
+                onHide={hideRequest}
+              />
+            )}
+            ListEmptyComponent={
+              <View style={styles.emptyWrap}>
+                <ScreenStateCard
+                  role="babysitter"
+                  icon="mail-open-outline"
+                  title={strings.requestsIncomingSectionEmpty}
+                />
+              </View>
+            }
+          />
+        )}
+      </View>
+    </AppShell>
+  );
+}
+
+function buildIncomingRequests(incomingRequests: Request[]) {
+  return [...incomingRequests]
+    .filter(request => request.status !== 'accepted')
+    .sort((a, b) => {
+      if (a.status === b.status) {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+
+      if (a.status === 'pending') return -1;
+      if (b.status === 'pending') return 1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: BabysitterDesignTokens.spacing.pageHorizontal,
+    paddingTop: BabysitterDesignTokens.spacing.pageVertical,
+    backgroundColor: BabysitterDesignTokens.surfaces.screen,
+  },
+  searchField: {
+    marginBottom: 12,
+  },
+  list: {
+    paddingTop: 14,
+    paddingBottom: 40,
+    flexGrow: 1,
+  },
+  emptyWrap: {
+    flex: 1,
+    minHeight: 260,
+  },
+});
