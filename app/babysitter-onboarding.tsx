@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import {
   View,
+  Image,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -510,6 +511,13 @@ export default function BabysitterOnboarding() {
     return (
       <SafeAreaView style={styles.completeSafe}>
         <ScrollView contentContainerStyle={styles.completeScroll} showsVerticalScrollIndicator={false}>
+          {/* Hero banner */}
+          <Image
+            source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAAYq3z43IEF7wzINRBjv-HjOCTAez46mbFz_TM5w25NKGS6FzF-V8Y8X2y98p2Md-De8etwaMb312fW3LW6Vc1khRr7YGQCNoVY3GQB9wMuWRMFjXvIQnQA9vDq5lTQ9pTVcEjclhBR1LRqqFDfoAiiIJk17pCJUaAW-ulyYnWirdUwy-I4tAYTc22nIjK2yhQD7-P5n4GeoRrXWv6wL5WMjUwEUa76hNuX1-P9c1xZW1YqjE0VVLMfFACs2XWhSnq2_2_RbiLCtKX' }}
+            style={styles.completeBanner}
+            resizeMode="cover"
+          />
+
           {/* Success icon */}
           <View style={styles.completeIconWrap}>
             <LinearGradient colors={['#702ae1', '#6411d5']} style={styles.completeIconGradient}>
@@ -713,7 +721,8 @@ export default function BabysitterOnboarding() {
 const styles = StyleSheet.create({
   // Completion screen
   completeSafe: { flex: 1, backgroundColor: BabyCityPalette.canvas },
-  completeScroll: { paddingHorizontal: 24, paddingTop: 48, paddingBottom: 40, alignItems: 'center' },
+  completeScroll: { paddingHorizontal: 24, paddingTop: 0, paddingBottom: 40, alignItems: 'center' },
+  completeBanner: { alignSelf: 'stretch', height: 220, marginHorizontal: -24, marginBottom: 32 },
   completeIconWrap: { marginBottom: 24 },
   completeIconGradient: { width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center' },
   completeHeading: { marginBottom: 8 },

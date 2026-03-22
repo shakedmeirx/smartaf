@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import {
   View,
+  Image,
   TextInput,
   StyleSheet,
   KeyboardAvoidingView,
@@ -9,7 +10,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { strings } from '@/locales';
 import { useAuth } from '@/context/AuthContext';
 import { BabyCityPalette } from '@/constants/theme';
@@ -25,8 +26,14 @@ const AUTH = {
   brandMarkText: BabyCityPalette.primary,
   inputBg: '#f4f6ff',
   tileBg: '#ecf1ff',
-  avatarColors: ['#dee8ff', '#ede9f5', '#e8f8ff'] as const,
 } as const;
+
+// Stitch social-proof avatar images
+const SOCIAL_PROOF_AVATARS = [
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuA-s0dD1m_2cLBvEul9elsR3TKyH2N0BAM7_oEHYNiNGGNN5xfO0AdwumMkiC4lsj8eg_LR-ok8N0Ve_dQwpvkIgl4aGtp3HbYUTpOpiv6noDzUP790JN2LS7Z_D0uX6j4oRhVe8KFy4tPzHqsL5yKpqgnwFAHyCTlhxQoVtgM6FgiOs-mzylBLStS49vySfqtxhaG_mTmTPgjHyeAEj9u04uRyrQ1stdlJHLhkjY1CiOAuLdR7KlV1LqsP4tgqYdymeXHqSa8tlSde',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuCFWRFrYQlCYvwwuvkMm4cJXQSaL51bK4nMDy2Mzc8eI1cRtCMtacTKicSD3OjH0UEZAX_sSjCQZopC15rmi7OfpV_63OVU7sZlORwDYyIG2UkO05kJzlVswerDXXQHwa2dEgGCmxTYtKPlSCWLfxdvvb6VDd63wS0N_pMAcWhtDLpo5qh34yv9POGufReSz2wiyqe-FcS_umdN8oG-ykIpmdmmUJNOq51r8bq--ELfZgPGJjyUr4xA7W-UxJB0l2Qnv3IFeivRXHeP',
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuAAer5Nml7VFmRJpAoc1NAtneSlOl-iJH8VRWyTOAOQOAP-KPiICTvaZGSCLJ9d7CyNGKoXXSPsfw7TR8dVEE07qg5xZrpt5z3zaXJl33N9V4vDZFNLoMcmWz7Nfv-nVvBnCmdP9RT5HH6DxBOPBKcP7nWtE_Fh_PGtFrFcVErGut6yS5CrQhoZdUbEBxGqUk2LdLPJTrH9MiiC9EhudWlMqC25rwY1eAyJ-l1_ruQqZMvqDqLEs5bywOg2-7SHJC29K6o-0Y9AbNGP',
+] as const;
 
 // Converts a local Israeli number to E.164 format required by Supabase.
 function toE164(input: string): string {
@@ -148,10 +155,13 @@ export default function AuthScreen() {
           {/* ── Social proof ───────────────────────────────────────────────── */}
           <View style={styles.socialProof}>
             <View style={styles.avatarStack}>
-              {AUTH.avatarColors.map((bg, i) => (
-                <View key={i} style={[styles.avatar, { backgroundColor: bg, right: i * 22 }]}>
-                  <Ionicons name="person" size={14} color={BabyCityPalette.textSecondary} />
-                </View>
+              {SOCIAL_PROOF_AVATARS.map((uri, i) => (
+                <Image
+                  key={i}
+                  source={{ uri }}
+                  style={[styles.avatar, { right: i * 22 }]}
+                  resizeMode="cover"
+                />
               ))}
             </View>
             <AppText variant="caption" weight="600" style={styles.socialProofText}>
@@ -162,8 +172,8 @@ export default function AuthScreen() {
           {/* ── Feature tiles ──────────────────────────────────────────────── */}
           <View style={styles.tilesRow}>
             <View style={styles.tile}>
-              <Ionicons name="shield-checkmark-outline" size={24} color={BabyCityPalette.primary} />
-              <AppText variant="meta" weight="700" style={styles.tileTitle}>
+              <MaterialIcons name="verified-user" size={24} color={BabyCityPalette.primary} />
+              <AppText variant="caption" weight="700" style={styles.tileTitle}>
                 {'פרופילים מאומתים'}
               </AppText>
               <AppText variant="caption" tone="muted" style={styles.tileBody}>
@@ -171,8 +181,8 @@ export default function AuthScreen() {
               </AppText>
             </View>
             <View style={styles.tile}>
-              <Ionicons name="location-outline" size={24} color={BabyCityPalette.accent} />
-              <AppText variant="meta" weight="700" style={styles.tileTitle}>
+              <MaterialIcons name="location-on" size={24} color={BabyCityPalette.accent} />
+              <AppText variant="caption" weight="700" style={styles.tileTitle}>
                 {'קרוב לבית'}
               </AppText>
               <AppText variant="caption" tone="muted" style={styles.tileBody}>
@@ -180,7 +190,7 @@ export default function AuthScreen() {
               </AppText>
             </View>
             <View style={styles.tile}>
-              <Ionicons name="heart-outline" size={24} color={BabyCityPalette.success} />
+              <MaterialIcons name="chat-bubble" size={24} color={BabyCityPalette.success} />
               <AppText variant="caption" weight="700" style={styles.tileTitle}>
                 {'חוויה אישית'}
               </AppText>
@@ -327,11 +337,10 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
     borderWidth: 2,
     borderColor: AUTH.bg,
     top: 2,
+    overflow: 'hidden',
   },
   socialProofText: {
     color: BabyCityPalette.textSecondary,

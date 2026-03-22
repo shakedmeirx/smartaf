@@ -145,11 +145,11 @@ export default function FamilyProfileScreen() {
           <>
             {/* ── Full-width banner ── */}
             <View style={styles.bannerWrap}>
-              {family.profilePhotoUrl ? (
-                <Image source={{ uri: family.profilePhotoUrl }} style={styles.bannerImg} resizeMode="cover" />
-              ) : (
-                <View style={[styles.bannerImg, styles.bannerPlaceholder]} />
-              )}
+              <Image
+                source={{ uri: family.profilePhotoUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBT3NZv2Ptj1APxDCMZH2wv89IFmsUhiBHQu84bvclwSvSVpFfUVaqHGCOW7t0-R4jvfK4EtlZIuaeKDhXmihMbTGyoIMH0-xhwYbIo2vxd0gj4ouaSOF_kqeCq7qPW2hmHBb-M1PYksU6ssB_qTdppvclZH6t_WJPhg7fPKoJzdqREfDxIqG35dWzZZmxPIo2XXG7CsNZfMktndr9WHTTpdMFClBhdFQcOqBwaX6HssMk7dFJeKKza4EmFKB8lbJUOhQlYDfJ7E6mA' }}
+                style={styles.bannerImg}
+                resizeMode="cover"
+              />
             </View>
 
             {/* ── Avatar overlapping banner ── */}

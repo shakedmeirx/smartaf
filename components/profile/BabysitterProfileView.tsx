@@ -122,11 +122,11 @@ export default function BabysitterProfileView({
 
         {/* ── Banner ── */}
         <View style={styles.bannerWrap}>
-          {profilePhotoUrl ? (
-            <Image source={{ uri: profilePhotoUrl }} style={styles.bannerImage} resizeMode="cover" />
-          ) : (
-            <View style={[styles.bannerImage, styles.bannerPlaceholder]} />
-          )}
+          <Image
+            source={{ uri: profilePhotoUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDv781fLEnnEarOnE3oh5Kl6eWiI5w3iHx2d_DiDX4AKVx-6LqVlAf-zNcM_28Ea-VDU39Xbdwo0_79BtpPG4kKzL29zgAawPq7Uvx-iLB0oYcY-BBI3misnHZGB-xUh4aAbHz0_i5hd7z2fPfTGLSJSqAR573nHD0OMCCiEYFPo2d8oaBWBr8zwGjQjrx8_UuHbAwi2tbT0cvwNi36T4C5pk9PbBUHRjuwa_W1Frlr1SUQRLrbQgOMzAH4VEQ1pS4bRlaucbk7LvgL' }}
+            style={styles.bannerImage}
+            resizeMode="cover"
+          />
         </View>
 
         {/* ── Avatar overlapping banner ── */}

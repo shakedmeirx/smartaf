@@ -445,11 +445,13 @@ export default function ParentOnboardingScreen() {
             <AppText variant="bodyLarge" weight="800">{strings.appName}</AppText>
           </View>
 
-          {/* Hero placeholder */}
+          {/* Hero image */}
           <View style={styles.welcomeHero}>
-            <View style={styles.welcomeHeroPlaceholder}>
-              <Ionicons name="people" size={64} color={BabyCityPalette.surfaceContainer} />
-            </View>
+            <Image
+              source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB5wfqxzhnrq9X-rWgu93gAkoCCF6Slk7LPdDPHyxoUb5XQ7FeWinBlNQ1b1jovjfnqz_gnk1BpggjfyM4AB7Hfj2mOAjowhr7QXqdCcJftoRY2iAmU-WEIhinLjNsIyzjKrj_IIDPQGDgLqO71oY4FRYpaohir7eFEU73qcLVQ5L9ae1CWoOicMwZ-MPVsAVJsQKH78RP1duR2SVTJumpJwgwSaUBP8v7HoAubImaKo4TWsCGCNGoXP472KsNluUysQ7vTTPguPfpq' }}
+              style={styles.welcomeHeroImage}
+              resizeMode="cover"
+            />
           </View>
 
           <AppText variant="h1" weight="800" align="center" style={styles.welcomeHeadline}>
@@ -477,10 +479,12 @@ export default function ParentOnboardingScreen() {
           {/* Social proof */}
           <View style={styles.welcomeSocialProof}>
             <View style={styles.welcomeAvatarStack}>
-              {['#dee8ff', '#ede9f5', '#e8f8ff'].map((bg, i) => (
-                <View key={i} style={[styles.welcomeAvatar, { backgroundColor: bg, right: i * 22 }]}>
-                  <Ionicons name="person" size={12} color={BabyCityPalette.textSecondary} />
-                </View>
+              {[
+                'https://lh3.googleusercontent.com/aida-public/AB6AXuA-s0dD1m_2cLBvEul9elsR3TKyH2N0BAM7_oEHYNiNGGNN5xfO0AdwumMkiC4lsj8eg_LR-ok8N0Ve_dQwpvkIgl4aGtp3HbYUTpOpiv6noDzUP790JN2LS7Z_D0uX6j4oRhVe8KFy4tPzHqsL5yKpqgnwFAHyCTlhxQoVtgM6FgiOs-mzylBLStS49vySfqtxhaG_mTmTPgjHyeAEj9u04uRyrQ1stdlJHLhkjY1CiOAuLdR7KlV1LqsP4tgqYdymeXHqSa8tlSde',
+                'https://lh3.googleusercontent.com/aida-public/AB6AXuCFWRFrYQlCYvwwuvkMm4cJXQSaL51bK4nMDy2Mzc8eI1cRtCMtacTKicSD3OjH0UEZAX_sSjCQZopC15rmi7OfpV_63OVU7sZlORwDYyIG2UkO05kJzlVswerDXXQHwa2dEgGCmxTYtKPlSCWLfxdvvb6VDd63wS0N_pMAcWhtDLpo5qh34yv9POGufReSz2wiyqe-FcS_umdN8oG-ykIpmdmmUJNOq51r8bq--ELfZgPGJjyUr4xA7W-UxJB0l2Qnv3IFeivRXHeP',
+                'https://lh3.googleusercontent.com/aida-public/AB6AXuAAer5Nml7VFmRJpAoc1NAtneSlOl-iJH8VRWyTOAOQOAP-KPiICTvaZGSCLJ9d7CyNGKoXXSPsfw7TR8dVEE07qg5xZrpt5z3zaXJl33N9V4vDZFNLoMcmWz7Nfv-nVvBnCmdP9RT5HH6DxBOPBKcP7nWtE_Fh_PGtFrFcVErGut6yS5CrQhoZdUbEBxGqUk2LdLPJTrH9MiiC9EhudWlMqC25rwY1eAyJ-l1_ruQqZMvqDqLEs5bywOg2-7SHJC29K6o-0Y9AbNGP',
+              ].map((uri, i) => (
+                <Image key={i} source={{ uri }} style={[styles.welcomeAvatar, { right: i * 22 }]} resizeMode="cover" />
               ))}
             </View>
             <AppText variant="caption" weight="600" tone="muted" style={{ flex: 1, textAlign: 'right' }}>
@@ -801,14 +805,14 @@ const styles = StyleSheet.create({
   welcomeBrand: { flexDirection: 'row-reverse', alignItems: 'center', gap: 8, paddingTop: 16, paddingBottom: 8 },
   welcomeBrandMark: { width: 36, height: 36, borderRadius: 12, backgroundColor: BabyCityPalette.primarySoft, alignItems: 'center', justifyContent: 'center' },
   welcomeHero: { alignItems: 'center', marginVertical: 24 },
-  welcomeHeroPlaceholder: { width: '100%', height: 180, borderRadius: 24, backgroundColor: BabyCityPalette.surfaceLow, alignItems: 'center', justifyContent: 'center' },
+  welcomeHeroImage: { width: '100%', height: 200, borderRadius: 24, overflow: 'hidden' },
   welcomeHeadline: { marginBottom: 10 },
   welcomeSubtitle: { marginBottom: 24, lineHeight: 22 },
   welcomeFeatureRow: { flexDirection: 'row-reverse', gap: 10, marginBottom: 24 },
   welcomeFeatureCard: { flex: 1, backgroundColor: BabyCityPalette.surfaceLow, borderRadius: 20, padding: 14, alignItems: 'center', gap: 4 },
   welcomeSocialProof: { flexDirection: 'row-reverse', alignItems: 'center', gap: 12, marginBottom: 24 },
   welcomeAvatarStack: { flexDirection: 'row-reverse', width: 70, height: 36, position: 'relative' },
-  welcomeAvatar: { position: 'absolute', width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#ffffff', top: 3 },
+  welcomeAvatar: { position: 'absolute', width: 30, height: 30, borderRadius: 15, overflow: 'hidden', borderWidth: 2, borderColor: '#ffffff', top: 3 },
   welcomeCta: { marginBottom: 12 },
   // Review screen
   reviewSafe: { flex: 1, backgroundColor: BabyCityPalette.canvas },
