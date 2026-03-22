@@ -207,6 +207,8 @@ export const en = {
   drawerShiftManager: 'Shift manager',
   drawerAvailability: 'Availability & preferences',
   drawerEditProfile: 'Edit profile',
+  authWelcomeHeroBadgeTitle: 'With full trust',
+  authWelcomeHeroBadgeSubtitle: 'Best for your kids',
   drawerFutureTitle: 'More coming soon',
   drawerFutureText: 'We will add shortcuts here later for chats, support, safety, and account tools.',
   babysitterSaveValidationError: 'Please fill in at least name, city, bio, rate, and experience.',

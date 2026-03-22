@@ -29,6 +29,8 @@ export const he = {
   authWelcomeSecondaryAction: 'התחברות',
   authWelcomeDivider: 'או באמצעות',
   authWelcomeSocialProof: 'מעל 15,000 הורים כבר מצאו את המטפלת המושלמת',
+  authWelcomeHeroBadgeTitle: 'בביטחון מלא',
+  authWelcomeHeroBadgeSubtitle: 'הכי טוב לילדים שלך',
   authWelcomeFeatureVerifiedTitle: 'פרופילים מאומתים',
   authWelcomeFeatureVerifiedBody: 'אנחנו בודקים כל מטפלת כדי להבטיח ביטחון מלא.',
   authWelcomeFeatureNearbyTitle: 'קרוב לבית',
