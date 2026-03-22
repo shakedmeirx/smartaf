@@ -199,6 +199,8 @@ export const en = {
   navProfile: 'Profile',
   navSettings: 'Settings',
   drawerTitle: 'Menu',
+  drawerMainMenu: 'Main menu',
+  drawerSettingsSupport: 'Settings & support',
   drawerDashboard: 'Dashboard',
   drawerCalendar: 'Calendar',
   drawerStatistics: 'Statistics',

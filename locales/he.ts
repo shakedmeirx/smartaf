@@ -199,6 +199,8 @@ export const he = {
   navProfile: 'פרופיל',
   navSettings: 'הגדרות',
   drawerTitle: 'תפריט',
+  drawerMainMenu: 'תפריט ראשי',
+  drawerSettingsSupport: 'הגדרות ותמיכה',
   drawerDashboard: 'לוח בקרה',
   drawerCalendar: 'יומן',
   drawerStatistics: 'סטטיסטיקות',
