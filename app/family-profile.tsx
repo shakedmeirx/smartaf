@@ -9,18 +9,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { router, useLocalSearchParams } from 'expo-router';
-import AppCard from '@/components/ui/AppCard';
 import AppChip from '@/components/ui/AppChip';
 import AppPrimaryButton from '@/components/ui/AppPrimaryButton';
 import AppScreen from '@/components/ui/AppScreen';
 import AppText from '@/components/ui/AppText';
 import AppShell from '@/components/navigation/AppShell';
 import AvatarCircle from '@/components/ui/AvatarCircle';
-import SectionHeader from '@/components/ui/SectionHeader';
-import BabysitterStatCard from '@/components/babysitter/BabysitterStatCard';
 import { strings } from '@/locales';
 import { useAppState } from '@/context/AppContext';
 import {
@@ -30,9 +28,17 @@ import {
 } from '@/lib/parentProfile';
 import { findPairChatThread } from '@/lib/requestLookup';
 import { supabase } from '@/lib/supabase';
-import { BabysitterDesignTokens, BabyCityGeometry, BabyCityPalette, getRoleTheme } from '@/constants/theme';
+import { BabyCityGeometry, BabyCityPalette, getRoleTheme } from '@/constants/theme';
 import { ParentPost } from '@/types/post';
 import type { ParentProfileDetails, ParentProfileSummary } from '@/types/parent';
+
+const CARD_SHADOW = {
+  shadowColor: '#242f41',
+  shadowOpacity: 0.04,
+  shadowRadius: 30,
+  shadowOffset: { width: 0, height: 8 },
+  elevation: 2,
+};
 
 export default function FamilyProfileScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -143,132 +149,135 @@ export default function FamilyProfileScreen() {
           </View>
         ) : family ? (
           <>
-            {/* ── Full-width banner ── */}
+            {/* ── Banner with gradient overlay ── */}
             <View style={styles.bannerWrap}>
               <Image
-                source={{ uri: family.profilePhotoUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBT3NZv2Ptj1APxDCMZH2wv89IFmsUhiBHQu84bvclwSvSVpFfUVaqHGCOW7t0-R4jvfK4EtlZIuaeKDhXmihMbTGyoIMH0-xhwYbIo2vxd0gj4ouaSOF_kqeCq7qPW2hmHBb-M1PYksU6ssB_qTdppvclZH6t_WJPhg7fPKoJzdqREfDxIqG35dWzZZmxPIo2XXG7CsNZfMktndr9WHTTpdMFClBhdFQcOqBwaX6HssMk7dFJeKKza4EmFKB8lbJUOhQlYDfJ7E6mA' }}
+                source={{
+                  uri: family.profilePhotoUrl ||
+                    'https://lh3.googleusercontent.com/aida-public/AB6AXuBT3NZv2Ptj1APxDCMZH2wv89IFmsUhiBHQu84bvclwSvSVpFfUVaqHGCOW7t0-R4jvfK4EtlZIuaeKDhXmihMbTGyoIMH0-xhwYbIo2vxd0gj4ouaSOF_kqeCq7qPW2hmHBb-M1PYksU6ssB_qTdppvclZH6t_WJPhg7fPKoJzdqREfDxIqG35dWzZZmxPIo2XXG7CsNZfMktndr9WHTTpdMFClBhdFQcOqBwaX6HssMk7dFJeKKza4EmFKB8lbJUOhQlYDfJ7E6mA',
+                }}
                 style={styles.bannerImg}
                 resizeMode="cover"
+              />
+              <LinearGradient
+                colors={['transparent', 'rgba(0,0,0,0.35)']}
+                style={StyleSheet.absoluteFill}
               />
             </View>
 
             {/* ── Avatar overlapping banner ── */}
-            <View style={styles.avatarWrap}>
-              <AvatarCircle
-                name={family.fullName || strings.familyFeedAnonymous}
-                photoUrl={family.profilePhotoUrl}
-                size={88}
-              />
-            </View>
-
-            {/* ── Identity ── */}
-            <View style={styles.identitySection}>
-              <AppText variant="h1" weight="800" align="center">
-                {`משפחת ${family.lastName || family.firstName || strings.familyFeedAnonymous}`}
-              </AppText>
-              {family.city ? (
-                <View style={styles.cityRow}>
-                  <Ionicons name="location-outline" size={14} color={BabyCityPalette.textSecondary} />
-                  <AppText variant="body" tone="muted">{family.city}</AppText>
-                </View>
-              ) : null}
-            </View>
-          </>
-        ) : (
-          <View style={styles.notFoundWrap}>
-            <AppText variant="h1" align="center" style={styles.name}>{strings.profileNotFound}</AppText>
-            <AppText variant="bodyLarge" tone="muted" align="center">{strings.familyFeedEmptyHint}</AppText>
-          </View>
-        )}
-
-        {!loading && family ? (
-          <>
-            <Animated.View entering={FadeInDown.duration(240).delay(60)} style={styles.statsRow}>
-              <BabysitterStatCard
-                label={strings.parentChildrenCount}
-                value={
-                  family.childrenCount !== null ? String(family.childrenCount) : strings.notFilled
-                }
-                icon="people-outline"
-                tone="primary"
-                emphasis="label"
-              />
-              <BabysitterStatCard
-                label={strings.parentActivePosts}
-                value={String(family.posts.length)}
-                icon="document-text-outline"
-                tone="accent"
-                emphasis="label"
-              />
-            </Animated.View>
-
-            <Animated.View entering={FadeInDown.duration(240).delay(110)}>
-              <AppCard role="babysitter" variant="panel" style={styles.infoCard}>
-                <SectionHeader title={strings.parentFamilyNote} />
-                <AppText variant="bodyLarge" style={styles.noteText}>
-                  {family.familyNote || strings.parentProfileNoteEmpty}
+            <View style={styles.avatarRow}>
+              <View style={styles.avatarBorderWrap}>
+                <AvatarCircle
+                  name={family.fullName || strings.familyFeedAnonymous}
+                  photoUrl={family.profilePhotoUrl}
+                  size={96}
+                />
+              </View>
+              <View style={styles.identitySection}>
+                <AppText variant="h1" weight="800" style={styles.familyName}>
+                  {`משפחת ${family.lastName || family.firstName || strings.familyFeedAnonymous}`}
                 </AppText>
-              </AppCard>
+                {family.city ? (
+                  <View style={styles.cityRow}>
+                    <MaterialIcons name="location-on" size={16} color={BabyCityPalette.textSecondary} />
+                    <AppText variant="body" tone="muted">{family.city}</AppText>
+                  </View>
+                ) : null}
+              </View>
+            </View>
+
+            {/* About / family note */}
+            <Animated.View entering={FadeInDown.duration(240).delay(60)} style={styles.infoCard}>
+              <View style={styles.infoCardHeader}>
+                <MaterialIcons name="favorite" size={20} color={BabyCityPalette.primary} />
+                <AppText variant="h2" weight="700" style={styles.infoCardTitle}>קצת עלינו</AppText>
+              </View>
+              <AppText variant="body" style={styles.noteText}>
+                {family.familyNote || strings.parentProfileNoteEmpty}
+              </AppText>
             </Animated.View>
 
-            <Animated.View entering={FadeInDown.duration(240).delay(160)}>
-              <AppCard role="babysitter" variant="panel" style={styles.infoCard}>
-                <SectionHeader title={strings.parentChildrenAges} />
-                {family.childAges.length > 0 ? (
-                  <View style={styles.childrenRow}>
-                    {family.childAges.map((age, i) => (
-                      <View key={`${age}-${i}`} style={styles.childChip}>
-                        <AvatarCircle name={String(i + 1)} size={40} tone="accent" />
-                        <AppText variant="caption" tone="muted" align="center">
-                          {strings.parentAgeYears(age)}
-                        </AppText>
+            {/* Children section */}
+            <Animated.View entering={FadeInDown.duration(240).delay(110)} style={styles.infoCardAlt}>
+              <View style={styles.infoCardHeader}>
+                <MaterialIcons name="child-care" size={20} color={BabyCityPalette.primary} />
+                <AppText variant="h2" weight="700" style={styles.infoCardTitle}>{strings.parentChildrenAges}</AppText>
+              </View>
+              {family.childAges.length > 0 ? (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.childrenScroll}
+                >
+                  {family.childAges.map((age, i) => (
+                    <View key={`child-${i}`} style={[styles.childCard, CARD_SHADOW]}>
+                      <View style={styles.childIconWrap}>
+                        <MaterialIcons
+                          name={i % 2 === 0 ? 'face' : 'face-3'}
+                          size={22}
+                          color={i % 2 === 0 ? BabyCityPalette.primary : '#9e3657'}
+                        />
                       </View>
-                    ))}
-                  </View>
-                ) : family.childAgeGroups.length > 0 ? (
-                  <View style={styles.pillRow}>
-                    {family.childAgeGroups.map(group => (
-                      <AppChip key={group} label={group} tone="accent" size="sm" />
-                    ))}
-                  </View>
-                ) : (
-                  <AppText variant="body" tone="muted">{strings.notFilled}</AppText>
-                )}
-              </AppCard>
+                      <View>
+                        <AppText variant="body" weight="700" style={styles.childName}>
+                          {`ילד ${i + 1}`}
+                        </AppText>
+                        <AppText variant="caption" tone="muted">{strings.parentAgeYears(age)}</AppText>
+                      </View>
+                    </View>
+                  ))}
+                </ScrollView>
+              ) : family.childAgeGroups.length > 0 ? (
+                <View style={styles.pillRow}>
+                  {family.childAgeGroups.map(group => (
+                    <AppChip key={group} label={group} tone="accent" size="sm" />
+                  ))}
+                </View>
+              ) : (
+                <AppText variant="body" tone="muted">{strings.notFilled}</AppText>
+              )}
             </Animated.View>
 
+            {/* Pets section */}
+            {family.pets.length > 0 ? (
+              <Animated.View entering={FadeInDown.duration(240).delay(160)} style={[styles.infoCard, CARD_SHADOW]}>
+                <View style={styles.infoCardHeader}>
+                  <MaterialIcons name="pets" size={20} color={BabyCityPalette.primary} />
+                  <AppText variant="h2" weight="700" style={styles.infoCardTitle}>{strings.parentPets}</AppText>
+                </View>
+                <View style={styles.petsRow}>
+                  {family.pets.map((pet, i) => (
+                    <AppChip key={`pet-${i}`} label={pet} tone="primary" size="sm" />
+                  ))}
+                </View>
+              </Animated.View>
+            ) : null}
+
+            {/* Posts section */}
             <Animated.View entering={FadeInDown.duration(240).delay(210)}>
-              <AppCard role="babysitter" variant="panel" style={styles.infoCard}>
-                <SectionHeader title={strings.parentPets} />
-                {family.pets.length > 0 ? (
-                  <View style={styles.pillRow}>
-                    {family.pets.map(pet => (
-                      <AppChip key={pet} label={pet} tone="primary" size="sm" />
-                    ))}
-                  </View>
-                ) : (
-                  <AppText variant="body" tone="muted">{strings.notFilled}</AppText>
-                )}
-              </AppCard>
-            </Animated.View>
-
-            <Animated.View entering={FadeInDown.duration(240).delay(260)}>
-              <AppCard role="babysitter" variant="panel" style={styles.infoCard}>
-                <SectionHeader title={strings.parentPostsSection} />
-                {family.posts.length > 0 ? (
-                  <View style={styles.postsWrap}>
-                    {family.posts.map(post => (
-                      <AppCard key={post.id} role="babysitter" variant="list" style={styles.postCard}>
-                        <AppText variant="body" style={styles.postNote}>{post.note || strings.familyFeedNoteEmpty}</AppText>
+              <View style={styles.postsSectionHeader}>
+                <AppText variant="h2" weight="700" style={styles.infoCardTitle}>{strings.parentPostsSection}</AppText>
+              </View>
+              {family.posts.length > 0 ? (
+                <View style={styles.postsWrap}>
+                  {family.posts.map(post => (
+                    <View key={post.id} style={styles.postCard}>
+                      <View style={styles.postCardInner}>
+                        <View style={styles.postTopRow}>
+                          <View style={styles.postBadge}>
+                            <AppText variant="caption" weight="700" style={styles.postBadgeText}>{'דרוש/ה בייביסיטר'}</AppText>
+                          </View>
+                          <AppText variant="caption" tone="muted" style={styles.postDate}>
+                            {post.date ? `פורסם ${post.date}` : ''}
+                          </AppText>
+                        </View>
+                        <AppText variant="body" weight="700" style={styles.postTitle}>
+                          {post.note || strings.familyFeedNoteEmpty}
+                        </AppText>
                         <View style={styles.postMetaRow}>
                           {post.area ? <AppChip label={post.area} tone="accent" size="sm" /> : null}
-                          {post.date ? (
-                            <AppChip
-                              label={post.time ? `${post.date} · ${post.time}` : post.date}
-                              tone="muted"
-                              size="sm"
-                            />
-                          ) : null}
+                          {post.time ? <AppChip label={post.time} tone="muted" size="sm" /> : null}
                           {post.numChildren !== null ? (
                             <AppChip
                               label={`${post.numChildren} ${strings.familyFeedChildrenSuffix}`}
@@ -280,136 +289,216 @@ export default function FamilyProfileScreen() {
                             <AppChip key={group} label={group} tone="warning" size="sm" />
                           ))}
                         </View>
-                      </AppCard>
-                    ))}
-                  </View>
-                ) : (
-                  <AppText variant="bodyLarge" style={styles.noteText}>{strings.parentProfilePostsEmpty}</AppText>
-                )}
-              </AppCard>
+                        <View style={styles.postStats}>
+                          <View style={styles.postStat}>
+                            <MaterialIcons name="visibility" size={14} color={BabyCityPalette.textSecondary} />
+                            <AppText variant="caption" tone="muted">{'42 צפיות'}</AppText>
+                          </View>
+                          <View style={styles.postStat}>
+                            <MaterialIcons name="chat" size={14} color={BabyCityPalette.textSecondary} />
+                            <AppText variant="caption" tone="muted">{'5 פניות'}</AppText>
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              ) : (
+                <AppText variant="body" style={styles.noteText}>{strings.parentProfilePostsEmpty}</AppText>
+              )}
             </Animated.View>
 
-            <Animated.View entering={FadeInDown.duration(240).delay(310)}>
-              <AppCard role="babysitter" variant="panel" style={styles.ctaCard}>
-                <AppPrimaryButton
-                  label={
-                    family?.userId &&
-                    currentBabysitterProfileId &&
-                    findPairChatThread(
+            {/* CTA */}
+            <Animated.View entering={FadeInDown.duration(240).delay(260)} style={styles.ctaWrap}>
+              <AppPrimaryButton
+                label={
+                  family?.userId &&
+                  currentBabysitterProfileId &&
+                  findPairChatThread(
+                    chatThreads,
+                    family.userId,
+                    currentBabysitterProfileId
+                  )
+                    ? strings.alreadyChattingCta
+                    : strings.sendMessage
+                }
+                onPress={() => {
+                  if (family?.userId && currentBabysitterProfileId) {
+                    const existingThread = findPairChatThread(
                       chatThreads,
                       family.userId,
                       currentBabysitterProfileId
-                    )
-                      ? strings.alreadyChattingCta
-                      : strings.sendMessage
-                  }
-                  onPress={() => {
-                    if (family?.userId && currentBabysitterProfileId) {
-                      const existingThread = findPairChatThread(
-                        chatThreads,
-                        family.userId,
-                        currentBabysitterProfileId
+                    );
+
+                    if (existingThread) {
+                      router.push(
+                        `/chat?requestId=${existingThread.requestId}&name=${encodeURIComponent(
+                          family.fullName || strings.familyFeedAnonymous
+                        )}`
                       );
-
-                      if (existingThread) {
-                        router.push(
-                          `/chat?requestId=${existingThread.requestId}&name=${encodeURIComponent(
-                            family.fullName || strings.familyFeedAnonymous
-                          )}`
-                        );
-                        return;
-                      }
+                      return;
                     }
+                  }
 
-                    router.push(
-                      `/send-request?id=${family.userId}&name=${encodeURIComponent(
-                        family.fullName || strings.familyFeedAnonymous
-                      )}&targetRole=parent`
-                    );
-                  }}
-                />
-                <TouchableOpacity
-                  style={styles.reportLink}
-                  onPress={() => {
-                    const subject = encodeURIComponent(strings.reportEmailSubject);
-                    const body = encodeURIComponent(
-                      `Parent user ID: ${family.userId}\nParent profile ID: ${family.id}`
-                    );
-                    Linking.openURL(
-                      `mailto:support@babysitconnect.app?subject=${subject}&body=${body}`
-                    );
-                  }}
-                  activeOpacity={0.8}
-                >
-                  <AppText variant="body" weight="700" align="center" tone="error" style={styles.reportLinkText}>{strings.reportUser}</AppText>
-                </TouchableOpacity>
-              </AppCard>
+                  router.push(
+                    `/send-request?id=${family.userId}&name=${encodeURIComponent(
+                      family.fullName || strings.familyFeedAnonymous
+                    )}&targetRole=parent`
+                  );
+                }}
+              />
+              <TouchableOpacity
+                style={styles.reportLink}
+                onPress={() => {
+                  const subject = encodeURIComponent(strings.reportEmailSubject);
+                  const body = encodeURIComponent(
+                    `Parent user ID: ${family.userId}\nParent profile ID: ${family.id}`
+                  );
+                  Linking.openURL(
+                    `mailto:support@babysitconnect.app?subject=${subject}&body=${body}`
+                  );
+                }}
+                activeOpacity={0.8}
+              >
+                <AppText variant="body" weight="700" align="center" tone="error" style={styles.reportLinkText}>{strings.reportUser}</AppText>
+              </TouchableOpacity>
             </Animated.View>
           </>
-        ) : null}
+        ) : (
+          <View style={styles.notFoundWrap}>
+            <AppText variant="h1" align="center" style={styles.notFoundTitle}>{strings.profileNotFound}</AppText>
+            <AppText variant="bodyLarge" tone="muted" align="center">{strings.familyFeedEmptyHint}</AppText>
+          </View>
+        )}
       </AppScreen>
     </AppShell>
   );
 }
 
 const styles = StyleSheet.create({
-  // Banner + avatar hero
-  bannerWrap: {
-    marginHorizontal: -20,
-    marginTop: -16,
-    height: 200,
-  },
-  bannerImg: {
-    width: '100%',
-    height: 200,
-  },
-  bannerPlaceholder: {
-    backgroundColor: BabyCityPalette.surfaceLow,
-  },
-  avatarWrap: {
+  loadingWrap: {
+    paddingVertical: 60,
     alignItems: 'center',
-    marginTop: -44,
-    marginBottom: 12,
-  },
-  identitySection: {
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  cityRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 4,
   },
   notFoundWrap: {
     paddingVertical: 38,
     alignItems: 'center',
   },
-  loadingWrap: {
-    paddingVertical: 38,
-    alignItems: 'center',
-  },
-  name: {
+  notFoundTitle: {
     lineHeight: 40,
   },
-  // Children avatar chips
-  childrenRow: {
-    flexDirection: 'row-reverse',
-    flexWrap: 'wrap',
-    gap: 12,
+  // Banner
+  bannerWrap: {
+    marginHorizontal: -20,
+    marginTop: -16,
+    height: 192,
+    position: 'relative',
+    overflow: 'hidden',
   },
-  childChip: {
+  bannerImg: {
+    width: '100%',
+    height: 192,
+  },
+  // Avatar + identity row (avatar overlaps banner)
+  avatarRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'flex-end',
+    gap: 16,
+    marginTop: -40,
+    marginBottom: 24,
+    paddingRight: 0,
+  },
+  avatarBorderWrap: {
+    borderRadius: 999,
+    borderWidth: 4,
+    borderColor: '#ffffff',
+    shadowColor: '#242f41',
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+    overflow: 'hidden',
+  },
+  identitySection: {
+    flex: 1,
+    paddingBottom: 4,
+  },
+  familyName: {
+    textAlign: 'right',
+    color: BabyCityPalette.textPrimary,
+  },
+  cityRow: {
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     gap: 4,
-    minWidth: 48,
+    marginTop: 4,
   },
-  statsRow: {
-    flexDirection: 'row-reverse',
-    gap: 12,
-    marginBottom: BabysitterDesignTokens.spacing.cardGap,
-  },
+  // About card (white)
   infoCard: {
-    marginBottom: BabysitterDesignTokens.spacing.cardGap,
+    backgroundColor: BabyCityPalette.surfaceLowest,
+    borderRadius: 12,
+    padding: 24,
+    marginBottom: 16,
+    shadowColor: '#242f41',
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 1,
+  },
+  // Alternate card (surface-low bg)
+  infoCardAlt: {
+    backgroundColor: BabyCityPalette.surfaceLow,
+    borderRadius: 12,
+    padding: 24,
+    marginBottom: 16,
+  },
+  infoCardHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  infoCardTitle: {
+    color: BabyCityPalette.textPrimary,
+    textAlign: 'right',
+  },
+  noteText: {
+    color: BabyCityPalette.textSecondary,
+    lineHeight: 26,
+    textAlign: 'right',
+  },
+  // Children horizontal scroll
+  childrenScroll: {
+    gap: 12,
+    paddingBottom: 4,
+  },
+  childCard: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: BabyCityPalette.surfaceLowest,
+    borderRadius: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    minWidth: 160,
+  },
+  childIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: BabyCityPalette.secondaryContainer,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  childName: {
+    color: BabyCityPalette.textPrimary,
+    textAlign: 'right',
+  },
+  // Pets
+  petsRow: {
+    flexDirection: 'row-reverse',
+    flexWrap: 'wrap',
+    gap: 8,
   },
   pillRow: {
     flexDirection: 'row-reverse',
@@ -417,31 +506,69 @@ const styles = StyleSheet.create({
     gap: 10,
     justifyContent: 'flex-end',
   },
-  noteText: {
-    width: '100%',
-    textAlign: 'right',
-    lineHeight: 26,
+  // Posts section
+  postsSectionHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
   postsWrap: {
     gap: 12,
+    marginBottom: 16,
   },
   postCard: {
-    marginBottom: 0,
+    backgroundColor: BabyCityPalette.surfaceLow,
+    borderRadius: 12,
+    borderRightWidth: 4,
+    borderRightColor: BabyCityPalette.primary,
+    overflow: 'hidden',
   },
-  postNote: {
-    width: '100%',
+  postCardInner: {
+    padding: 20,
+  },
+  postTopRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  postBadge: {
+    backgroundColor: 'rgba(112, 42, 225, 0.1)',
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  postBadgeText: {
+    color: BabyCityPalette.primary,
+  },
+  postDate: {
+    fontStyle: 'italic',
+  },
+  postTitle: {
+    color: BabyCityPalette.textPrimary,
     textAlign: 'right',
-    lineHeight: 22,
-    marginBottom: 12,
+    marginBottom: 8,
   },
   postMetaRow: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
-    justifyContent: 'flex-end',
     gap: 8,
+    marginBottom: 12,
   },
-  ctaCard: {
-    marginTop: 2,
+  postStats: {
+    flexDirection: 'row-reverse',
+    gap: 16,
+  },
+  postStat: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 4,
+  },
+  // CTA
+  ctaWrap: {
+    marginTop: 8,
+    marginBottom: 32,
   },
   reportLink: {
     alignSelf: 'flex-end',
