@@ -436,67 +436,68 @@ export default function ParentOnboardingScreen() {
   if (uiStep === 'welcome') {
     return (
       <SafeAreaView style={styles.welcomeSafe}>
+        {/* Atmosphere bubbles */}
+        <View style={styles.welcomeBubbleTopLeft} pointerEvents="none" />
+        <View style={styles.welcomeBubbleMidRight} pointerEvents="none" />
+
         <ScrollView contentContainerStyle={styles.welcomeScroll} showsVerticalScrollIndicator={false}>
-          {/* Brand */}
-          <View style={styles.welcomeBrand}>
-            <View style={styles.welcomeBrandMark}>
-              <AppText variant="bodyLarge" weight="800" style={{ color: BabyCityPalette.primary }}>S</AppText>
-            </View>
-            <AppText variant="bodyLarge" weight="800">{strings.appName}</AppText>
-          </View>
-
-          {/* Hero image */}
-          <View style={styles.welcomeHero}>
-            <Image
-              source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB5wfqxzhnrq9X-rWgu93gAkoCCF6Slk7LPdDPHyxoUb5XQ7FeWinBlNQ1b1jovjfnqz_gnk1BpggjfyM4AB7Hfj2mOAjowhr7QXqdCcJftoRY2iAmU-WEIhinLjNsIyzjKrj_IIDPQGDgLqO71oY4FRYpaohir7eFEU73qcLVQ5L9ae1CWoOicMwZ-MPVsAVJsQKH78RP1duR2SVTJumpJwgwSaUBP8v7HoAubImaKo4TWsCGCNGoXP472KsNluUysQ7vTTPguPfpq' }}
-              style={styles.welcomeHeroImage}
-              resizeMode="cover"
-            />
-          </View>
-
-          <AppText variant="h1" weight="800" align="center" style={styles.welcomeHeadline}>
-            {'ברוכים הבאים לסמארטאף'}
-          </AppText>
-          <AppText variant="body" tone="muted" align="center" style={styles.welcomeSubtitle}>
-            {'מצאו את הבייביסיטר המושלם עבור המשפחה שלכם'}
-          </AppText>
-
-          {/* Feature cards */}
-          <View style={styles.welcomeFeatureRow}>
-            {[
-              { icon: 'verified-user' as keyof typeof MaterialIcons.glyphMap, title: 'בטיחות', body: 'כל בייביסיטר עובר בדיקה ואימות' },
-              { icon: 'search' as keyof typeof MaterialIcons.glyphMap, title: 'התאמה חכמה', body: 'מציאת הבייביסיטר הקרוב אליכם' },
-              { icon: 'favorite' as keyof typeof MaterialIcons.glyphMap, title: 'תמיכה אישית', body: 'אנחנו כאן לכל שאלה' },
-            ].map(f => (
-              <View key={f.title} style={styles.welcomeFeatureCard}>
-                <MaterialIcons name={f.icon} size={24} color={BabyCityPalette.primary} />
-                <AppText variant="caption" weight="700" align="center" style={{ marginTop: 8 }}>{f.title}</AppText>
-                <AppText variant="caption" tone="muted" align="center" style={{ lineHeight: 18 }}>{f.body}</AppText>
-              </View>
-            ))}
-          </View>
-
-          {/* Social proof */}
-          <View style={styles.welcomeSocialProof}>
-            <View style={styles.welcomeAvatarStack}>
-              {[
-                'https://lh3.googleusercontent.com/aida-public/AB6AXuA-s0dD1m_2cLBvEul9elsR3TKyH2N0BAM7_oEHYNiNGGNN5xfO0AdwumMkiC4lsj8eg_LR-ok8N0Ve_dQwpvkIgl4aGtp3HbYUTpOpiv6noDzUP790JN2LS7Z_D0uX6j4oRhVe8KFy4tPzHqsL5yKpqgnwFAHyCTlhxQoVtgM6FgiOs-mzylBLStS49vySfqtxhaG_mTmTPgjHyeAEj9u04uRyrQ1stdlJHLhkjY1CiOAuLdR7KlV1LqsP4tgqYdymeXHqSa8tlSde',
-                'https://lh3.googleusercontent.com/aida-public/AB6AXuCFWRFrYQlCYvwwuvkMm4cJXQSaL51bK4nMDy2Mzc8eI1cRtCMtacTKicSD3OjH0UEZAX_sSjCQZopC15rmi7OfpV_63OVU7sZlORwDYyIG2UkO05kJzlVswerDXXQHwa2dEgGCmxTYtKPlSCWLfxdvvb6VDd63wS0N_pMAcWhtDLpo5qh34yv9POGufReSz2wiyqe-FcS_umdN8oG-ykIpmdmmUJNOq51r8bq--ELfZgPGJjyUr4xA7W-UxJB0l2Qnv3IFeivRXHeP',
-                'https://lh3.googleusercontent.com/aida-public/AB6AXuAAer5Nml7VFmRJpAoc1NAtneSlOl-iJH8VRWyTOAOQOAP-KPiICTvaZGSCLJ9d7CyNGKoXXSPsfw7TR8dVEE07qg5xZrpt5z3zaXJl33N9V4vDZFNLoMcmWz7Nfv-nVvBnCmdP9RT5HH6DxBOPBKcP7nWtE_Fh_PGtFrFcVErGut6yS5CrQhoZdUbEBxGqUk2LdLPJTrH9MiiC9EhudWlMqC25rwY1eAyJ-l1_ruQqZMvqDqLEs5bywOg2-7SHJC29K6o-0Y9AbNGP',
-              ].map((uri, i) => (
-                <Image key={i} source={{ uri }} style={[styles.welcomeAvatar, { right: i * 22 }]} resizeMode="cover" />
-              ))}
-            </View>
-            <AppText variant="caption" weight="600" tone="muted" style={{ flex: 1, textAlign: 'right' }}>
-              {'הצטרפו ל-2,400+ משפחות'}
+          {/* Brand — centered */}
+          <View style={styles.welcomeBrandRow}>
+            <AppText variant="bodyLarge" weight="800" style={styles.welcomeBrandName}>
+              {strings.appName}
             </AppText>
           </View>
 
-          <AppPrimaryButton
-            label={'בואו נתחיל'}
-            onPress={() => setUiStep('form')}
-            style={styles.welcomeCta}
-          />
+          {/* Hero illustration */}
+          <View style={styles.welcomeHeroWrap}>
+            {/* Background shape layers */}
+            <View style={styles.welcomeHeroBgShape1} />
+            <View style={styles.welcomeHeroBgShape2} />
+
+            {/* Main image */}
+            <View style={styles.welcomeHeroImageWrap}>
+              <Image
+                source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB5wfqxzhnrq9X-rWgu93gAkoCCF6Slk7LPdDPHyxoUb5XQ7FeWinBlNQ1b1jovjfnqz_gnk1BpggjfyM4AB7Hfj2mOAjowhr7QXqdCcJftoRY2iAmU-WEIhinLjNsIyzjKrj_IIDPQGDgLqO71oY4FRYpaohir7eFEU73qcLVQ5L9ae1CWoOicMwZ-MPVsAVJsQKH78RP1duR2SVTJumpJwgwSaUBP8v7HoAubImaKo4TWsCGCNGoXP472KsNluUysQ7vTTPguPfpq' }}
+                style={styles.welcomeHeroImage}
+                resizeMode="cover"
+              />
+            </View>
+
+            {/* Floating trust badge */}
+            <View style={styles.welcomeTrustBadge}>
+              <View style={styles.welcomeTrustIcon}>
+                <MaterialIcons name="verified" size={20} color="#64042d" />
+              </View>
+              <View style={styles.welcomeTrustText}>
+                <AppText variant="caption" weight="700" style={styles.welcomeTrustTitle}>{'ביטחון מלא'}</AppText>
+                <AppText style={styles.welcomeTrustSub}>{'מטפלות מוסמכות בלבד'}</AppText>
+              </View>
+            </View>
+          </View>
+
+          {/* Headline + subtitle */}
+          <View style={styles.welcomeCopyBlock}>
+            <AppText variant="h1" weight="800" align="center" style={styles.welcomeHeadline}>
+              {'ברוכים הבאים למשפחת Smartaf'}
+            </AppText>
+            <AppText variant="body" tone="muted" align="center" style={styles.welcomeSubtitle}>
+              {'המקום שבו ביטחון, רוגע וטיפול מסור נפגשים. אנחנו כאן כדי לעזור לכם למצוא את המעטפת המושלמת עבור הקטנטנים שלכם.'}
+            </AppText>
+          </View>
+
+          {/* CTA buttons */}
+          <View style={styles.welcomeActions}>
+            <AppPrimaryButton
+              label={'מתחילים'}
+              onPress={() => setUiStep('form')}
+              style={styles.welcomeCta}
+            />
+            <TouchableOpacity activeOpacity={0.8} style={styles.welcomeLoginBtn}>
+              <AppText variant="body" weight="600" style={styles.welcomeLoginText}>
+                {'כבר יש לי חשבון? התחברות'}
+              </AppText>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </SafeAreaView>
     );
@@ -508,74 +509,124 @@ export default function ParentOnboardingScreen() {
     return (
       <SafeAreaView style={styles.reviewSafe}>
         <ScrollView contentContainerStyle={styles.reviewScroll} showsVerticalScrollIndicator={false}>
-          <View style={styles.reviewHeader}>
-            <AppText variant="h1" weight="800" style={styles.reviewTitle}>{'סקירה'}</AppText>
-            <AppText variant="body" tone="muted" style={styles.reviewSubtitle}>
-              {'בדקו שהפרטים נכונים לפני השמירה'}
+
+          {/* Hero section — verified icon + badge */}
+          <View style={styles.reviewHeroSection}>
+            <View style={styles.reviewHeroIconWrap}>
+              <View style={styles.reviewHeroBlur} />
+              <View style={styles.reviewHeroCircle}>
+                <MaterialIcons name="verified-user" size={64} color={BabyCityPalette.primary} />
+              </View>
+              <View style={styles.reviewHeroBadge}>
+                <MaterialIcons name="celebration" size={20} color="#ffeff1" />
+              </View>
+            </View>
+            <AppText variant="h1" weight="800" align="center" style={styles.reviewHeroTitle}>{'הכל מוכן!'}</AppText>
+            <AppText variant="body" tone="muted" align="center" style={styles.reviewHeroSubtitle}>
+              {'פרופיל ההורה שלך נוצר בהצלחה. הנה סיכום של המידע שהזנת.'}
             </AppText>
           </View>
 
-          {/* Location */}
-          {data.city ? (
-            <AppCard style={styles.reviewCard}>
-              <View style={styles.reviewRow}>
-                <MaterialIcons name="location-on" size={18} color={BabyCityPalette.primary} />
-                <AppText variant="bodyLarge" weight="700" style={styles.reviewRowText}>{data.city}</AppText>
+          {/* Family description card (family note) */}
+          {data.familyNote ? (
+            <View style={styles.reviewFamilyCard}>
+              <View style={styles.reviewFamilyCardAccent} />
+              <View style={styles.reviewCardHeader}>
+                <MaterialIcons name="family-restroom" size={20} color={BabyCityPalette.primary} />
+                <AppText variant="bodyLarge" weight="700" style={styles.reviewCardHeaderText}>{'תיאור המשפחה'}</AppText>
               </View>
-            </AppCard>
+              <AppText style={styles.reviewFamilyNote}>{`"${data.familyNote}"`}</AppText>
+            </View>
+          ) : null}
+
+          {/* Location row */}
+          {data.city ? (
+            <View style={styles.reviewDetailCard}>
+              <View style={styles.reviewDetailIconWrap}>
+                <MaterialIcons name="location-on" size={20} color={BabyCityPalette.primary} />
+              </View>
+              <View>
+                <AppText variant="caption" tone="muted" style={styles.reviewDetailLabel}>{'עיר מגורים'}</AppText>
+                <AppText variant="bodyLarge" weight="700" style={styles.reviewDetailValue}>{data.city}</AppText>
+              </View>
+            </View>
           ) : null}
 
           {/* Pets */}
           {data.pets.length > 0 ? (
-            <AppCard style={styles.reviewCard}>
-              <AppText variant="caption" weight="700" tone="muted" style={styles.reviewCardLabel}>{'חיות מחמד'}</AppText>
-              <View style={styles.reviewChipsRow}>
-                {data.pets.map(pet => (
-                  <AppChip key={pet} label={pet} tone="primary" size="sm" />
-                ))}
+            <View style={styles.reviewDetailCard}>
+              <View style={styles.reviewDetailIconWrap}>
+                <MaterialIcons name="pets" size={20} color={BabyCityPalette.primary} />
               </View>
-            </AppCard>
+              <View style={styles.reviewDetailRight}>
+                <AppText variant="caption" tone="muted" style={styles.reviewDetailLabel}>{'חיות מחמד'}</AppText>
+                <View style={styles.reviewChipsRow}>
+                  {data.pets.map(pet => (
+                    <AppChip key={pet} label={pet} tone="primary" size="sm" />
+                  ))}
+                </View>
+              </View>
+            </View>
           ) : null}
 
-          {/* Children */}
+          {/* Children section */}
           {childCount > 0 ? (
-            <AppCard style={styles.reviewCard}>
-              <AppText variant="caption" weight="700" tone="muted" style={styles.reviewCardLabel}>{'ילדים'}</AppText>
-              <View style={styles.reviewChildrenRow}>
+            <View style={styles.reviewChildrenCard}>
+              <View style={styles.reviewChildrenHeader}>
+                <AppText variant="bodyLarge" weight="700" style={styles.reviewCardHeaderText}>{'הילדים שלנו'}</AppText>
+                <View style={styles.reviewChildCountBadge}>
+                  <AppText style={styles.reviewChildCountText}>{`${childCount} ילדים`}</AppText>
+                </View>
+              </View>
+              <View style={styles.reviewChildrenList}>
                 {Array.from({ length: Math.min(childCount, 4) }).map((_, i) => {
                   const birthDate = data.childBirthDates?.[i];
                   const age = birthDate ? calculateAgeFromBirthDate(birthDate) : null;
                   return (
-                    <View key={i} style={styles.reviewChildChip}>
-                      <AvatarCircle name={String(i + 1)} size={44} tone="accent" />
-                      {age !== null ? (
-                        <AppText variant="caption" tone="muted" align="center">
-                          {`${age} שנים`}
-                        </AppText>
-                      ) : null}
+                    <View key={i} style={styles.reviewChildRow}>
+                      <AvatarCircle name={String(i + 1)} size={56} tone="accent" />
+                      <View style={styles.reviewChildInfo}>
+                        <AppText variant="body" weight="700">{`ילד ${i + 1}`}</AppText>
+                        {age !== null ? (
+                          <AppText variant="caption" tone="muted">{`בן/בת ${age} שנים`}</AppText>
+                        ) : null}
+                      </View>
+                      <MaterialIcons name="child-care" size={20} color={BabyCityPalette.textTertiary} />
                     </View>
                   );
                 })}
               </View>
-            </AppCard>
+            </View>
           ) : null}
+
+          {/* Verification notice */}
+          <View style={styles.reviewNotice}>
+            <MaterialIcons name="info" size={20} color="#564f61" style={styles.reviewNoticeIcon} />
+            <AppText style={styles.reviewNoticeText}>
+              {'שימי לב: המידע שהזנת יוצג למטפלות פוטנציאליות רק לאחר אישור הפרופיל על ידי הצוות שלנו. תוכלי לערוך את הפרטים בכל עת מהגדרות הפרופיל.'}
+            </AppText>
+          </View>
 
           {saveError ? (
             <AppText variant="body" tone="error" style={styles.reviewError}>{saveError}</AppText>
           ) : null}
 
-          <AppPrimaryButton
-            label={'סיים'}
-            loading={saving}
-            onPress={handleFinish}
-            style={styles.reviewSaveBtn}
-          />
-          <AppButton
-            label={'ערוך'}
-            variant="secondary"
-            onPress={() => setUiStep('form')}
-            style={styles.reviewEditBtn}
-          />
+          {/* CTA */}
+          <View style={styles.reviewActions}>
+            <AppPrimaryButton
+              label={'סיום והמשך לאפליקציה'}
+              loading={saving}
+              onPress={handleFinish}
+              style={styles.reviewSaveBtn}
+            />
+            <TouchableOpacity
+              style={styles.reviewEditBtn}
+              onPress={() => setUiStep('form')}
+              activeOpacity={0.8}
+            >
+              <AppText variant="body" weight="700" style={styles.reviewEditText}>{'חזרה לעריכה'}</AppText>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </SafeAreaView>
     );
@@ -799,37 +850,260 @@ export default function ParentOnboardingScreen() {
 }
 
 const styles = StyleSheet.create({
-  // Welcome screen
-  welcomeSafe: { flex: 1, backgroundColor: '#ffffff' },
-  welcomeScroll: { paddingHorizontal: 24, paddingBottom: 40 },
-  welcomeBrand: { flexDirection: 'row-reverse', alignItems: 'center', gap: 8, paddingTop: 16, paddingBottom: 8 },
-  welcomeBrandMark: { width: 36, height: 36, borderRadius: 12, backgroundColor: BabyCityPalette.primarySoft, alignItems: 'center', justifyContent: 'center' },
-  welcomeHero: { alignItems: 'center', marginVertical: 24 },
-  welcomeHeroImage: { width: '100%', height: 200, borderRadius: 24, overflow: 'hidden' },
-  welcomeHeadline: { marginBottom: 10 },
-  welcomeSubtitle: { marginBottom: 24, lineHeight: 22 },
-  welcomeFeatureRow: { flexDirection: 'row-reverse', gap: 10, marginBottom: 24 },
-  welcomeFeatureCard: { flex: 1, backgroundColor: BabyCityPalette.surfaceLow, borderRadius: 20, padding: 14, alignItems: 'center', gap: 4 },
-  welcomeSocialProof: { flexDirection: 'row-reverse', alignItems: 'center', gap: 12, marginBottom: 24 },
-  welcomeAvatarStack: { flexDirection: 'row-reverse', width: 70, height: 36, position: 'relative' },
-  welcomeAvatar: { position: 'absolute', width: 30, height: 30, borderRadius: 15, overflow: 'hidden', borderWidth: 2, borderColor: '#ffffff', top: 3 },
-  welcomeCta: { marginBottom: 12 },
-  // Review screen
-  reviewSafe: { flex: 1, backgroundColor: BabyCityPalette.canvas },
-  reviewScroll: { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 40 },
-  reviewHeader: { alignItems: 'flex-end', marginBottom: 20 },
-  reviewTitle: { textAlign: 'right' },
-  reviewSubtitle: { textAlign: 'right', marginTop: 4 },
-  reviewCard: { marginBottom: 12 },
-  reviewRow: { flexDirection: 'row-reverse', alignItems: 'center', gap: 8 },
-  reviewRowText: { flex: 1, textAlign: 'right' },
-  reviewCardLabel: { textAlign: 'right', marginBottom: 10 },
+  // ── Welcome screen ─────────────────────────────────────────────────────────
+  welcomeSafe: { flex: 1, backgroundColor: '#f4f6ff' },
+  welcomeScroll: { paddingHorizontal: 24, paddingBottom: 48 },
+  // Atmosphere bubbles
+  welcomeBubbleTopLeft: {
+    position: 'absolute',
+    top: -80,
+    left: -80,
+    width: 256,
+    height: 256,
+    borderRadius: 128,
+    backgroundColor: '#dee8ff99',
+    zIndex: 0,
+  },
+  welcomeBubbleMidRight: {
+    position: 'absolute',
+    top: '40%',
+    right: -128,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: '#e9def566',
+    zIndex: 0,
+  },
+  // Brand
+  welcomeBrandRow: { alignItems: 'center', paddingTop: 20, paddingBottom: 8 },
+  welcomeBrandName: { color: '#702ae1', fontSize: 24, lineHeight: 30 },
+  // Hero illustration
+  welcomeHeroWrap: {
+    width: '100%',
+    aspectRatio: 1,
+    maxHeight: 360,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 16,
+    position: 'relative',
+  },
+  welcomeHeroBgShape1: {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: '#ecf1ff',
+    borderRadius: 9999,
+    transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }, { translateX: 12 }, { translateY: -12 }],
+  },
+  welcomeHeroBgShape2: {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: '#e9def54d',
+    borderRadius: 9999,
+    transform: [{ scaleX: 0.95 }, { scaleY: 0.95 }, { translateX: -8 }, { translateY: 8 }],
+  },
+  welcomeHeroImageWrap: {
+    width: '90%',
+    height: '90%',
+    borderRadius: 24,
+    overflow: 'hidden',
+    shadowColor: '#242f41',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 16 },
+    shadowRadius: 32,
+    elevation: 6,
+    zIndex: 1,
+  },
+  welcomeHeroImage: { width: '100%', height: '100%' },
+  // Floating trust badge
+  welcomeTrustBadge: {
+    position: 'absolute',
+    bottom: -16,
+    right: 0,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 10,
+    shadowColor: '#242f41',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 8 },
+    shadowRadius: 24,
+    elevation: 6,
+    zIndex: 2,
+  },
+  welcomeTrustIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#ff8eac',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  welcomeTrustText: { alignItems: 'flex-end' },
+  welcomeTrustTitle: { color: '#242f41', fontSize: 13 },
+  welcomeTrustSub: { color: '#515c70', fontSize: 11 },
+  // Copy
+  welcomeCopyBlock: { marginTop: 28, gap: 16 },
+  welcomeHeadline: { fontSize: 32, lineHeight: 40, color: '#242f41' },
+  welcomeSubtitle: { fontSize: 17, lineHeight: 26, color: '#515c70', maxWidth: '90%', alignSelf: 'center' },
+  // Actions
+  welcomeActions: { marginTop: 28, gap: 12, paddingBottom: 16 },
+  welcomeCta: {},
+  welcomeLoginBtn: { alignItems: 'center', paddingVertical: 12 },
+  welcomeLoginText: { color: '#702ae1', fontSize: 15 },
+
+  // ── Review screen ───────────────────────────────────────────────────────────
+  reviewSafe: { flex: 1, backgroundColor: '#f4f6ff' },
+  reviewScroll: { paddingHorizontal: 24, paddingTop: 24, paddingBottom: 48 },
+  // Hero
+  reviewHeroSection: { alignItems: 'center', marginBottom: 32, gap: 12 },
+  reviewHeroIconWrap: { position: 'relative', alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  reviewHeroBlur: {
+    position: 'absolute',
+    inset: 0,
+    width: 192,
+    height: 192,
+    borderRadius: 96,
+    backgroundColor: '#702ae11a',
+  },
+  reviewHeroCircle: {
+    width: 192,
+    height: 192,
+    borderRadius: 96,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#242f41',
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
+    elevation: 2,
+  },
+  reviewHeroBadge: {
+    position: 'absolute',
+    bottom: -4,
+    left: -4,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#9e3657',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#242f41',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  reviewHeroTitle: { fontSize: 32, color: '#242f41' },
+  reviewHeroSubtitle: { fontSize: 16, lineHeight: 24, color: '#515c70', maxWidth: '85%' },
+  // Family card
+  reviewFamilyCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 28,
+    marginBottom: 16,
+    overflow: 'hidden',
+    position: 'relative',
+    shadowColor: '#242f41',
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
+    elevation: 2,
+  },
+  reviewFamilyCardAccent: {
+    position: 'absolute',
+    top: -32,
+    left: -32,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: '#702ae10d',
+  },
+  reviewCardHeader: { flexDirection: 'row-reverse', alignItems: 'center', gap: 10, marginBottom: 16 },
+  reviewCardHeaderText: { color: '#242f41', textAlign: 'right' },
+  reviewFamilyNote: { color: '#515c70', lineHeight: 22, textAlign: 'right', fontStyle: 'italic', fontSize: 14 },
+  // Detail card (location / pets)
+  reviewDetailCard: {
+    backgroundColor: '#ecf1ff',
+    borderRadius: 16,
+    padding: 24,
+    marginBottom: 16,
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 20,
+    shadowColor: '#242f41',
+    shadowOpacity: 0.03,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 1,
+  },
+  reviewDetailIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#242f41',
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 1,
+  },
+  reviewDetailRight: { flex: 1, alignItems: 'flex-end', gap: 6 },
+  reviewDetailLabel: { textAlign: 'right', fontSize: 12, color: '#515c70' },
+  reviewDetailValue: { textAlign: 'right', color: '#242f41', fontSize: 18 },
   reviewChipsRow: { flexDirection: 'row-reverse', flexWrap: 'wrap', gap: 8 },
-  reviewChildrenRow: { flexDirection: 'row-reverse', gap: 12 },
-  reviewChildChip: { alignItems: 'center', gap: 4 },
+  // Children card
+  reviewChildrenCard: {
+    backgroundColor: '#dee8ff',
+    borderRadius: 16,
+    padding: 32,
+    marginBottom: 16,
+  },
+  reviewChildrenHeader: {
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  reviewChildCountBadge: {
+    backgroundColor: '#702ae11a',
+    borderRadius: 9999,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
+  reviewChildCountText: { color: '#702ae1', fontSize: 13, fontWeight: '700' },
+  reviewChildrenList: { gap: 16 },
+  reviewChildRow: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 20,
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 16,
+  },
+  reviewChildInfo: { flex: 1, alignItems: 'flex-end' },
+  // Notice
+  reviewNotice: {
+    backgroundColor: '#e9def5',
+    borderRadius: 16,
+    padding: 20,
+    flexDirection: 'row-reverse',
+    alignItems: 'flex-start',
+    gap: 14,
+    marginBottom: 16,
+  },
+  reviewNoticeIcon: { marginTop: 2 },
+  reviewNoticeText: { flex: 1, color: '#564f61', fontSize: 13, lineHeight: 20, textAlign: 'right' },
   reviewError: { textAlign: 'right', marginBottom: 12 },
-  reviewSaveBtn: { marginBottom: 12 },
-  reviewEditBtn: {},
+  // Actions
+  reviewActions: { marginTop: 32, gap: 16 },
+  reviewSaveBtn: {},
+  reviewEditBtn: { alignItems: 'center', paddingVertical: 12 },
+  reviewEditText: { color: '#702ae1', fontSize: 15 },
   container: {
     flex: 1,
     backgroundColor: BabyCityPalette.canvas,
