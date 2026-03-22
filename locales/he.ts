@@ -62,7 +62,7 @@ export const he = {
   authErrorInvalidOtp: 'קוד לא תקין. נסה/י שוב.',
   authErrorGeneric: 'אירעה שגיאה. נסה/י שוב.',
   authErrorNameRequired: 'נא להזין שם',
-  resendCode: 'שלח/י קוד מחדש',
+  resendCode: 'שלח קוד חדש',
   resendCodeIn: 'שלח מחדש בעוד',
   resendCodeSent: 'קוד חדש נשלח!',
   seconds: 'שניות',

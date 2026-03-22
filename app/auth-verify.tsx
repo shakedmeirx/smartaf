@@ -1,54 +1,45 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  TouchableOpacity,
-  View,
-  TextInput,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { strings } from '@/locales';
 import { useAuth } from '@/context/AuthContext';
-import { BabyCityPalette, BabyCityShadows } from '@/constants/theme';
+import {
+  BabyCityPalette,
+  BabyCityShadows,
+} from '@/constants/theme';
 import KeyboardAccessoryBar from '@/components/ui/KeyboardAccessoryBar';
 import AppText from '@/components/ui/AppText';
-import AppCard from '@/components/ui/AppCard';
-import AppPrimaryButton from '@/components/ui/AppPrimaryButton';
 
-// Auth-screen local palette — shared visual language with auth.tsx
-const AUTH = {
-  bg: '#ecf1ff',
-  inputBg: '#dee8ff',
-  otpBorder: '#a2adc4',          // outline_variant
-  otpActiveBorder: BabyCityPalette.primary,
-  otpActiveBg: BabyCityPalette.primarySoft,
-} as const;
-
-const RESEND_COOLDOWN = 30; // seconds before the resend button becomes active
+const RESEND_COOLDOWN = 30;
 
 export default function AuthVerifyScreen() {
   const { phone } = useLocalSearchParams<{ phone: string }>();
   const { verifyOtp, sendOtp } = useAuth();
   const codeRef = useRef<TextInput>(null);
   const codeAccessoryId = 'auth-verify-accessory';
+  const phoneValue = typeof phone === 'string' ? phone : '';
 
-  const [code, setCode]       = useState('');
-  const [error, setError]     = useState('');
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Resend state
-  const [cooldown, setCooldown]   = useState(RESEND_COOLDOWN);
+  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN);
   const [resending, setResending] = useState(false);
-  const [resentOk, setResentOk]   = useState(false);
+  const [resentOk, setResentOk] = useState(false);
 
-  // Count down from RESEND_COOLDOWN to 0, then allow resend
   useEffect(() => {
     if (cooldown <= 0) return;
-    const timer = setTimeout(() => setCooldown(c => c - 1), 1000);
+    const timer = setTimeout(() => setCooldown((current) => current - 1), 1000);
     return () => clearTimeout(timer);
   }, [cooldown]);
 
@@ -61,9 +52,7 @@ export default function AuthVerifyScreen() {
     setLoading(true);
     setError('');
     try {
-      await verifyOtp(phone, code.trim());
-      // Success: onAuthStateChange in AuthContext fires, session is set,
-      // and the AuthGate in _layout.tsx redirects to '/' automatically.
+      await verifyOtp(phoneValue, code.trim());
     } catch {
       setError(strings.authErrorInvalidOtp);
       setLoading(false);
@@ -75,10 +64,10 @@ export default function AuthVerifyScreen() {
     setResentOk(false);
     setError('');
     try {
-      await sendOtp(phone);
+      await sendOtp(phoneValue);
       setResentOk(true);
-      setCooldown(RESEND_COOLDOWN); // restart cooldown
-      setCode('');                  // clear old code
+      setCooldown(RESEND_COOLDOWN);
+      setCode('');
     } catch {
       setError(strings.authErrorGeneric);
     } finally {
@@ -88,100 +77,158 @@ export default function AuthVerifyScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <View style={styles.backgroundLayer} pointerEvents="none">
+        <View style={styles.backgroundBlobTop} />
+        <View style={styles.backgroundBlobBottom} />
+      </View>
+
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.content}>
-          {/* Hero — icon circle + title + subtitle, no card box */}
+          <View style={styles.topBar}>
+            <AppText variant="bodyLarge" weight="800" style={styles.brandName}>
+              {strings.authBrandName}
+            </AppText>
+
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => router.replace('/auth')}
+              style={styles.backButton}
+            >
+              <Ionicons name="chevron-forward" size={18} color={BabyCityPalette.textPrimary} />
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.hero}>
-            <View style={styles.iconCircle}>
-              <Ionicons name="lock-closed-outline" size={36} color={BabyCityPalette.primary} />
+            <View style={styles.heroGlow} />
+            <View style={styles.heroIcon}>
+              <MaterialIcons name="phonelink-lock" size={44} color={BabyCityPalette.primary} />
             </View>
-            <AppText variant="h1" weight="800" style={styles.title}>
+          </View>
+
+          <View style={styles.header}>
+            <AppText variant="h1" weight="800" align="center" style={styles.title}>
               {strings.authOtpTitle}
             </AppText>
-            <AppText style={styles.subtitle}>
-              {strings.authOtpSubtitle} {phone}
+            <AppText variant="bodyLarge" weight="500" align="center" style={styles.subtitle}>
+              {`${strings.authOtpSubtitle} ${phoneValue}`}
             </AppText>
           </View>
 
-          {/* Form card — borderless, generous radius */}
-          <AppCard borderColor="transparent" style={styles.formCard}>
-            <AppText variant="caption" weight="700" tone="muted" style={styles.label}>
-              {strings.otpCodeLabel}
-            </AppText>
-            <View style={styles.otpContainer}>
-              <View style={styles.otpRow} pointerEvents="none">
-                {[0, 1, 2, 3, 4, 5].map(i => {
-                  const isActive = i === code.length || (code.length >= 6 && i === 5);
-                  return (
-                    <View key={i} style={[styles.otpBox, isActive && styles.otpBoxActive]}>
-                      <AppText weight="700" style={styles.otpDigit}>
-                        {code[i] ?? ''}
-                      </AppText>
-                    </View>
-                  );
-                })}
-              </View>
-              <TextInput
-                ref={codeRef}
-                style={styles.hiddenInput}
-                value={code}
-                onChangeText={v => { setCode(v); setError(''); setResentOk(false); }}
-                keyboardType="number-pad"
-                textContentType="oneTimeCode"
-                maxLength={6}
-                returnKeyType="done"
-                onSubmitEditing={handleVerify}
-                autoFocus
-                inputAccessoryViewID={Platform.OS === 'ios' ? codeAccessoryId : undefined}
-                caretHidden
-              />
-            </View>
+          <View style={styles.otpSection}>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => codeRef.current?.focus()}
+              style={styles.otpRow}
+            >
+              {[0, 1, 2, 3, 4, 5].map((index) => {
+                const digit = code[index] ?? '';
+                const activeIndex = Math.min(code.length, 5);
+                const isActive = index === activeIndex;
+
+                return (
+                  <View
+                    key={index}
+                    style={[styles.otpBox, isActive && styles.otpBoxActive]}
+                  >
+                    <AppText variant="bodyLarge" weight="700" align="center" style={styles.otpDigit}>
+                      {digit !== '' ? digit : '·'}
+                    </AppText>
+                  </View>
+                );
+              })}
+            </TouchableOpacity>
+
+            <TextInput
+              ref={codeRef}
+              value={code}
+              onChangeText={(value) => {
+                setCode(value.replace(/\D/g, ''));
+                setError('');
+                setResentOk(false);
+              }}
+              keyboardType="number-pad"
+              textContentType="oneTimeCode"
+              maxLength={6}
+              returnKeyType="done"
+              onSubmitEditing={handleVerify}
+              autoFocus
+              inputAccessoryViewID={Platform.OS === 'ios' ? codeAccessoryId : undefined}
+              style={styles.hiddenInput}
+            />
+
             <KeyboardAccessoryBar nativeID={codeAccessoryId} onPress={handleVerify} />
 
             {error !== '' ? (
-              <AppText variant="body" tone="error" style={styles.error}>
+              <AppText variant="body" tone="error" align="center" style={styles.feedback}>
                 {error}
               </AppText>
-            ) : null}
-            {resentOk ? (
-              <AppText variant="body" style={styles.success}>
+            ) : resentOk ? (
+              <AppText variant="body" align="center" style={styles.successText}>
                 {strings.resendCodeSent}
               </AppText>
             ) : null}
 
-            <AppPrimaryButton
-              label={strings.verifyCode}
-              loading={loading}
-              onPress={handleVerify}
-              size="lg"
-              style={styles.button}
-            />
-
-            <View style={styles.resendRow}>
-              <AppText variant="caption" tone="muted" style={styles.resendHelper}>
-                לא קיבלת את הקוד?
+            <View style={styles.resendWrap}>
+              <AppText variant="body" tone="muted" align="center">
+                {strings.authOtpResendPrompt}
               </AppText>
+
               {cooldown > 0 ? (
-                <AppText style={styles.resendDisabled}>
-                  {strings.resendCodeIn} {cooldown} {strings.seconds}
+                <AppText variant="body" align="center" style={styles.cooldownText}>
+                  {`${strings.resendCodeIn} ${cooldown} ${strings.seconds}`}
                 </AppText>
               ) : (
-                <TouchableOpacity onPress={handleResend} disabled={resending}>
-                  {resending
-                    ? <ActivityIndicator size="small" color={BabyCityPalette.primary} />
-                    : (
-                      <AppText weight="700" tone="accent" style={styles.resendLink}>
-                        {strings.resendCode}
-                      </AppText>
-                    )
-                  }
+                <TouchableOpacity disabled={resending} onPress={handleResend} activeOpacity={0.8}>
+                  {resending ? (
+                    <ActivityIndicator color={BabyCityPalette.primary} />
+                  ) : (
+                    <AppText variant="bodyLarge" weight="700" align="center" style={styles.resendLink}>
+                      {strings.resendCode}
+                    </AppText>
+                  )}
                 </TouchableOpacity>
               )}
             </View>
-          </AppCard>
+
+            <TouchableOpacity
+              activeOpacity={0.88}
+              onPress={handleVerify}
+              disabled={loading}
+              style={styles.primaryButtonShadow}
+            >
+              <LinearGradient
+                colors={[BabyCityPalette.primary, '#6411d5']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.primaryButton}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#ffffff" />
+                ) : (
+                  <AppText variant="bodyLarge" weight="700" style={styles.primaryButtonText}>
+                    {strings.authOtpContinue}
+                  </AppText>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.supportCard}>
+            <View style={styles.supportIcon}>
+              <MaterialIcons name="help-outline" size={20} color={BabyCityPalette.textSecondary} />
+            </View>
+            <View style={styles.supportContent}>
+              <AppText variant="caption" weight="700" style={styles.supportTitle}>
+                {strings.authOtpHelpTitle}
+              </AppText>
+              <AppText variant="caption" tone="muted" style={styles.supportBody}>
+                {strings.authOtpHelpBody}
+              </AppText>
+            </View>
+          </View>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -191,120 +238,195 @@ export default function AuthVerifyScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: AUTH.bg,
+    backgroundColor: BabyCityPalette.surface,
   },
   flex: {
     flex: 1,
   },
+  backgroundLayer: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  backgroundBlobTop: {
+    position: 'absolute',
+    top: -60,
+    left: -80,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: 'rgba(112, 42, 225, 0.06)',
+  },
+  backgroundBlobBottom: {
+    position: 'absolute',
+    bottom: -40,
+    right: -30,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: 'rgba(233, 222, 245, 0.38)',
+  },
   content: {
     flex: 1,
-    justifyContent: 'center',
     paddingHorizontal: 24,
+    paddingTop: 12,
     paddingBottom: 32,
-    gap: 20,
-  },
-  // ── Hero ────────────────────────────────────────────────────────────────────
-  hero: {
     alignItems: 'center',
-    paddingHorizontal: 8,
-    gap: 10,
   },
-  iconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: BabyCityPalette.surface,
+  topBar: {
+    width: '100%',
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 28,
+  },
+  brandName: {
+    color: BabyCityPalette.textPrimary,
+    fontSize: 26,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(236, 241, 255, 0.7)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 2,
+  },
+  hero: {
+    position: 'relative',
+    marginBottom: 28,
+  },
+  heroGlow: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 64,
+    backgroundColor: 'rgba(112, 42, 225, 0.12)',
+    transform: [{ scale: 1.18 }],
+  },
+  heroIcon: {
+    width: 128,
+    height: 128,
+    borderRadius: 64,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
     ...BabyCityShadows.soft,
+  },
+  header: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 36,
   },
   title: {
     color: BabyCityPalette.textPrimary,
-    textAlign: 'center',
-    fontSize: 30,
-    lineHeight: 38,
+    marginBottom: 12,
   },
   subtitle: {
     color: BabyCityPalette.textSecondary,
-    textAlign: 'center',
-    lineHeight: 22,
+    maxWidth: 320,
+    lineHeight: 28,
   },
-  // ── Form card ────────────────────────────────────────────────────────────────
-  formCard: {
-    borderRadius: 28,
-    paddingHorizontal: 24,
-    paddingVertical: 28,
-  },
-  label: {
-    textAlign: 'center',
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-    marginBottom: 12,
-  },
-  otpContainer: {
-    position: 'relative',
-    marginBottom: 4,
+  otpSection: {
+    width: '100%',
+    alignItems: 'center',
   },
   otpRow: {
     flexDirection: 'row',
+    gap: 12,
     justifyContent: 'center',
-    gap: 10,
   },
   otpBox: {
-    width: 50,
-    height: 62,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: AUTH.otpBorder,
-    backgroundColor: BabyCityPalette.surface,
+    width: 48,
+    height: 64,
+    borderRadius: 16,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#a2adc4',
     alignItems: 'center',
     justifyContent: 'center',
+    ...BabyCityShadows.soft,
   },
   otpBoxActive: {
-    borderColor: AUTH.otpActiveBorder,
+    borderColor: BabyCityPalette.primary,
     borderWidth: 2,
-    backgroundColor: AUTH.otpActiveBg,
+    shadowColor: BabyCityPalette.primary,
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 0 },
   },
   otpDigit: {
-    fontSize: 26,
     color: BabyCityPalette.textPrimary,
-    lineHeight: 30,
+    fontSize: 20,
+    lineHeight: 24,
   },
   hiddenInput: {
     position: 'absolute',
-    width: '100%',
-    height: '100%',
     opacity: 0,
+    width: 1,
+    height: 1,
   },
-  error: {
-    textAlign: 'center',
-    marginTop: 10,
-    marginBottom: 4,
+  feedback: {
+    marginTop: 18,
   },
-  success: {
+  successText: {
+    marginTop: 18,
     color: BabyCityPalette.success,
-    textAlign: 'center',
-    marginTop: 10,
-    marginBottom: 4,
   },
-  button: {
-    marginTop: 24,
-    borderRadius: 24,
-    borderWidth: 0,
-  },
-  // ── Resend section ──────────────────────────────────────────────────────────
-  resendRow: {
+  resendWrap: {
     alignItems: 'center',
-    marginTop: 20,
-    gap: 6,
-    minHeight: 44,
+    gap: 8,
+    marginTop: 28,
   },
-  resendHelper: {
-    textAlign: 'center',
+  cooldownText: {
+    color: BabyCityPalette.textSecondary,
   },
-  resendDisabled: {
-    color: BabyCityPalette.textTertiary,
+  resendLink: {
+    color: BabyCityPalette.primary,
   },
-  resendLink: {},
+  primaryButtonShadow: {
+    width: '100%',
+    marginTop: 28,
+    shadowColor: BabyCityPalette.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.22,
+    shadowRadius: 14,
+    elevation: 6,
+  },
+  primaryButton: {
+    minHeight: 60,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  primaryButtonText: {
+    color: '#ffffff',
+  },
+  supportCard: {
+    marginTop: 'auto',
+    width: '100%',
+    borderRadius: 20,
+    backgroundColor: BabyCityPalette.surfaceLow,
+    paddingHorizontal: 18,
+    paddingVertical: 18,
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 12,
+  },
+  supportIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  supportContent: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  supportTitle: {
+    color: BabyCityPalette.textPrimary,
+    marginBottom: 2,
+  },
+  supportBody: {
+    textAlign: 'right',
+  },
 });
