@@ -1,10 +1,9 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import AppCard from '@/components/ui/AppCard';
 import AppButton from '@/components/ui/AppButton';
-import AppChip from '@/components/ui/AppChip';
 import AppText from '@/components/ui/AppText';
-import AvatarCircle from '@/components/ui/AvatarCircle';
+import { MaterialIcons } from '@expo/vector-icons';
 import {
   BabyCityGeometry,
   BabysitterDesignTokens,
@@ -28,14 +27,15 @@ type Props = {
   paymentUpdating?: boolean;
   editing?: boolean;
   placeholderPhotoUrl?: string;
+  /** When true, renders with reduced opacity (older month groups) */
+  dimmed?: boolean;
 };
 
 function formatShiftDate(dateValue: string) {
   return new Date(`${dateValue}T12:00:00`).toLocaleDateString('he-IL', {
-    weekday: 'short',
+    weekday: 'long',
     day: 'numeric',
     month: 'long',
-    year: 'numeric',
   });
 }
 
@@ -48,61 +48,77 @@ export default function BabysitterShiftEntryCard({
   paymentUpdating = false,
   editing = false,
   placeholderPhotoUrl,
+  dimmed = false,
 }: Props) {
   const isPaid = shift.paymentStatus === 'paid';
+
+  const statusBg = isPaid ? '#dcfce7' : '#fef9c3';
+  const statusText = isPaid ? '#15803d' : '#a16207';
+  const statusLabel = isPaid ? strings.babysitterShiftPaid : strings.babysitterShiftUnpaid;
+
+  const timeRangeLabel = `${shift.startTime} - ${shift.endTime} • ${formatShiftHours(shift.hoursWorked)} ${strings.babysitterShiftManagerSummaryHours}`;
 
   return (
     <AppCard
       role="babysitter"
       variant="list"
-      style={[styles.card, editing && styles.cardEditing]}
+      style={[
+        styles.card,
+        editing && styles.cardEditing,
+        dimmed && styles.cardDimmed,
+      ]}
       borderColor={editing ? BabyCityPalette.primary : undefined}
     >
-      <View style={styles.headerRow}>
-        <AvatarCircle name={shift.parentName} photoUrl={placeholderPhotoUrl} size={44} />
-
-        <View style={styles.identity}>
-          <AppText variant="h3" weight="800" numberOfLines={1}>
-            {shift.parentName}
-          </AppText>
-          <AppText variant="body" tone="muted">
-            {formatShiftDate(shift.shiftDate)}
-          </AppText>
-        </View>
-
-        <View style={styles.amountWrap}>
-          <AppText variant="caption" tone="muted" style={styles.amountLabel}>
-            {strings.babysitterShiftTotalLabel}
-          </AppText>
-          <AppText variant="h3" weight="800" style={styles.amount}>
+      {/* Main row: avatar+info on the right, price+badge on the left */}
+      <View style={styles.mainRow}>
+        {/* Price + status badge (left in RTL = visual right for LTR readers, but we keep RTL) */}
+        <View style={styles.priceCol}>
+          <AppText style={styles.priceText}>
             {formatShiftCurrency(shift.totalAmount)}
           </AppText>
+          <View style={[styles.statusBadge, { backgroundColor: statusBg }]}>
+            <AppText style={[styles.statusText, { color: statusText }]}>
+              {statusLabel}
+            </AppText>
+          </View>
+        </View>
+
+        {/* Family info */}
+        <View style={styles.infoCol}>
+          <AppText variant="h3" weight="800" numberOfLines={1} style={styles.familyName}>
+            {shift.parentName}
+          </AppText>
+          <AppText variant="body" tone="muted" style={styles.dateText}>
+            {formatShiftDate(shift.shiftDate)}
+          </AppText>
+
+          {/* Timer chip */}
+          <View style={styles.timerChip}>
+            <MaterialIcons name="timer" size={13} color={BabyCityPalette.textSecondary} />
+            <AppText style={styles.timerText}>{timeRangeLabel}</AppText>
+          </View>
+        </View>
+
+        {/* Avatar with check_circle overlay */}
+        <View style={styles.avatarWrap}>
+          {placeholderPhotoUrl ? (
+            <Image
+              source={{ uri: placeholderPhotoUrl }}
+              style={styles.avatarImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.avatarFallback}>
+              <MaterialIcons name="history" size={22} color={BabyCityPalette.textSecondary} />
+            </View>
+          )}
+          <View style={styles.checkBadge}>
+            <MaterialIcons name="check-circle" size={16} color={BabyCityPalette.primary} />
+          </View>
         </View>
       </View>
 
-      <View style={styles.metaRow}>
-        <AppChip
-          label={`${shift.startTime} ${strings.babysitterShiftTimeRangeSeparator} ${shift.endTime}`}
-          tone="accent"
-          size="sm"
-        />
-        <AppChip
-          label={`${formatShiftHours(shift.hoursWorked)} ${strings.babysitterShiftManagerSummaryHours}`}
-          tone="success"
-          size="sm"
-        />
-        <AppChip
-          label={`${formatShiftCurrency(shift.hourlyRate)} ${strings.perHour}`}
-          tone="primary"
-          size="sm"
-        />
-        <AppChip
-          label={isPaid ? strings.babysitterShiftPaid : strings.babysitterShiftUnpaid}
-          tone={isPaid ? 'success' : 'muted'}
-          size="sm"
-        />
-      </View>
-
+      {/* Notes */}
       {shift.notes.trim() ? (
         <View style={styles.notesWrap}>
           <AppText variant="body" tone="muted" style={styles.notes}>
@@ -111,6 +127,7 @@ export default function BabysitterShiftEntryCard({
         </View>
       ) : null}
 
+      {/* Action buttons */}
       {onEditPress || onDeletePress || onTogglePaymentPress ? (
         <View style={styles.actionsRow}>
           {onTogglePaymentPress ? (
@@ -159,6 +176,8 @@ export default function BabysitterShiftEntryCard({
   );
 }
 
+const AVATAR_SIZE = 56;
+
 const styles = StyleSheet.create({
   card: {
     marginBottom: BabysitterDesignTokens.spacing.cardGap,
@@ -170,39 +189,96 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 4,
   },
-  headerRow: {
+  cardDimmed: {
+    opacity: 0.8,
+  },
+  mainRow: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: BabyCityGeometry.spacing.md,
+    gap: 12,
   },
-  amountWrap: {
-    minWidth: 110,
-    alignItems: 'flex-end',
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: BabyCityGeometry.radius.control,
-    backgroundColor: BabysitterDesignTokens.surfaces.cardMuted,
+  avatarWrap: {
+    position: 'relative',
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    flexShrink: 0,
   },
-  amount: {
-    color: BabyCityPalette.success,
-    textAlign: 'right',
+  avatarImage: {
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: AVATAR_SIZE / 2,
   },
-  amountLabel: {
-    marginBottom: 4,
-    textAlign: 'right',
+  avatarFallback: {
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: AVATAR_SIZE / 2,
+    backgroundColor: '#d5e3ff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  identity: {
+  checkBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  infoCol: {
     flex: 1,
     alignItems: 'flex-end',
     minWidth: 0,
-    gap: 4,
+    gap: 2,
   },
-  metaRow: {
-    marginTop: BabyCityGeometry.spacing.md,
+  familyName: {
+    textAlign: 'right',
+    fontSize: 16,
+  },
+  dateText: {
+    fontSize: 13,
+    textAlign: 'right',
+  },
+  timerChip: {
     flexDirection: 'row-reverse',
-    flexWrap: 'wrap',
-    gap: BabyCityGeometry.spacing.sm,
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 4,
+    backgroundColor: '#ecf1ff',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    alignSelf: 'flex-end',
+  },
+  timerText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: BabyCityPalette.textSecondary,
+    textAlign: 'right',
+  },
+  priceCol: {
+    alignItems: 'flex-start',
+    gap: 6,
+    minWidth: 64,
+  },
+  priceText: {
+    fontSize: 19,
+    fontWeight: '700',
+    color: BabyCityPalette.primary,
+    textAlign: 'left',
+  },
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  statusText: {
+    fontSize: 11,
+    fontWeight: '700',
   },
   notesWrap: {
     marginTop: BabyCityGeometry.spacing.md,

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import AppShell from '@/components/navigation/AppShell';
 import AppScreen from '@/components/ui/AppScreen';
@@ -634,23 +635,40 @@ export default function BabysitterShiftsScreen() {
           </View>
         </AppCard>
 
-        {/* ── Stitch 2-tile summary row ── */}
-        <View style={styles.stitchSummaryRow}>
-          <View style={styles.stitchSummaryTile}>
-            <AppText variant="h1" weight="800" style={styles.stitchSummaryValue}>
-              {formatShiftHours(totals.hours)}
-            </AppText>
-            <AppText variant="caption" tone="muted" style={styles.stitchSummaryLabel}>
-              {strings.babysitterShiftManagerSummaryHours}
-            </AppText>
-          </View>
-          <View style={styles.stitchSummaryTile}>
-            <AppText variant="h1" weight="800" style={[styles.stitchSummaryValue, styles.stitchSummaryIncome]}>
-              {formatShiftCurrency(totals.amount)}
-            </AppText>
-            <AppText variant="caption" tone="muted" style={styles.stitchSummaryLabel}>
-              {strings.babysitterShiftManagerSummaryIncome}
-            </AppText>
+        {/* ── Stitch monthly hero summary ── */}
+        <View style={styles.stitchHero}>
+          <AppText variant="h2" weight="800" style={styles.stitchHeroTitle}>
+            {strings.babysitterShiftManagerTitle}
+          </AppText>
+          <View style={styles.stitchSummaryRow}>
+            {/* Hours tile */}
+            <View style={styles.stitchSummaryTile}>
+              <View style={styles.stitchStatIconWrap}>
+                <MaterialIcons name="schedule" size={22} color={BabyCityPalette.primary} />
+              </View>
+              <View style={styles.stitchStatText}>
+                <AppText variant="caption" tone="muted" style={styles.stitchSummaryLabel}>
+                  {strings.babysitterShiftManagerSummaryHours}
+                </AppText>
+                <AppText variant="h2" weight="800" style={styles.stitchSummaryValue}>
+                  {formatShiftHours(totals.hours)}
+                </AppText>
+              </View>
+            </View>
+            {/* Income tile */}
+            <View style={styles.stitchSummaryTile}>
+              <View style={[styles.stitchStatIconWrap, styles.stitchStatIconIncome]}>
+                <MaterialIcons name="payments" size={22} color={BabyCityPalette.primary} />
+              </View>
+              <View style={styles.stitchStatText}>
+                <AppText variant="caption" tone="muted" style={styles.stitchSummaryLabel}>
+                  {strings.babysitterShiftManagerSummaryIncome}
+                </AppText>
+                <AppText variant="h2" weight="800" style={[styles.stitchSummaryValue, styles.stitchSummaryIncome]}>
+                  {formatShiftCurrency(totals.amount)}
+                </AppText>
+              </View>
+            </View>
           </View>
         </View>
 
@@ -1106,27 +1124,38 @@ export default function BabysitterShiftsScreen() {
         ) : (
           (() => {
             let shiftCounter = 0;
-            return groupShiftsByMonth(filteredShifts).map(({ month, shifts: monthShifts }) => (
-              <View key={month}>
-                <AppText variant="bodyLarge" weight="800" style={styles.monthHeader}>{month}</AppText>
-                {monthShifts.map(shift => {
-                  const photoIndex = shiftCounter++;
-                  return (
-                    <BabysitterShiftEntryCard
-                      key={shift.id}
-                      shift={shift}
-                      placeholderPhotoUrl={SHIFT_FAMILY_IMAGES[photoIndex % SHIFT_FAMILY_IMAGES.length]}
-                      onEditPress={startEditingShift}
-                      onDeletePress={handleDeleteShift}
-                      onTogglePaymentPress={handleTogglePaymentStatus}
-                      deleting={deletingShiftId === shift.id}
-                      paymentUpdating={paymentUpdatingShiftId === shift.id}
-                      editing={editingShiftId === shift.id}
-                    />
-                  );
-                })}
-              </View>
-            ));
+            const groups = groupShiftsByMonth(filteredShifts);
+            return groups.map(({ month, shifts: monthShifts }, groupIndex) => {
+              const isOlderMonth = groupIndex > 0;
+              return (
+                <View key={month} style={isOlderMonth ? styles.olderMonthGroup : undefined}>
+                  <AppText
+                    variant="bodyLarge"
+                    weight="800"
+                    style={[styles.monthHeader, isOlderMonth && styles.monthHeaderDimmed]}
+                  >
+                    {month}
+                  </AppText>
+                  {monthShifts.map(shift => {
+                    const photoIndex = shiftCounter++;
+                    return (
+                      <BabysitterShiftEntryCard
+                        key={shift.id}
+                        shift={shift}
+                        placeholderPhotoUrl={SHIFT_FAMILY_IMAGES[photoIndex % SHIFT_FAMILY_IMAGES.length]}
+                        onEditPress={startEditingShift}
+                        onDeletePress={handleDeleteShift}
+                        onTogglePaymentPress={handleTogglePaymentStatus}
+                        deleting={deletingShiftId === shift.id}
+                        paymentUpdating={paymentUpdatingShiftId === shift.id}
+                        editing={editingShiftId === shift.id}
+                        dimmed={isOlderMonth}
+                      />
+                    );
+                  })}
+                </View>
+              );
+            });
           })()
         )}
       </AppScreen>
@@ -1138,37 +1167,80 @@ const styles = StyleSheet.create({
   summaryCard: {
     marginBottom: BabysitterDesignTokens.spacing.cardGap,
   },
-  // Stitch 2-tile summary row
-  stitchSummaryRow: {
-    flexDirection: 'row-reverse',
-    gap: 12,
+  // Stitch monthly hero
+  stitchHero: {
+    backgroundColor: '#ecf1ff',
+    borderRadius: 16,
+    padding: 20,
     marginBottom: 20,
+    overflow: 'hidden',
   },
-  stitchSummaryTile: {
-    flex: 1,
-    backgroundColor: BabyCityPalette.surfaceContainer,
-    borderRadius: BabyCityGeometry.radius.control,
-    paddingVertical: 16,
-    paddingHorizontal: 14,
-    alignItems: 'center',
-    gap: 4,
-  },
-  stitchSummaryValue: {
-    textAlign: 'center',
+  stitchHeroTitle: {
+    textAlign: 'right',
+    fontSize: 20,
+    marginBottom: 16,
     color: BabyCityPalette.textPrimary,
   },
+  // Stitch 2-tile summary row
+  stitchSummaryRow: {
+    flexDirection: 'column',
+    gap: 12,
+  },
+  stitchSummaryTile: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 16,
+    shadowColor: '#242f41',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
+  },
+  stitchStatIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#e9def5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  stitchStatIconIncome: {
+    backgroundColor: 'rgba(178,140,255,0.2)',
+  },
+  stitchStatText: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  stitchSummaryValue: {
+    textAlign: 'right',
+    color: BabyCityPalette.textPrimary,
+    fontSize: 24,
+  },
   stitchSummaryIncome: {
-    color: BabyCityPalette.success,
+    color: BabyCityPalette.textPrimary,
   },
   stitchSummaryLabel: {
-    textAlign: 'center',
+    textAlign: 'right',
+    marginBottom: 2,
   },
   // Month header for grouped shift list
   monthHeader: {
     textAlign: 'right',
-    marginBottom: 10,
+    marginBottom: 12,
     marginTop: 4,
+    paddingHorizontal: 8,
     color: BabyCityPalette.textSecondary,
+  },
+  monthHeaderDimmed: {
+    opacity: 0.6,
+  },
+  olderMonthGroup: {
+    marginTop: 8,
   },
   summaryHeader: {
     gap: BabyCityGeometry.spacing.sm,

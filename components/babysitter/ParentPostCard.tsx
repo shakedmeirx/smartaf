@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { Share, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Share, StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   FadeInDown,
   useAnimatedStyle,
@@ -8,11 +9,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import AppText from '@/components/ui/AppText';
-import AppButton from '@/components/ui/AppButton';
-import InfoChip from '@/components/ui/InfoChip';
-import AppCard from '@/components/ui/AppCard';
 import AppChip from '@/components/ui/AppChip';
-import AvatarCircle from '@/components/ui/AvatarCircle';
 import { strings } from '@/locales';
 import { ParentPost } from '@/types/post';
 import {
@@ -21,7 +18,7 @@ import {
   BabyCityPalette,
 } from '@/constants/theme';
 
-const AnimatedCard = Animated.createAnimatedComponent(View);
+const AnimatedView = Animated.createAnimatedComponent(View);
 
 type ParentPostCardProps = {
   post: ParentPost;
@@ -63,13 +60,6 @@ export default function ParentPostCard({
     translateY.value = withTiming(0, { duration: 140 });
   }
 
-  const dateTimePill =
-    post.date
-      ? post.time
-        ? `${post.date} · ${post.time}`
-        : post.date
-      : null;
-
   const isSoon = useMemo(() => {
     if (!post.date) return false;
     const postDate = new Date(post.date);
@@ -81,153 +71,194 @@ export default function ParentPostCard({
 
   const parentCity = post.parentCity || post.area;
 
-  const metaItems = [
-    post.area
-      ? {
-          icon: 'location-on' as keyof typeof MaterialIcons.glyphMap,
-          label: strings.cityLabel,
-          value: post.area,
-        }
-      : null,
-    post.date
-      ? {
-          icon: 'calendar-today' as keyof typeof MaterialIcons.glyphMap,
-          label: strings.birthDate,
-          value: post.date,
-        }
-      : null,
-    post.time
-      ? {
-          icon: 'schedule' as keyof typeof MaterialIcons.glyphMap,
-          label: strings.postTime,
-          value: post.time,
-        }
-      : null,
-    post.numChildren !== null
-      ? {
-          icon: 'group' as keyof typeof MaterialIcons.glyphMap,
-          label: strings.parentChildrenCount,
-          value: `${post.numChildren} ${strings.familyFeedChildrenSuffix}`,
-        }
-      : null,
-  ].filter(Boolean) as Array<{
+  // Build Stitch-style meta items: date+time combined, children count
+  const metaItems: Array<{
     icon: keyof typeof MaterialIcons.glyphMap;
     label: string;
     value: string;
-  }>;
+  }> = [];
+
+  if (post.date || post.time) {
+    const dateVal = post.date ?? '';
+    const timeVal = post.time ?? '';
+    metaItems.push({
+      icon: 'calendar-today',
+      label: strings.birthDate,
+      value: dateVal && timeVal ? `${dateVal} · ${timeVal}` : dateVal || timeVal,
+    });
+  }
+
+  if (post.numChildren !== null) {
+    metaItems.push({
+      icon: 'child-care',
+      label: strings.parentChildrenCount,
+      value: `${post.numChildren} ${strings.familyFeedChildrenSuffix}`,
+    });
+  }
+
+  if (!post.date && !post.time && post.area) {
+    metaItems.push({
+      icon: 'location-on',
+      label: strings.cityLabel,
+      value: post.area,
+    });
+  }
+
+  const avatarPhotoUrl = post.parentProfilePhotoUrl || photoUrl;
+  const displayName = post.parentName || strings.familyFeedAnonymous;
+
+  const badgeLabel = isSoon ? strings.postSoonLabel : strings.parentPostStatusActive;
+  const badgeBg = isSoon ? '#fef3c7' : '#e9def5';
+  const badgeText = isSoon ? '#92400e' : '#564f61';
 
   return (
-    <AnimatedCard
+    <AnimatedView
       entering={FadeInDown.duration(220).delay(120 + index * 55)}
-      style={[styles.cardShell, animatedStyle, highlighted && styles.cardShellHighlighted]}
+      style={[styles.shellWrap, animatedStyle, highlighted && styles.shellHighlighted]}
     >
-      <View onTouchStart={handlePressIn} onTouchEnd={handlePressOut}>
-        <AppCard role="babysitter" variant="list" style={[styles.card, highlighted && styles.cardHighlighted]}>
-          <View style={styles.cardTopRow}>
-            <TouchableOpacity
-              style={styles.cardIdentityTouchable}
-              activeOpacity={0.78}
-              onPress={event => {
-                event.stopPropagation();
-                onViewProfile();
-              }}
-            >
-              <AvatarCircle
-                name={post.parentName || strings.familyFeedAnonymous}
-                photoUrl={post.parentProfilePhotoUrl || photoUrl}
-                size={56}
-                tone="accent"
+      {/* Overlapping avatar — absolutely positioned above the card top-right */}
+      <View style={styles.avatarAnchor}>
+        <TouchableOpacity
+          onPress={onViewProfile}
+          activeOpacity={0.82}
+          style={styles.avatarTouchable}
+        >
+          <View style={[styles.avatarRing, highlighted && styles.avatarRingHighlighted]}>
+            {avatarPhotoUrl ? (
+              <Image
+                source={{ uri: avatarPhotoUrl }}
+                style={styles.avatarImage}
+                resizeMode="cover"
               />
-              <View style={styles.cardIdentity}>
-                <AppText variant="h2" weight="800" style={styles.cardName}>
-                  {post.parentName || strings.familyFeedAnonymous}
+            ) : (
+              <View style={styles.avatarFallback}>
+                <AppText variant="h2" weight="800" style={styles.avatarInitial}>
+                  {displayName.charAt(0)}
                 </AppText>
+              </View>
+            )}
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      {/* Card body */}
+      <View
+        onTouchStart={handlePressIn}
+        onTouchEnd={handlePressOut}
+        style={[
+          styles.card,
+          highlighted && styles.cardHighlighted,
+        ]}
+      >
+        {/* Header row: name + location on right, badge on left */}
+        <View style={styles.cardHeader}>
+          {/* Name + city — indented to leave room for avatar */}
+          <TouchableOpacity
+            onPress={onViewProfile}
+            activeOpacity={0.78}
+            style={styles.identityWrap}
+          >
+            <AppText variant="h2" weight="800" style={styles.cardName}>
+              {displayName}
+            </AppText>
+            {parentCity ? (
+              <View style={styles.cityRow}>
+                <MaterialIcons name="location-on" size={14} color={BabyCityPalette.textSecondary} />
                 <AppText variant="body" tone="muted" style={styles.cardCity}>
                   {parentCity}
                 </AppText>
-                <View style={styles.statusRow}>
-                  <InfoChip
-                    label={isSoon ? strings.postSoonLabel : strings.parentPostStatusActive}
-                    tone={isSoon ? 'warning' : 'muted'}
-                    size="sm"
-                  />
-                </View>
               </View>
-            </TouchableOpacity>
-          </View>
+            ) : null}
+          </TouchableOpacity>
 
+          {/* Status badge */}
+          <View style={[styles.badge, { backgroundColor: badgeBg }]}>
+            <AppText style={[styles.badgeText, { color: badgeText }]}>
+              {badgeLabel}
+            </AppText>
+          </View>
+        </View>
+
+        {/* 2-column meta chip grid */}
+        {metaItems.length > 0 ? (
+          <View style={styles.metaGrid}>
+            {metaItems.map(item => (
+              <MetaChip key={`${item.label}:${item.value}`} icon={item.icon} label={item.label} value={item.value} />
+            ))}
+          </View>
+        ) : null}
+
+        {/* Description note */}
+        {post.note ? (
           <AppText
-            variant="bodyLarge"
+            variant="body"
+            tone="muted"
             numberOfLines={2}
             style={styles.noteText}
           >
-            {post.note || strings.familyFeedNoteEmpty}
+            {post.note}
           </AppText>
+        ) : null}
 
-          {metaItems.length > 0 ? (
-            <View style={styles.metaGrid}>
-              {metaItems.map(item => (
-                <MetaPill
-                  key={`${item.label}:${item.value}`}
-                  icon={item.icon}
-                  label={item.label}
-                  value={item.value}
-                />
-              ))}
-            </View>
-          ) : null}
+        {/* Age range chips */}
+        {post.childAgeRange.length > 0 ? (
+          <View style={styles.tagsRow}>
+            {post.childAgeRange.map(group => (
+              <AppChip key={group} label={group} tone="accent" size="sm" />
+            ))}
+          </View>
+        ) : null}
 
-          {post.childAgeRange.length > 0 ? (
-            <View style={styles.tagsRow}>
-              {post.childAgeRange.map(group => (
-                <AppChip key={group} label={group} tone="accent" size="sm" />
-              ))}
-            </View>
-          ) : null}
+        {/* Full-width gradient action button */}
+        <TouchableOpacity
+          style={styles.ctaWrapper}
+          onPress={onSendMessage}
+          activeOpacity={0.88}
+        >
+          <LinearGradient
+            colors={['#702ae1', '#6411d5']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.ctaGradient}
+          >
+            <AppText style={styles.ctaText}>
+              {messageButtonLabel ?? strings.postSendMessage}
+            </AppText>
+          </LinearGradient>
+        </TouchableOpacity>
 
-          <View style={styles.cardActions}>
-            <AppButton
-              label={messageButtonLabel ?? strings.postSendMessage}
-              variant="primary"
-              fullWidth={false}
-              style={styles.cardSendButton}
-              onPress={() => {
-                onSendMessage();
-              }}
-            />
-            {onToggleSave ? (
-              <TouchableOpacity
-                style={styles.cardIconButton}
-                onPress={() => {
-                  onToggleSave();
-                }}
-                activeOpacity={0.85}
-              >
-                <MaterialIcons
-                  name={isSaved ? 'bookmark' : 'bookmark-border'}
-                  size={20}
-                  color={BabyCityPalette.primary}
-                />
-              </TouchableOpacity>
-            ) : null}
+        {/* Icon row: save + share */}
+        <View style={styles.iconRow}>
+          {onToggleSave ? (
             <TouchableOpacity
-              style={styles.cardIconButton}
-              onPress={() => {
-                const url = `babysitconnect:///babysitter?postId=${post.id}`;
-                Share.share({ message: `${strings.sharePostText}\n${url}` });
-              }}
+              style={styles.iconButton}
+              onPress={onToggleSave}
               activeOpacity={0.85}
             >
-              <MaterialIcons name="share" size={20} color={BabyCityPalette.primary} />
+              <MaterialIcons
+                name={isSaved ? 'bookmark' : 'bookmark-border'}
+                size={20}
+                color={BabyCityPalette.primary}
+              />
             </TouchableOpacity>
-          </View>
-        </AppCard>
+          ) : null}
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => {
+              const url = `babysitconnect:///babysitter?postId=${post.id}`;
+              Share.share({ message: `${strings.sharePostText}\n${url}` });
+            }}
+            activeOpacity={0.85}
+          >
+            <MaterialIcons name="share" size={20} color={BabyCityPalette.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
-    </AnimatedCard>
+    </AnimatedView>
   );
 }
 
-function MetaPill({
+function MetaChip({
   icon,
   label,
   value,
@@ -237,13 +268,13 @@ function MetaPill({
   value: string;
 }) {
   return (
-    <View style={styles.metaPill}>
-      <MaterialIcons name={icon} size={16} color={BabyCityPalette.textSecondary} />
-      <View style={styles.metaPillText}>
-        <AppText variant="caption" tone="muted" style={styles.metaPillLabel}>
-          {label}
-        </AppText>
-        <AppText variant="body" weight="700" style={styles.metaPillValue}>
+    <View style={styles.metaChip}>
+      <View style={styles.metaChipIconWrap}>
+        <MaterialIcons name={icon} size={18} color={BabyCityPalette.primary} />
+      </View>
+      <View style={styles.metaChipText}>
+        <AppText style={styles.metaChipLabel}>{label}</AppText>
+        <AppText variant="body" weight="600" style={styles.metaChipValue} numberOfLines={1}>
           {value}
         </AppText>
       </View>
@@ -251,103 +282,197 @@ function MetaPill({
   );
 }
 
+const CARD_BORDER_RADIUS = 16;
+const AVATAR_SIZE = 64;
+const AVATAR_BORDER = 4;
+const AVATAR_OVERHANG = 22; // how many px the avatar bleeds above the card
+
 const styles = StyleSheet.create({
-  cardShell: {
-    marginBottom: BabysitterDesignTokens.spacing.cardGap,
+  shellWrap: {
+    // extra top padding so avatar has room to bleed upward
+    paddingTop: AVATAR_SIZE / 2 - AVATAR_BORDER,
+    marginBottom: 24,
+    shadowColor: '#242f41',
+    shadowOffset: { width: 0, height: 22 },
+    shadowOpacity: 0.06,
+    shadowRadius: 22,
+    elevation: 4,
   },
-  cardShellHighlighted: {
+  shellHighlighted: {
     shadowColor: BabyCityPalette.primary,
     shadowOpacity: 0.2,
     shadowRadius: 18,
     elevation: 7,
   },
+  avatarAnchor: {
+    position: 'absolute',
+    top: 0,
+    right: 6,
+    zIndex: 10,
+  },
+  avatarTouchable: {},
+  avatarRing: {
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: AVATAR_SIZE / 2,
+    borderWidth: AVATAR_BORDER,
+    borderColor: BabyCityPalette.surface,
+    overflow: 'hidden',
+    backgroundColor: BabyCityPalette.secondaryContainer,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  avatarRingHighlighted: {
+    borderColor: BabyCityPalette.primary,
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+  },
+  avatarFallback: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: BabyCityPalette.secondaryContainer,
+  },
+  avatarInitial: {
+    color: BabyCityPalette.primary,
+    fontSize: 22,
+  },
   card: {
-    paddingVertical: 14,
+    backgroundColor: '#ffffff',
+    borderRadius: CARD_BORDER_RADIUS,
+    paddingTop: AVATAR_OVERHANG + 8,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
   cardHighlighted: {
-    borderColor: BabyCityPalette.primary,
     borderWidth: 2,
+    borderColor: BabyCityPalette.primary,
   },
-  cardTopRow: {
+  cardHeader: {
     flexDirection: 'row-reverse',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    // indentRTL: push name right so it doesn't overlap the avatar
+    paddingRight: AVATAR_SIZE + 4,
   },
-  cardIdentityTouchable: {
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-    width: '100%',
-    gap: BabyCityGeometry.spacing.sm,
-  },
-  cardIdentity: {
+  identityWrap: {
     flex: 1,
     alignItems: 'flex-end',
-    minWidth: 0,
   },
   cardName: {
     textAlign: 'right',
     lineHeight: 26,
+    fontSize: 18,
+  },
+  cityRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 2,
+    marginTop: 2,
   },
   cardCity: {
+    fontSize: 13,
+    textAlign: 'right',
+  },
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    alignSelf: 'flex-start',
     marginTop: 2,
-    textAlign: 'right',
   },
-  statusRow: {
-    flexDirection: 'row-reverse',
-    marginTop: BabyCityGeometry.spacing.sm,
-    width: '100%',
-  },
-  noteText: {
-    lineHeight: 22,
-    textAlign: 'right',
-    marginTop: BabyCityGeometry.spacing.sm,
+  badgeText: {
+    fontSize: 11,
+    fontWeight: '700',
   },
   metaGrid: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
-    gap: BabyCityGeometry.spacing.sm,
-    marginTop: BabyCityGeometry.spacing.sm,
+    gap: 8,
+    marginTop: 12,
   },
-  metaPill: {
+  metaChip: {
     width: '48%',
     minHeight: 54,
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: BabyCityGeometry.spacing.sm,
-    backgroundColor: BabysitterDesignTokens.surfaces.cardMuted,
-    borderRadius: BabyCityGeometry.radius.control,
-    paddingHorizontal: 12,
+    gap: 10,
+    backgroundColor: '#ecf1ff',
+    borderRadius: 12,
+    paddingHorizontal: 10,
     paddingVertical: 8,
   },
-  metaPillText: {
+  metaChipIconWrap: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  metaChipText: {
     flex: 1,
     alignItems: 'flex-end',
     minWidth: 0,
   },
-  metaPillLabel: {
+  metaChipLabel: {
+    fontSize: 10,
+    color: BabyCityPalette.textSecondary,
+    lineHeight: 13,
+    marginBottom: 2,
     textAlign: 'right',
   },
-  metaPillValue: {
+  metaChipValue: {
+    fontSize: 13,
     textAlign: 'right',
-    marginTop: 2,
+    color: BabyCityPalette.textPrimary,
+  },
+  noteText: {
+    marginTop: 12,
+    lineHeight: 22,
+    textAlign: 'right',
+    fontSize: 14,
   },
   tagsRow: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     gap: BabyCityGeometry.spacing.sm,
-    marginTop: BabyCityGeometry.spacing.sm,
+    marginTop: 10,
   },
-  cardActions: {
-    flexDirection: 'row-reverse',
+  ctaWrapper: {
+    marginTop: 16,
+    borderRadius: 10,
+    overflow: 'hidden',
+    shadowColor: BabyCityPalette.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  ctaGradient: {
+    paddingVertical: 14,
     alignItems: 'center',
-    gap: BabyCityGeometry.spacing.sm,
-    marginTop: BabyCityGeometry.spacing.sm,
+    justifyContent: 'center',
   },
-  cardSendButton: {
-    flex: 1,
+  ctaText: {
+    color: '#f8f0ff',
+    fontWeight: '700',
+    fontSize: 15,
+    textAlign: 'center',
   },
-  cardIconButton: {
-    width: 48,
-    height: 48,
+  iconRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 8,
+    marginTop: 10,
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: BabysitterDesignTokens.surfaces.cardMuted,
