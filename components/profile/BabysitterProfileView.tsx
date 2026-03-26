@@ -1,11 +1,3 @@
-import { Image, Linking, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-
-const BABYSITTER_GALLERY_IMAGES = [
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAQIvSUdjirWkyRInjQ8K8c145qlQPRo9wvbaWVc7Z_sNxx-LQwDfc5eCloGLLbxPnI-E7VJ_maA9xcSqAbaZf74EAvHDvDNTeUjqKTJ1E3kF36Dw1KnyBV8dd18wR0xxLkpcGW1W7NyHqyY8KGPDfba-VwCATgxoMRIHZMrPz_7xNfB0cgbhyxHrG8Og1FeDkM6sZUHPrn-s5PEDDNAtKYPPr68qr4vXkGHelG9ox3P1bU7cYIoPKFPY8MZbFPAqiB6rAGTKJiuD0c',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAR_4EcCMJq0MX8kHKmc1tOuVYHGxCIdKSmt7TXyzleyt7940F0iFHS9nztugRdmS8okyxWMDk4orHoG-MxqfHMDoNvGOsi4R6Wgk9eHgUhslcY8bCkcNBwpqT5erC49DKbqzPPIoGh3wf8ysEZcwIN-7NrxfnW-KJFehYm1VM8Dn2izll9ovzkYAghXBCT_NKUI-w23BhXhGNb9aim_zKooWcqqv742THN2TJJ9ID1Ndrmz5T5mjQEROCE2aWp5oppYL7sn5TdLTy0',
-];
 import { strings } from '@/locales';
 import { Babysitter } from '@/types/babysitter';
 import { BabysitterRating } from '@/types/rating';
@@ -18,6 +10,17 @@ import {
 import AppText from '@/components/ui/AppText';
 import AppButton from '@/components/ui/AppButton';
 import InfoChip from '@/components/ui/InfoChip';
+import {
+  Image,
+  Linking,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type Props = {
   babysitter: Babysitter;
@@ -33,7 +36,9 @@ type Props = {
   onRefresh?: () => void;
 };
 
-// Specialty icon mapping
+const SPECIFIC_DAY_LABEL = /^[א-ש][׳']\s+\d{1,2}\.\d{1,2}$/;
+const RECURRING_AVAILABILITY_ORDER = ['בוקר', 'צהריים', 'ערב', 'לינה', 'סופי שבוע'];
+
 const SPECIALTY_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
   'תינוקות': 'child-care',
   'פעוטות': 'toys',
@@ -43,6 +48,14 @@ const SPECIALTY_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
   'צרכים מיוחדים': 'accessible',
 };
 
+const CARD_SHADOW = {
+  shadowColor: '#242f41',
+  shadowOpacity: 0.06,
+  shadowRadius: 24,
+  shadowOffset: { width: 0, height: 10 },
+  elevation: 3,
+};
+
 function getSpecialtyIcon(label: string): keyof typeof MaterialIcons.glyphMap {
   for (const key of Object.keys(SPECIALTY_ICONS)) {
     if (label.includes(key)) return SPECIALTY_ICONS[key];
@@ -50,13 +63,26 @@ function getSpecialtyIcon(label: string): keyof typeof MaterialIcons.glyphMap {
   return 'star';
 }
 
-const STAT_TILE_SHADOW = {
-  shadowColor: '#242f41',
-  shadowOpacity: 0.04,
-  shadowRadius: 30,
-  shadowOffset: { width: 0, height: 8 },
-  elevation: 2,
-};
+function isSpecificDayAvailability(slot: string) {
+  return SPECIFIC_DAY_LABEL.test(slot.trim());
+}
+
+function compareRecurringAvailability(a: string, b: string) {
+  const aIndex = RECURRING_AVAILABILITY_ORDER.indexOf(a);
+  const bIndex = RECURRING_AVAILABILITY_ORDER.indexOf(b);
+  const normalizedAIndex = aIndex === -1 ? RECURRING_AVAILABILITY_ORDER.length : aIndex;
+  const normalizedBIndex = bIndex === -1 ? RECURRING_AVAILABILITY_ORDER.length : bIndex;
+
+  if (normalizedAIndex !== normalizedBIndex) {
+    return normalizedAIndex - normalizedBIndex;
+  }
+
+  return a.localeCompare(b, 'he');
+}
+
+function formatCountLabel(count: number, singular: string, plural: string) {
+  return count === 1 ? singular : `${count} ${plural}`;
+}
 
 export default function BabysitterProfileView({
   babysitter,
@@ -71,9 +97,9 @@ export default function BabysitterProfileView({
   refreshing = false,
   onRefresh,
 }: Props) {
-  const galleryToShow = galleryPhotoUrls.length > 0 ? galleryPhotoUrls : BABYSITTER_GALLERY_IMAGES;
-
   const theme = getRoleTheme('parent');
+  const galleryToShow = galleryPhotoUrls.filter(Boolean);
+
   const {
     name,
     age,
@@ -97,35 +123,144 @@ export default function BabysitterProfileView({
     profilePhotoUrl,
   } = babysitter;
 
-  // Build specialties from ageGroups + superpowers
   const specialties = [
-    ...ageGroups.map(g => g),
+    ...ageGroups,
     ...superpowers.slice(0, Math.max(0, 4 - ageGroups.length)),
   ].slice(0, 4);
 
-  // Profile completion card (own profile only)
-  const completionCard = onEditProfile ? (() => {
-    const checks = [
-      bio.trim().length > 0,
-      !!profilePhotoUrl,
-      certifications.length > 0,
-      availability.length > 0,
-      languages.length > 0,
-    ];
-    const pct = Math.round((checks.filter(Boolean).length / checks.length) * 100);
-    if (pct >= 100) return null;
-    return (
-      <View style={styles.completionCard}>
-        <View style={styles.completionHeader}>
-          <AppText variant="h2" weight="800" style={styles.completionPct}>{String(pct)}%</AppText>
-          <AppText variant="body" tone="muted" style={styles.completionLabel}>{strings.profileCompletionLabel}</AppText>
-        </View>
-        <View style={styles.completionBarBg}>
-          <View style={[styles.completionBarFill, { width: `${pct}%` as const }]} />
-        </View>
-      </View>
-    );
-  })() : null;
+  const recurringAvailability = availability
+    .filter(slot => !isSpecificDayAvailability(slot))
+    .sort(compareRecurringAvailability);
+  const specificDayAvailability = availability.filter(isSpecificDayAvailability);
+  const detailRows = [
+    preferredLocation
+      ? {
+          key: 'location',
+          icon: 'place' as const,
+          label: strings.preferredLocationLabel,
+          value: preferredLocation,
+        }
+      : null,
+    yearsExperience
+      ? {
+          key: 'experience',
+          icon: 'work' as const,
+          label: strings.yearsExpLabel,
+          value: yearsExperience,
+        }
+      : null,
+    ageGroups.length > 0
+      ? {
+          key: 'ageGroups',
+          icon: 'child-care' as const,
+          label: strings.ageGroupsProfile,
+          value: ageGroups.join(' • '),
+        }
+      : null,
+    languages.length > 0
+      ? {
+          key: 'languages',
+          icon: 'translate' as const,
+          label: strings.spokenLanguages,
+          value: languages.join(' • '),
+        }
+      : null,
+    certifications.length > 0
+      ? {
+          key: 'certifications',
+          icon: 'school' as const,
+          label: strings.certificationsProfile,
+          value: certifications.join(' • '),
+        }
+      : null,
+    superpowers.length > 0
+      ? {
+          key: 'superpowers',
+          icon: 'auto-awesome' as const,
+          label: strings.superpowersProfile,
+          value: superpowers.join(' • '),
+        }
+      : null,
+    extras.length > 0
+      ? {
+          key: 'extras',
+          icon: 'check-circle' as const,
+          label: strings.extrasLabel,
+          value: extras.join(' • '),
+        }
+      : null,
+  ].filter(Boolean) as {
+    key: string;
+    icon: keyof typeof MaterialIcons.glyphMap;
+    label: string;
+    value: string;
+  }[];
+
+  const trustChips = [
+    isVerified ? { key: 'verified', label: strings.verifiedBadge, tone: 'success' as const } : null,
+    hasReferences ? { key: 'references', label: strings.referencesBadge, tone: 'accent' as const } : null,
+    hasFirstAid ? { key: 'firstAid', label: strings.firstAidBadge, tone: 'accent' as const } : null,
+    hasCar ? { key: 'car', label: strings.hasCarBadge, tone: 'primary' as const } : null,
+    specialNeeds ? { key: 'specialNeeds', label: strings.specialNeedsBadge, tone: 'warning' as const } : null,
+    ...personalityTags.slice(0, 3).map(tag => ({ key: `tag-${tag}`, label: tag, tone: 'muted' as const })),
+  ].filter(Boolean) as { key: string; label: string; tone: 'success' | 'accent' | 'primary' | 'warning' | 'muted' }[];
+
+  const statItems = [
+    {
+      key: 'rating',
+      value: averageStars !== null && ratings.length > 0 ? averageStars.toFixed(1) : '—',
+      label: ratings.length > 0 ? formatCountLabel(ratings.length, 'דירוג אחד', 'דירוגים') : 'דירוגים',
+      icon: 'star' as const,
+    },
+    {
+      key: 'experience',
+      value: yearsExperience || 'חדש/ה',
+      label: strings.yearsExpLabel,
+      icon: 'work' as const,
+    },
+    {
+      key: 'availability',
+      value: availability.length > 0 ? String(availability.length) : 'גמיש/ה',
+      label: strings.availabilityProfile,
+      icon: 'schedule' as const,
+    },
+    {
+      key: 'rate',
+      value: `₪${hourlyRate}`,
+      label: strings.perHour,
+      icon: 'sell' as const,
+    },
+  ];
+
+  const completionCard = onEditProfile
+    ? (() => {
+        const checks = [
+          bio.trim().length > 0,
+          !!profilePhotoUrl,
+          certifications.length > 0,
+          availability.length > 0,
+          languages.length > 0,
+        ];
+        const pct = Math.round((checks.filter(Boolean).length / checks.length) * 100);
+        if (pct >= 100) return null;
+
+        return (
+          <View style={styles.completionCard}>
+            <View style={styles.completionHeader}>
+              <AppText variant="h2" weight="800" style={styles.completionPct}>
+                {String(pct)}%
+              </AppText>
+              <AppText variant="body" tone="muted" style={styles.completionLabel}>
+                {strings.profileCompletionLabel}
+              </AppText>
+            </View>
+            <View style={styles.completionBarBg}>
+              <View style={[styles.completionBarFill, { width: `${pct}%` as const }]} />
+            </View>
+          </View>
+        );
+      })()
+    : null;
 
   return (
     <>
@@ -137,80 +272,79 @@ export default function BabysitterProfileView({
       >
         {completionCard}
 
-        {/* ── Hero banner with gradient overlay ── */}
-        <View style={styles.heroWrap}>
-          <Image
-            source={{
-              uri: profilePhotoUrl ||
-                'https://lh3.googleusercontent.com/aida-public/AB6AXuDv781fLEnnEarOnE3oh5Kl6eWiI5w3iHx2d_DiDX4AKVx-6LqVlAf-zNcM_28Ea-VDU39Xbdwo0_79BtpPG4kKzL29zgAawPq7Uvx-iLB0oYcY-BBI3misnHZGB-xUh4aAbHz0_i5hd7z2fPfTGLSJSqAR573nHD0OMCCiEYFPo2d8oaBWBr8zwGjQjrx8_UuHbAwi2tbT0cvwNi36T4C5pk9PbBUHRjuwa_W1Frlr1SUQRLrbQgOMzAH4VEQ1pS4bRlaucbk7LvgL',
-            }}
-            style={styles.heroImage}
-            resizeMode="cover"
-          />
-          {/* Gradient overlay at bottom */}
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.6)']}
-            style={styles.heroGradient}
-          />
-          {/* Overlaid name / location / verified badge */}
-          <View style={styles.heroOverlay}>
-            {isVerified ? (
-              <View style={styles.verifiedPill}>
-                <MaterialIcons name="verified" size={14} color="#f8f0ff" />
-                <AppText variant="caption" weight="700" style={styles.verifiedPillText}>מאומת</AppText>
-              </View>
-            ) : null}
-            <AppText variant="h1" weight="800" style={styles.heroName}>
-              {age ? `${name}, ${age}` : name}
-            </AppText>
-            {city ? (
-              <View style={styles.heroCityRow}>
-                <MaterialIcons name="location-on" size={18} color="rgba(255,255,255,0.9)" />
-                <AppText variant="body" style={styles.heroCityText}>{city}</AppText>
-              </View>
-            ) : null}
-          </View>
-        </View>
+        {/* Hero — rebuilt into a cleaner editorial profile header */}
+        <View style={styles.heroSection}>
+          <View style={styles.heroWrap}>
+            {profilePhotoUrl ? (
+              <Image source={{ uri: profilePhotoUrl }} style={styles.heroImage} resizeMode="cover" />
+            ) : (
+              <LinearGradient
+                colors={['#efe6ff', BabyCityPalette.primary + '30', BabyCityPalette.surfaceContainer]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.heroImage}
+              />
+            )}
+            <LinearGradient
+              colors={['rgba(12,18,31,0.05)', 'rgba(12,18,31,0.18)', 'rgba(12,18,31,0.82)']}
+              start={{ x: 0.1, y: 0 }}
+              end={{ x: 0.4, y: 1 }}
+              style={styles.heroOverlay}
+            />
+            <View style={styles.heroScrimOrb} />
 
-        {/* ── Stats row — 4 tiles, pulled up ── */}
-        <View style={styles.statsRow}>
-          {averageStars !== null ? (
-            <View style={[styles.statTile, STAT_TILE_SHADOW]}>
-              <AppText variant="h2" weight="700" style={styles.statValue}>
-                {averageStars.toFixed(1)}
-              </AppText>
-              <AppText variant="caption" tone="muted" style={styles.statLabel}>
-                {`${ratings.length} ביקורות`}
-              </AppText>
+            <View style={styles.heroContent}>
+              <View style={styles.heroBadgeRow}>
+                {isVerified ? (
+                  <View style={styles.heroVerifiedBadge}>
+                    <MaterialIcons name="verified" size={14} color="#ffffff" />
+                    <AppText style={styles.heroVerifiedText}>{strings.verifiedBadge}</AppText>
+                  </View>
+                ) : null}
+                {hasReferences ? (
+                  <View style={styles.heroSubBadge}>
+                    <MaterialIcons name="fact-check" size={14} color="#ffffff" />
+                    <AppText style={styles.heroSubBadgeText}>{strings.referencesBadge}</AppText>
+                  </View>
+                ) : null}
+              </View>
+
+              <View style={styles.heroIdentityRow}>
+                <View style={styles.heroIdentityContent}>
+                  <AppText variant="h1" weight="800" style={styles.heroName}>
+                    {age ? `${name}, ${age}` : name}
+                  </AppText>
+
+                  {city ? (
+                    <View style={styles.heroCityRow}>
+                      <MaterialIcons name="location-on" size={18} color="#ffffff" />
+                      <AppText style={styles.heroCityText}>{city}</AppText>
+                    </View>
+                  ) : null}
+                </View>
+              </View>
             </View>
-          ) : null}
-          <View style={[styles.statTile, STAT_TILE_SHADOW]}>
-            <AppText variant="h2" weight="700" style={styles.statValue}>
-              {yearsExperience ? `+${yearsExperience}` : '–'}
-            </AppText>
-            <AppText variant="caption" tone="muted" style={styles.statLabel}>
-              {strings.yearsExpLabel}
-            </AppText>
           </View>
-          <View style={[styles.statTile, STAT_TILE_SHADOW]}>
-            <AppText variant="h2" weight="700" style={styles.statValue}>
-              {'15 דק׳'}
-            </AppText>
-            <AppText variant="caption" tone="muted" style={styles.statLabel}>
-              {'זמן תגובה'}
-            </AppText>
-          </View>
-          <View style={[styles.statTile, STAT_TILE_SHADOW]}>
-            <AppText variant="h2" weight="700" style={styles.statValue}>
-              {`₪${hourlyRate}`}
-            </AppText>
-            <AppText variant="caption" tone="muted" style={styles.statLabel}>
-              {strings.perHour}
-            </AppText>
+
+          <View style={[styles.heroStatsPanel, CARD_SHADOW]}>
+            <View style={styles.statsGrid}>
+              {statItems.map(item => (
+                <View key={item.key} style={styles.statTile}>
+                  <View style={styles.statIconBubble}>
+                    <MaterialIcons name={item.icon} size={20} color={BabyCityPalette.primary} />
+                  </View>
+                  <AppText variant="h2" weight="800" style={styles.statValue}>
+                    {item.value}
+                  </AppText>
+                  <AppText variant="caption" tone="muted" style={styles.statLabel}>
+                    {item.label}
+                  </AppText>
+                </View>
+              ))}
+            </View>
           </View>
         </View>
 
-        {/* ── Edit button (own profile) ── */}
         {onEditProfile ? (
           <View style={styles.editRow}>
             <AppButton
@@ -223,70 +357,186 @@ export default function BabysitterProfileView({
           </View>
         ) : null}
 
-        {/* ── Bio ── */}
         {bio ? (
           <View style={styles.section}>
             <View style={styles.sectionTitleRow}>
               <View style={styles.sectionTitleBorder} />
-              <AppText variant="h2" weight="700" style={styles.sectionTitle}>כמה מילים עליי</AppText>
+              <AppText variant="h2" weight="700" style={styles.sectionTitle}>
+                כמה מילים עליי
+              </AppText>
             </View>
-            <View style={styles.bioCard}>
-              <AppText variant="body" style={styles.bioText}>{bio}</AppText>
+            <View style={[styles.copyCard, CARD_SHADOW]}>
+              <AppText variant="body" style={styles.copyText}>
+                {bio}
+              </AppText>
             </View>
           </View>
         ) : null}
 
-        {/* ── Specialties (2-col grid) ── */}
         {specialties.length > 0 ? (
           <View style={styles.section}>
             <View style={styles.sectionTitleRow}>
               <View style={styles.sectionTitleBorder} />
-              <AppText variant="h2" weight="700" style={styles.sectionTitle}>ההתמחויות שלי</AppText>
+              <AppText variant="h2" weight="700" style={styles.sectionTitle}>
+                ההתמחויות שלי
+              </AppText>
             </View>
             <View style={styles.specialtiesGrid}>
-              {specialties.map((item, i) => (
-                <View key={`specialty-${i}`} style={styles.specialtyTile}>
-                  <MaterialIcons name={getSpecialtyIcon(item)} size={22} color={BabyCityPalette.primary} />
-                  <AppText variant="body" weight="600" style={styles.specialtyLabel}>{item}</AppText>
+              {specialties.map((item, index) => (
+                <View key={`specialty-${item}-${index}`} style={styles.specialtyTile}>
+                  <MaterialIcons
+                    name={getSpecialtyIcon(item)}
+                    size={20}
+                    color={BabyCityPalette.primary}
+                  />
+                  <AppText variant="body" weight="700" style={styles.specialtyLabel}>
+                    {item}
+                  </AppText>
                 </View>
               ))}
             </View>
           </View>
         ) : null}
 
-        {/* ── Additional info chips ── */}
-        {(availability.length > 0 || languages.length > 0 || ageGroups.length > 0 || certifications.length > 0) ? (
+        <View style={styles.section}>
+          <View style={[styles.sectionTitleRow, styles.sectionTitleRowSpread]}>
+            <View style={styles.sectionTitleLeft}>
+              <View style={styles.sectionTitleBorder} />
+              <AppText variant="h2" weight="700" style={styles.sectionTitle}>
+                לוח זמנים שבועי
+              </AppText>
+            </View>
+            {availability.length > 0 ? (
+              <AppText variant="caption" weight="700" style={styles.sectionMeta}>
+                {strings.babysitterAvailabilitySlotsSummary(availability.length)}
+              </AppText>
+            ) : null}
+          </View>
+
+          <View style={[styles.scheduleCard, CARD_SHADOW]}>
+            {availability.length > 0 ? (
+              <>
+                {recurringAvailability.length > 0 ? (
+                  <View style={styles.scheduleBlock}>
+                    <View style={styles.scheduleBlockHeader}>
+                      <View style={styles.scheduleBlockIcon}>
+                        <MaterialIcons name="schedule" size={18} color={BabyCityPalette.primary} />
+                      </View>
+                      <View style={styles.scheduleBlockCopy}>
+                        <AppText variant="body" weight="700" style={styles.scheduleBlockTitle}>
+                          {strings.babysitterAvailabilityTimeWindowsTitle}
+                        </AppText>
+                        <AppText variant="caption" tone="muted" style={styles.scheduleBlockSubtitle}>
+                          {strings.babysitterAvailabilityTimeWindowsSubtitle}
+                        </AppText>
+                      </View>
+                    </View>
+
+                    <View style={styles.scheduleChipWrap}>
+                      {recurringAvailability.map(slot => (
+                        <InfoChip key={`recurring-${slot}`} label={slot} tone="primary" size="sm" />
+                      ))}
+                    </View>
+                  </View>
+                ) : null}
+
+                {specificDayAvailability.length > 0 ? (
+                  <View
+                    style={[
+                      styles.scheduleBlock,
+                      recurringAvailability.length > 0 && styles.scheduleBlockBorder,
+                    ]}
+                  >
+                    <View style={styles.scheduleBlockHeader}>
+                      <View style={styles.scheduleBlockIcon}>
+                        <MaterialIcons name="calendar-month" size={18} color={BabyCityPalette.primary} />
+                      </View>
+                      <View style={styles.scheduleBlockCopy}>
+                        <AppText variant="body" weight="700" style={styles.scheduleBlockTitle}>
+                          {strings.babysitterAvailabilityWeekdaysTitle}
+                        </AppText>
+                        <AppText variant="caption" tone="muted" style={styles.scheduleBlockSubtitle}>
+                          {strings.babysitterAvailabilityWeekdaysSubtitle}
+                        </AppText>
+                      </View>
+                    </View>
+
+                    <View style={styles.scheduleChipWrap}>
+                      {specificDayAvailability.map(slot => (
+                        <InfoChip key={`specific-${slot}`} label={slot} tone="accent" size="sm" />
+                      ))}
+                    </View>
+                  </View>
+                ) : null}
+              </>
+            ) : (
+              <AppText variant="body" tone="muted" style={styles.scheduleEmpty}>
+                אין עדיין זמינות מוצגת בפרופיל.
+              </AppText>
+            )}
+          </View>
+        </View>
+
+        {(detailRows.length > 0 || trustChips.length > 0) ? (
           <View style={styles.section}>
             <View style={styles.sectionTitleRow}>
               <View style={styles.sectionTitleBorder} />
-              <AppText variant="h2" weight="700" style={styles.sectionTitle}>{strings.availabilityProfile}</AppText>
+              <AppText variant="h2" weight="700" style={styles.sectionTitle}>
+                עוד כמה דברים שחשוב לדעת
+              </AppText>
             </View>
-            <View style={styles.chipsWrap}>
-              {[...availability, ...languages, ...certifications].map((item, i) => (
-                <InfoChip key={`info-${i}`} label={item} tone="primary" size="sm" />
+
+            <View style={[styles.detailsCard, CARD_SHADOW]}>
+              {detailRows.map((row, index) => (
+                <View
+                  key={row.key}
+                  style={[
+                    styles.detailRow,
+                    index < detailRows.length - 1 && styles.detailRowBorder,
+                  ]}
+                >
+                  <View style={styles.detailTextWrap}>
+                    <AppText variant="caption" tone="muted" style={styles.detailLabel}>
+                      {row.label}
+                    </AppText>
+                    <AppText variant="body" weight="700" style={styles.detailValue}>
+                      {row.value}
+                    </AppText>
+                  </View>
+                  <View style={styles.detailIconWrap}>
+                    <MaterialIcons name={row.icon} size={18} color={BabyCityPalette.primary} />
+                  </View>
+                </View>
               ))}
-              {hasCar ? <InfoChip label={strings.hasCarBadge} tone="accent" size="sm" /> : null}
-              {hasFirstAid ? <InfoChip label={strings.firstAidBadge} tone="accent" size="sm" /> : null}
-              {hasReferences ? <InfoChip label={strings.referencesBadge} tone="success" size="sm" /> : null}
-              {specialNeeds ? <InfoChip label={strings.specialNeedsBadge} tone="warning" size="sm" /> : null}
-              {extras.map((e, i) => (
-                <InfoChip key={`extra-${i}`} label={e} tone="muted" size="sm" />
-              ))}
+
+              {trustChips.length > 0 ? (
+                <View style={styles.detailChipsWrap}>
+                  {trustChips.map(chip => (
+                    <InfoChip
+                      key={chip.key}
+                      label={chip.label}
+                      tone={chip.tone}
+                      size="sm"
+                    />
+                  ))}
+                </View>
+              ) : null}
             </View>
           </View>
         ) : null}
 
-        {/* ── Gallery ── */}
         {galleryToShow.length > 0 ? (
           <View style={styles.section}>
             <View style={styles.sectionTitleRow}>
               <View style={styles.sectionTitleBorder} />
-              <AppText variant="h2" weight="700" style={styles.sectionTitle}>{strings.galleryLabel ?? 'גלריה'}</AppText>
+              <AppText variant="h2" weight="700" style={styles.sectionTitle}>
+                {strings.galleryLabel}
+              </AppText>
             </View>
             <View style={styles.galleryGrid}>
-              {galleryToShow.map((uri, i) => (
+              {galleryToShow.map((uri, index) => (
                 <Image
-                  key={`gallery-${i}`}
+                  key={`gallery-${index}`}
                   source={{ uri }}
                   style={styles.galleryImage}
                   resizeMode="cover"
@@ -296,47 +546,54 @@ export default function BabysitterProfileView({
           </View>
         ) : null}
 
-        {/* ── Reviews ── */}
         <View style={styles.section}>
           <View style={[styles.sectionTitleRow, styles.sectionTitleRowSpread]}>
             <View style={styles.sectionTitleLeft}>
               <View style={styles.sectionTitleBorder} />
-              <AppText variant="h2" weight="700" style={styles.sectionTitle}>מה הורים אומרים</AppText>
+              <AppText variant="h2" weight="700" style={styles.sectionTitle}>
+                מה הורים אומרים
+              </AppText>
             </View>
             {canRate && onRate ? (
               <TouchableOpacity onPress={onRate}>
-                <AppText variant="caption" weight="700" style={styles.showAllLink}>{strings.rateThisBabysitter}</AppText>
+                <AppText variant="caption" weight="700" style={styles.showAllLink}>
+                  {strings.rateThisBabysitter}
+                </AppText>
               </TouchableOpacity>
             ) : null}
           </View>
+
           {ratings.length === 0 ? (
             <AppText variant="body" tone="muted" style={styles.ratingsEmpty}>
               {strings.ratingsEmpty}
             </AppText>
           ) : (
             <View style={styles.reviewsWrap}>
-              {ratings.map(r => (
-                <View key={r.id} style={[styles.reviewCard, STAT_TILE_SHADOW]}>
-                  <View style={styles.reviewTop}>
-                    <AvatarCircle name={r.parentName || '?'} size={40} />
-                    <View style={styles.reviewMeta}>
-                      {r.parentName ? (
-                        <AppText variant="body" weight="700" style={styles.reviewerName}>{r.parentName}</AppText>
-                      ) : null}
-                      <View style={styles.starsRow}>
-                        {Array.from({ length: 5 }).map((_, si) => (
+              {ratings.map(rating => (
+                <View key={rating.id} style={[styles.reviewCard, CARD_SHADOW]}>
+                  <View style={styles.reviewTopRow}>
+                    <View style={styles.reviewIdentity}>
+                      <AppText variant="body" weight="700" style={styles.reviewerName}>
+                        {rating.parentName || '?'}
+                      </AppText>
+                      <View style={styles.reviewStars}>
+                        {Array.from({ length: 5 }).map((_, index) => (
                           <MaterialIcons
-                            key={si}
-                            name={si < r.stars ? 'star' : 'star-border'}
+                            key={`${rating.id}-star-${index}`}
+                            name={index < rating.stars ? 'star' : 'star-border'}
                             size={14}
                             color="#facc15"
                           />
                         ))}
                       </View>
                     </View>
+                    <AvatarCircle name={rating.parentName || '?'} size={42} tone="accent" />
                   </View>
-                  {r.reviewText ? (
-                    <AppText variant="body" style={styles.reviewText}>{`"${r.reviewText}"`}</AppText>
+
+                  {rating.reviewText ? (
+                    <AppText variant="body" style={styles.reviewText}>
+                      {`"${rating.reviewText}"`}
+                    </AppText>
                   ) : null}
                 </View>
               ))}
@@ -344,7 +601,6 @@ export default function BabysitterProfileView({
           )}
         </View>
 
-        {/* ── Report link ── */}
         {onSendRequest ? (
           <TouchableOpacity
             style={styles.reportLink}
@@ -360,26 +616,41 @@ export default function BabysitterProfileView({
           </TouchableOpacity>
         ) : null}
 
-        {/* Bottom padding for CTA bar */}
         <View style={styles.bottomPad} />
       </ScrollView>
 
-      {/* ── Sticky CTA bar ── */}
       {onSendRequest ? (
         <View style={styles.ctaBar}>
           <View style={styles.ctaPriceWrap}>
-            <AppText variant="caption" weight="700" style={styles.ctaPriceLabel}>{'מחיר לשעה'}</AppText>
+            <AppText variant="caption" weight="700" style={styles.ctaPriceLabel}>
+              מחיר לשעה
+            </AppText>
             <View style={styles.ctaPriceRow}>
-              <AppText variant="h1" weight="800" style={styles.ctaPrice}>{`₪${hourlyRate}`}</AppText>
-              <AppText variant="caption" tone="muted" style={styles.ctaPriceUnit}>{`/ ${strings.perHour}`}</AppText>
+              <AppText variant="h1" weight="800" style={styles.ctaPrice}>
+                {`₪${hourlyRate}`}
+              </AppText>
+              <AppText variant="caption" tone="muted" style={styles.ctaPriceUnit}>
+                {`/ ${strings.perHour}`}
+              </AppText>
             </View>
           </View>
-          <AppButton
-            label={requestActionLabel ?? strings.sendMessage}
-            size="lg"
-            style={styles.ctaCta}
+          <TouchableOpacity
+            activeOpacity={0.88}
             onPress={onSendRequest}
-          />
+            style={styles.ctaButtonShadow}
+          >
+            <LinearGradient
+              colors={['#702ae1', '#6411d5']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.ctaButton}
+            >
+              <AppText variant="bodyLarge" weight="700" style={styles.ctaButtonText}>
+                {requestActionLabel ?? strings.sendMessage}
+              </AppText>
+              <MaterialIcons name="send" size={20} color="#ffffff" />
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       ) : null}
     </>
@@ -391,18 +662,18 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   completionCard: {
-    marginHorizontal: 16,
-    marginTop: 16,
-    marginBottom: 16,
+    marginHorizontal: 20,
+    marginTop: 14,
+    marginBottom: 18,
     backgroundColor: BabyCityPalette.surfaceLowest,
-    borderRadius: BabyCityGeometry.radius.control,
-    padding: 16,
+    borderRadius: 22,
+    padding: 18,
   },
   completionHeader: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
     gap: BabyCityGeometry.spacing.sm,
-    marginBottom: BabyCityGeometry.spacing.sm,
+    marginBottom: 10,
   },
   completionPct: {
     color: BabyCityPalette.primary,
@@ -422,103 +693,175 @@ const styles = StyleSheet.create({
     borderRadius: BabyCityGeometry.radius.chip,
     backgroundColor: BabyCityPalette.primary,
   },
-  // Hero banner
-  heroWrap: {
-    marginHorizontal: 16,
-    marginTop: 16,
-    borderRadius: 12,
-    overflow: 'hidden',
-    aspectRatio: 4 / 5,
-    position: 'relative',
-  },
-  heroImage: {
-    width: '100%',
-    height: '100%',
-  },
-  heroGradient: {
-    ...StyleSheet.absoluteFillObject,
-    // gradient runs from top-transparent to bottom-dark
-  },
-  heroOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 24,
-  },
-  verifiedPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    alignSelf: 'flex-end',
-    backgroundColor: BabyCityPalette.primary,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+  heroSection: {
+    marginTop: 12,
     marginBottom: 8,
   },
-  verifiedPillText: {
-    color: '#f8f0ff',
-    letterSpacing: 0.5,
+  heroWrap: {
+    marginHorizontal: 20,
+    borderRadius: 32,
+    overflow: 'hidden',
+    aspectRatio: 0.82,
+    backgroundColor: BabyCityPalette.surfaceContainer,
+    shadowColor: '#171d30',
+    shadowOpacity: 0.18,
+    shadowRadius: 28,
+    shadowOffset: { width: 0, height: 16 },
+    elevation: 6,
+  },
+  heroImage: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  heroOverlay: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  heroScrimOrb: {
+    position: 'absolute',
+    left: -28,
+    bottom: 56,
+    width: 168,
+    height: 168,
+    borderRadius: 84,
+    backgroundColor: 'rgba(255,255,255,0.10)',
+  },
+  heroContent: {
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 22,
+  },
+  heroBadgeRow: {
+    flexDirection: 'row-reverse',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    gap: 8,
+  },
+  heroVerifiedBadge: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: BabyCityPalette.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
+  },
+  heroSubBadge: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.20)',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 999,
+  },
+  heroSubBadgeText: {
+    color: '#ffffff',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  heroIdentityRow: {
+    width: '100%',
+    alignItems: 'flex-end',
+  },
+  heroIdentityContent: {
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    gap: 10,
+    maxWidth: '82%',
+  },
+  heroVerifiedText: {
+    color: '#ffffff',
+    fontSize: 11,
+    fontWeight: '700',
   },
   heroName: {
     color: '#ffffff',
     textAlign: 'right',
-    fontSize: 28,
-    lineHeight: 36,
+    fontSize: 34,
+    lineHeight: 40,
+    maxWidth: '100%',
   },
   heroCityRow: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: 4,
-    marginTop: 4,
-    justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
+    gap: 6,
+    backgroundColor: 'rgba(255,255,255,0.14)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.18)',
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 999,
+    maxWidth: '100%',
   },
   heroCityText: {
-    color: 'rgba(255,255,255,0.9)',
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '600',
     textAlign: 'right',
   },
-  // Stats row
-  statsRow: {
+  heroStatsPanel: {
+    marginHorizontal: 20,
+    marginTop: 18,
+    paddingTop: 18,
+    paddingBottom: 10,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.97)',
+    borderWidth: 1,
+    borderColor: 'rgba(205,221,254,0.72)',
+  },
+  statsGrid: {
     flexDirection: 'row-reverse',
-    gap: 10,
+    flexWrap: 'wrap',
+    gap: 12,
     paddingHorizontal: 16,
-    marginTop: -20,
-    marginBottom: 16,
-    zIndex: 10,
   },
   statTile: {
-    flex: 1,
+    width: '48%',
     backgroundColor: BabyCityPalette.surfaceLowest,
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 4,
+    borderRadius: 24,
+    minHeight: 108,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: 'rgba(205,221,254,0.74)',
+  },
+  statIconBubble: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(112,42,225,0.10)',
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
   },
   statValue: {
     color: BabyCityPalette.primary,
-    textAlign: 'center',
-    fontSize: 18,
-    lineHeight: 22,
+    textAlign: 'right',
+    width: '100%',
+    marginTop: 10,
   },
   statLabel: {
-    textAlign: 'center',
-    lineHeight: 14,
-    fontSize: 11,
+    textAlign: 'right',
+    width: '100%',
+    marginTop: 4,
+    lineHeight: 16,
   },
-  // Edit button (own profile)
   editRow: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginTop: 18,
+    marginBottom: 4,
   },
   editAction: {
     alignSelf: 'center',
   },
-  // Section layout
   section: {
-    marginHorizontal: 16,
-    marginBottom: 24,
+    marginHorizontal: 20,
+    marginTop: 26,
   },
   sectionTitleRow: {
     flexDirection: 'row-reverse',
@@ -537,147 +880,228 @@ const styles = StyleSheet.create({
   sectionTitleBorder: {
     width: 4,
     height: 20,
-    borderRadius: 2,
+    borderRadius: 99,
     backgroundColor: BabyCityPalette.primary,
   },
   sectionTitle: {
-    color: BabyCityPalette.textPrimary,
     textAlign: 'right',
+    color: BabyCityPalette.textPrimary,
   },
-  showAllLink: {
+  sectionMeta: {
     color: BabyCityPalette.primary,
   },
-  // Bio
-  bioCard: {
+  copyCard: {
     backgroundColor: BabyCityPalette.surfaceLowest,
-    borderRadius: 12,
-    padding: 20,
-    shadowColor: '#242f41',
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 1,
+    borderRadius: 24,
+    paddingHorizontal: 22,
+    paddingVertical: 20,
   },
-  bioText: {
-    lineHeight: 26,
+  copyText: {
     textAlign: 'right',
+    lineHeight: 26,
     color: BabyCityPalette.textSecondary,
   },
-  // Specialties 2-col grid
   specialtiesGrid: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 10,
   },
   specialtyTile: {
+    width: '48%',
+    minHeight: 70,
+    borderRadius: 20,
+    backgroundColor: '#eef2ff',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: 12,
-    backgroundColor: BabyCityPalette.surfaceLow,
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    width: '47%',
+    gap: 10,
   },
   specialtyLabel: {
-    color: BabyCityPalette.textPrimary,
-    textAlign: 'right',
     flex: 1,
-    fontSize: 14,
+    textAlign: 'right',
+    color: BabyCityPalette.textPrimary,
   },
-  // Chips (availability etc.)
-  chipsWrap: {
+  scheduleCard: {
+    backgroundColor: BabyCityPalette.surfaceLowest,
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+  },
+  scheduleBlock: {
+    gap: 12,
+  },
+  scheduleBlockBorder: {
+    marginTop: 18,
+    paddingTop: 18,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(108,119,140,0.18)',
+  },
+  scheduleBlockHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  scheduleBlockIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(112,42,225,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scheduleBlockCopy: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  scheduleBlockTitle: {
+    textAlign: 'right',
+    color: BabyCityPalette.textPrimary,
+  },
+  scheduleBlockSubtitle: {
+    textAlign: 'right',
+    lineHeight: 18,
+    marginTop: 2,
+  },
+  scheduleChipWrap: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     gap: 8,
   },
-  // Gallery 2-col grid
+  scheduleEmpty: {
+    textAlign: 'right',
+    lineHeight: 24,
+  },
+  detailsCard: {
+    backgroundColor: BabyCityPalette.surfaceLowest,
+    borderRadius: 24,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+  },
+  detailRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+  },
+  detailRowBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(108,119,140,0.18)',
+  },
+  detailIconWrap: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(112,42,225,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  detailTextWrap: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  detailLabel: {
+    textAlign: 'right',
+    marginBottom: 4,
+  },
+  detailValue: {
+    textAlign: 'right',
+    color: BabyCityPalette.textPrimary,
+    lineHeight: 22,
+  },
+  detailChipsWrap: {
+    flexDirection: 'row-reverse',
+    flexWrap: 'wrap',
+    gap: 8,
+    paddingTop: 14,
+    paddingBottom: 8,
+  },
   galleryGrid: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     gap: 10,
   },
   galleryImage: {
-    width: '47.5%',
+    width: '48%',
     aspectRatio: 1,
-    borderRadius: 12,
+    borderRadius: 20,
   },
-  // Reviews
+  showAllLink: {
+    color: BabyCityPalette.primary,
+  },
   reviewsWrap: {
     gap: 12,
   },
   reviewCard: {
     backgroundColor: BabyCityPalette.surfaceLowest,
-    borderRadius: 12,
-    padding: 20,
+    borderRadius: 24,
+    paddingHorizontal: 18,
+    paddingVertical: 18,
   },
-  reviewTop: {
+  reviewTopRow: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: 12,
     marginBottom: 12,
   },
-  reviewMeta: {
+  reviewIdentity: {
     flex: 1,
     alignItems: 'flex-end',
     gap: 4,
   },
   reviewerName: {
-    color: BabyCityPalette.textPrimary,
     textAlign: 'right',
+    color: BabyCityPalette.textPrimary,
   },
-  starsRow: {
+  reviewStars: {
     flexDirection: 'row',
     gap: 1,
   },
   reviewText: {
+    textAlign: 'right',
+    lineHeight: 24,
     color: BabyCityPalette.textSecondary,
     fontStyle: 'italic',
-    lineHeight: 22,
-    textAlign: 'right',
   },
   ratingsEmpty: {
     textAlign: 'right',
   },
-  // Report
   reportLink: {
     alignSelf: 'flex-end',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginBottom: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: 10,
   },
   reportLinkText: {
     textDecorationLine: 'underline',
   },
   bottomPad: {
-    height: 120,
+    height: 130,
   },
-  // Sticky CTA
   ctaBar: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    paddingBottom: 28,
-    backgroundColor: 'rgba(255,255,255,0.97)',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 20,
+    gap: 14,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 28,
+    backgroundColor: 'rgba(255,255,255,0.96)',
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    shadowColor: '#000000',
+    shadowOpacity: 0.08,
+    shadowRadius: 22,
     shadowOffset: { width: 0, height: -10 },
-    elevation: 8,
+    elevation: 10,
   },
   ctaPriceWrap: {
+    minWidth: 92,
     alignItems: 'flex-end',
-    minWidth: 72,
   },
   ctaPriceLabel: {
     color: BabyCityPalette.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    fontSize: 10,
+    textAlign: 'right',
   },
   ctaPriceRow: {
     flexDirection: 'row-reverse',
@@ -686,13 +1110,31 @@ const styles = StyleSheet.create({
   },
   ctaPrice: {
     color: BabyCityPalette.textPrimary,
-    fontSize: 24,
-    lineHeight: 30,
+    fontSize: 26,
+    lineHeight: 32,
   },
   ctaPriceUnit: {
     color: BabyCityPalette.textSecondary,
   },
-  ctaCta: {
+  ctaButtonShadow: {
     flex: 1,
+    shadowColor: '#702ae1',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 14,
+    elevation: 6,
+    borderRadius: 24,
+  },
+  ctaButton: {
+    flex: 1,
+    minHeight: 58,
+    borderRadius: 24,
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  ctaButtonText: {
+    color: '#ffffff',
   },
 });
