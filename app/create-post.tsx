@@ -4,8 +4,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { strings } from '@/locales';
 import { useAppState } from '@/context/AppContext';
@@ -15,12 +18,10 @@ import AppInput from '@/components/ui/AppInput';
 import AppPrimaryButton from '@/components/ui/AppPrimaryButton';
 import AppScreen from '@/components/ui/AppScreen';
 import AppTextArea from '@/components/ui/AppTextArea';
-import SectionLabel from '@/components/onboarding/SectionLabel';
 import TagSelector from '@/components/onboarding/TagSelector';
 import AppText from '@/components/ui/AppText';
 import DateTimePicker from '@/components/ui/DateTimePicker';
-import SectionHeader from '@/components/ui/SectionHeader';
-import { BabyCityGeometry, BabyCityPalette, ParentDesignTokens, getRoleTheme } from '@/constants/theme';
+import { BabyCityGeometry, BabyCityPalette, getRoleTheme } from '@/constants/theme';
 import { normalizeTimeValue } from '@/lib/time';
 
 const NUM_CHILDREN_OPTIONS = ['1', '2', '3', '4+'];
@@ -53,12 +54,20 @@ export default function CreatePostScreen() {
   const hydratedPostIdRef = useRef<string | null>(null);
 
   const areaRef = useRef<TextInput>(null);
-  const ageRangeOptions = [
-    { label: strings.ageRangeOptionInfants, value: AGE_RANGE_VALUES.infants },
-    { label: strings.ageRangeOptionToddlers, value: AGE_RANGE_VALUES.toddlers },
-    { label: strings.ageRangeOptionPreschool, value: AGE_RANGE_VALUES.preschool },
-    { label: strings.ageRangeOptionSchool, value: AGE_RANGE_VALUES.school },
-  ];
+  const ageRangeOptions = useMemo(
+    () => [
+      { label: strings.ageRangeOptionInfants, value: AGE_RANGE_VALUES.infants },
+      { label: strings.ageRangeOptionToddlers, value: AGE_RANGE_VALUES.toddlers },
+      { label: strings.ageRangeOptionPreschool, value: AGE_RANGE_VALUES.preschool },
+      { label: strings.ageRangeOptionSchool, value: AGE_RANGE_VALUES.school },
+    ],
+    [
+      strings.ageRangeOptionInfants,
+      strings.ageRangeOptionToddlers,
+      strings.ageRangeOptionPreschool,
+      strings.ageRangeOptionSchool,
+    ]
+  );
   const editingPost = useMemo(
     () => (postId ? myPosts.find(post => post.id === postId) ?? null : null),
     [myPosts, postId]
@@ -141,111 +150,14 @@ export default function CreatePostScreen() {
       activeTab="home"
       backgroundColor={theme.screenBackground}
       showBackButton
+      backButtonVariant="icon"
       onBack={() => router.back()}
-    >
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={90}
-      >
-        <AppScreen
-          scrollable
-          backgroundColor={theme.screenBackground}
-          scrollProps={{
-            keyboardShouldPersistTaps: 'handled',
-            showsVerticalScrollIndicator: false,
-          }}
+      bottomOverlay={
+        <LinearGradient
+          colors={['rgba(248,250,255,0)', 'rgba(248,250,255,0.92)', '#f8faff']}
+          locations={[0, 0.35, 1]}
+          style={styles.bottomOverlay}
         >
-          <AppCard
-            role="parent"
-            variant="hero"
-            backgroundColor={theme.highlightedSurface}
-            borderColor="transparent"
-            style={styles.heroCard}
-          >
-            <AppText variant="caption" weight="700" style={[styles.heroEyebrow, { color: theme.filterAccent }]}>
-              {isEditMode ? strings.editPostHeroEyebrow : strings.postHeroEyebrow}
-            </AppText>
-            <AppText variant="h1" weight="800" style={[styles.heroTitle, { color: theme.title }]}>
-              {isEditMode ? strings.editPostHeroTitle : strings.postHeroTitle}
-            </AppText>
-            <AppText style={[styles.heroSubtitle, { color: theme.subtitle }]}>
-              {isEditMode ? strings.editPostHeroSubtitle : strings.postHeroSubtitle}
-            </AppText>
-          </AppCard>
-
-          <AppCard style={styles.sectionCard}>
-            <SectionHeader title={strings.postDetailsSectionTitle} />
-
-            <AppTextArea
-              label={strings.postNote}
-              value={note}
-              onChangeText={text => { setNote(text); if (noteError) setNoteError(''); }}
-              placeholder={strings.postNotePlaceholder}
-              returnKeyType="next"
-              onSubmitEditing={() => areaRef.current?.focus()}
-              error={noteError}
-              inputWrapStyle={{ backgroundColor: BabyCityPalette.inputRecessedBg, borderWidth: 0, borderRadius: BabyCityGeometry.radius.control }}
-            />
-
-            <AppInput
-              ref={areaRef}
-              label={strings.postArea}
-              value={area}
-              onChangeText={text => { setArea(text); if (areaError) setAreaError(''); }}
-              placeholder={strings.postAreaPlaceholder}
-              returnKeyType="done"
-              error={areaError}
-              recessed
-            />
-
-            <DateTimePicker
-              mode="date"
-              label={strings.postDate}
-              value={date}
-              onChange={setDate}
-              optional
-            />
-
-            <DateTimePicker
-              mode="time"
-              label={strings.postTime}
-              value={time}
-              onChange={setTime}
-              optional
-            />
-          </AppCard>
-
-          <AppCard style={styles.sectionCard}>
-            <SectionHeader
-              title={strings.postFamilySectionTitle}
-              subtitle={strings.postOptionalHint}
-            />
-
-            <SectionLabel text={strings.postNumChildren} />
-            <TagSelector
-              options={NUM_CHILDREN_OPTIONS}
-              selected={numChildren}
-              onChange={setNumChildren}
-              singleSelect
-              tone="lavender"
-            />
-
-            <SectionLabel text={strings.postChildAgeRange} />
-            <TagSelector
-              options={ageRangeOptions.map(option => option.label)}
-              selected={ageRange}
-              onChange={setAgeRange}
-              tone="green"
-            />
-          </AppCard>
-
-          {submitError ? (
-            <AppText variant="body" tone="error" style={styles.errorText}>
-              {submitError}
-            </AppText>
-          ) : null}
-
           <AppPrimaryButton
             label={isEditMode ? strings.postUpdate : strings.postSubmit}
             size="lg"
@@ -254,7 +166,163 @@ export default function CreatePostScreen() {
             disabled={submitting}
             style={styles.submitButton}
           />
-        </AppScreen>
+        </LinearGradient>
+      }
+    >
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={90}
+      >
+        <View style={styles.screen}>
+          <View style={styles.backdropOrbTop} />
+          <View style={styles.backdropOrbBottom} />
+          <AppScreen
+            scrollable
+            backgroundColor={theme.screenBackground}
+            contentContainerStyle={styles.screenContent}
+            scrollProps={{
+              keyboardShouldPersistTaps: 'handled',
+              showsVerticalScrollIndicator: false,
+            }}
+          >
+            <View style={styles.heroSection}>
+              <AppText variant="body" style={[styles.heroSubtitle, { color: theme.subtitle }]}>
+                {isEditMode ? strings.editPostHeroSubtitle : strings.postHeroSubtitle}
+              </AppText>
+            </View>
+
+            <AppCard style={styles.editorialCard}>
+              <View style={styles.sectionIconHeader}>
+                <View style={styles.sectionIconChip}>
+                  <MaterialIcons name="edit-note" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700">{strings.postDetailsSectionTitle}</AppText>
+              </View>
+
+              <AppTextArea
+                value={note}
+                onChangeText={text => { setNote(text); if (noteError) setNoteError(''); }}
+                placeholder={strings.postNotePlaceholder}
+                returnKeyType="next"
+                onSubmitEditing={() => areaRef.current?.focus()}
+                error={noteError}
+                containerStyle={styles.fieldBlock}
+                inputWrapStyle={styles.editorialTextAreaWrap}
+              />
+            </AppCard>
+
+            <View style={styles.logisticsRow}>
+              <AppCard style={[styles.editorialCard, styles.logisticsCard]}>
+                <View style={styles.sectionIconHeader}>
+                  <View style={styles.sectionIconChip}>
+                    <MaterialIcons name="calendar-today" size={20} color={BabyCityPalette.primary} />
+                  </View>
+                  <AppText variant="bodyLarge" weight="700">
+                    {`${strings.postDate} / ${strings.postTime}`}
+                  </AppText>
+                </View>
+
+                <DateTimePicker
+                  mode="date"
+                  label={strings.postDate}
+                  value={date}
+                  onChange={setDate}
+                  optional
+                />
+
+                <DateTimePicker
+                  mode="time"
+                  label={strings.postTime}
+                  value={time}
+                  onChange={setTime}
+                  optional
+                />
+              </AppCard>
+
+              <AppCard style={[styles.editorialCard, styles.logisticsCard]}>
+                <View style={styles.sectionIconHeader}>
+                  <View style={styles.sectionIconChip}>
+                    <MaterialIcons name="location-on" size={20} color={BabyCityPalette.primary} />
+                  </View>
+                  <AppText variant="bodyLarge" weight="700">{strings.postArea}</AppText>
+                </View>
+
+                <AppInput
+                  ref={areaRef}
+                  value={area}
+                  onChangeText={text => { setArea(text); if (areaError) setAreaError(''); }}
+                  placeholder={strings.postAreaPlaceholder}
+                  returnKeyType="done"
+                  error={areaError}
+                  recessed
+                  containerStyle={styles.fieldBlock}
+                />
+              </AppCard>
+            </View>
+
+            <AppCard style={styles.editorialCard}>
+              <View style={styles.sectionIconHeader}>
+                <View style={styles.sectionIconChip}>
+                  <MaterialIcons name="child-care" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700">{strings.postFamilySectionTitle}</AppText>
+              </View>
+
+              <View style={styles.fieldBlock}>
+                <AppText variant="caption" weight="700" style={styles.fieldLabel}>
+                  {strings.postNumChildren}
+                </AppText>
+                <View style={styles.countSelectorWrap}>
+                  {NUM_CHILDREN_OPTIONS.map(option => {
+                    const isSelected = numChildren.includes(option);
+                    return (
+                      <TouchableOpacity
+                        key={option}
+                        accessibilityRole="button"
+                        activeOpacity={0.88}
+                        onPress={() => setNumChildren(isSelected ? [] : [option])}
+                        style={[
+                          styles.countOption,
+                          isSelected && styles.countOptionSelected,
+                        ]}
+                      >
+                        <AppText
+                          variant="body"
+                          weight={isSelected ? '800' : '700'}
+                          style={[
+                            styles.countOptionText,
+                            isSelected && styles.countOptionTextSelected,
+                          ]}
+                        >
+                          {option}
+                        </AppText>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+
+              <View style={styles.fieldBlock}>
+                <AppText variant="caption" weight="700" style={styles.fieldLabel}>
+                  {strings.postChildAgeRange}
+                </AppText>
+                <TagSelector
+                  options={ageRangeOptions.map(option => option.label)}
+                  selected={ageRange}
+                  onChange={setAgeRange}
+                  tone="green"
+                />
+              </View>
+            </AppCard>
+
+            {submitError ? (
+              <AppText variant="body" tone="error" style={styles.errorText}>
+                {submitError}
+              </AppText>
+            ) : null}
+          </AppScreen>
+        </View>
       </KeyboardAvoidingView>
     </AppShell>
   );
@@ -264,31 +332,125 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
-  heroCard: {
-    marginBottom: 16,
+  screen: {
+    flex: 1,
+    backgroundColor: BabyCityPalette.canvas,
   },
-  heroEyebrow: {
-    marginBottom: 8,
+  backdropOrbTop: {
+    position: 'absolute',
+    top: -32,
+    right: -30,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: `${BabyCityPalette.primary}14`,
   },
-  heroTitle: {
-    marginBottom: 8,
+  backdropOrbBottom: {
+    position: 'absolute',
+    left: -56,
+    bottom: 124,
+    width: 190,
+    height: 190,
+    borderRadius: 95,
+    backgroundColor: `${BabyCityPalette.primary}12`,
+  },
+  screenContent: {
+    paddingBottom: 168,
+  },
+  heroSection: {
+    paddingHorizontal: 6,
+    paddingTop: 6,
+    marginBottom: 18,
   },
   heroSubtitle: {
-    lineHeight: 21,
+    textAlign: 'right',
+    lineHeight: 24,
+    color: BabyCityPalette.textSecondary,
   },
-  sectionCard: {
-    marginBottom: 14,
-    gap: 14,
+  editorialCard: {
+    marginBottom: 16,
+    gap: 16,
+    borderRadius: 24,
+    backgroundColor: '#ffffff',
+    shadowColor: BabyCityPalette.primary,
+    shadowOpacity: 0.06,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 3,
   },
-  sectionTitle: {
-    color: BabyCityPalette.textPrimary,
-    marginBottom: 8,
+  logisticsRow: {
+    gap: 16,
+  },
+  logisticsCard: {
+    width: '100%',
+  },
+  sectionIconHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 4,
+  },
+  sectionIconChip: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    backgroundColor: `${BabyCityPalette.primary}0d`,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fieldBlock: {
+    marginTop: 2,
+  },
+  fieldLabel: {
+    marginBottom: 10,
+    color: BabyCityPalette.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  editorialTextAreaWrap: {
+    minHeight: 140,
+    borderRadius: 20,
+    backgroundColor: BabyCityPalette.inputRecessedBg,
+    borderWidth: 0,
+    paddingTop: BabyCityGeometry.spacing.md,
+  },
+  countSelectorWrap: {
+    flexDirection: 'row-reverse',
+    gap: 8,
+    backgroundColor: BabyCityPalette.inputRecessedBg,
+    borderRadius: 22,
+    padding: 6,
+  },
+  countOption: {
+    flex: 1,
+    minHeight: 48,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  countOptionSelected: {
+    backgroundColor: BabyCityPalette.primary,
+    shadowColor: BabyCityPalette.primary,
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 4,
+  },
+  countOptionText: {
+    color: BabyCityPalette.textSecondary,
+  },
+  countOptionTextSelected: {
+    color: '#ffffff',
   },
   errorText: {
-    marginBottom: 12,
+    marginBottom: 16,
+  },
+  bottomOverlay: {
+    paddingHorizontal: 2,
+    paddingTop: 20,
+    paddingBottom: 4,
   },
   submitButton: {
-    marginTop: 8,
-    marginBottom: ParentDesignTokens.spacing.pageVertical,
+    marginTop: 0,
   },
 });

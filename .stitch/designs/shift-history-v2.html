@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#702ae1",
+              "primary-dark": "#5a1eba",
+              "surface": "#F8FAFF",
+              "on-surface": "#1A1C1E",
+              "on-surface-variant": "#44474E",
+              "outline-variant": "#C4C6CF",
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans", "sans-serif"],
+              "body": ["Be Vietnam Pro", "sans-serif"],
+            },
+            borderRadius: {
+              "DEFAULT": "1.25rem",
+              "lg": "1.5rem",
+              "xl": "2.5rem",
+              "full": "9999px"
+            },
+            boxShadow: {
+              'premium': '0 10px 40px -10px rgba(112, 42, 225, 0.08)',
+              'card': '0 4px 24px -2px rgba(0, 0, 0, 0.04)',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #F8FAFF;
+            color: #1A1C1E;
+            -webkit-tap-highlight-color: transparent;
+        }
+        h1, h2, h3, .font-headline {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(248, 250, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-32">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 glass-nav h-16 flex items-center justify-between px-6 border-b border-outline-variant/10">
+<div class="flex items-center gap-3">
+<button class="p-2 -mr-2 text-primary hover:bg-primary/5 rounded-full transition-all active:scale-90">
+<span class="material-symbols-outlined text-[28px]">arrow_forward</span>
+</button>
+<h1 class="font-headline font-extrabold text-lg tracking-tight text-on-surface">היסטוריית משמרות</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:bg-black/5 rounded-full transition-all">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</nav>
+<main class="pt-24 px-5 space-y-8">
+<!-- Monthly Summary Card -->
+<section class="bg-white rounded-[2rem] p-7 shadow-premium relative overflow-hidden border border-primary/5">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/40 via-primary to-primary/40"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline text-base font-bold text-on-surface">סיכום חודש מאי • Smartaf</h2>
+<div class="bg-primary/5 px-3 py-1 rounded-full">
+<span class="text-[10px] font-bold text-primary uppercase tracking-wider">מאי 2024</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-primary/5 p-4 rounded-2xl flex flex-col gap-1 border border-primary/10 transition-transform active:scale-95">
+<span class="text-on-surface-variant/70 text-[11px] font-semibold uppercase tracking-wider">שעות עבודה</span>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-extrabold text-primary">42</span>
+<span class="text-xs font-bold text-primary/60">שעות</span>
+</div>
+</div>
+<div class="bg-primary/5 p-4 rounded-2xl flex flex-col gap-1 border border-primary/10 transition-transform active:scale-95">
+<span class="text-on-surface-variant/70 text-[11px] font-semibold uppercase tracking-wider">סה"כ רווח</span>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-extrabold text-primary">₪2,730</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Shift List Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-headline font-extrabold text-on-surface text-base">מאי 2024</h3>
+<span class="text-[11px] font-bold text-on-surface-variant/60 bg-surface-variant/10 border border-outline-variant/20 px-3 py-1 rounded-full">4 משמרות</span>
+</div>
+<div class="space-y-4">
+<!-- Shift Item 1 -->
+<div class="bg-white rounded-2xl p-5 shadow-card border border-outline-variant/5 group active:scale-[0.98] transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="relative">
+<div class="w-14 h-14 rounded-2xl overflow-hidden ring-4 ring-primary/5">
+<img alt="Family" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzssEd77qhtDMHbj3BM7LHQ5sAM6KlpDTGNYC5fGAIp5131jn3IyWNLTo6yi93HypwwQpNMn_G8ygvvqFAK2Otqk5Q_9JL04f-w4eq4RrGGOqcB3Biu7PHgjby1sR-Gwoy7xcg3XVB84esxLzyS9xDwx6pMY3M-gTtNZ2ii7VY_7ofcfS2w4CVXfOu2s_e2et21qigN_Cq1w-z9-XnJI8NPLc6N4z07scxENaUh4qRd_0jIVhIRzkpBkgvV55XcmkqN4oQDkKUHUGD"/>
+</div>
+</div>
+<div class="flex flex-col justify-center">
+<span class="font-headline font-bold text-[16px] text-on-surface">משפחת לוי</span>
+<span class="text-xs font-medium text-on-surface-variant">יום חמישי, 12 במאי</span>
+</div>
+</div>
+<div class="bg-[#E7F7EF] text-[#059669] px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wide">
+                        שולם
+                    </div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-2 text-on-surface-variant/80">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span class="text-xs font-semibold">17:00 - 21:00 • 4 שעות</span>
+</div>
+<div class="text-xl font-extrabold text-primary">₪260</div>
+</div>
+</div>
+<!-- Shift Item 2 -->
+<div class="bg-white rounded-2xl p-5 shadow-card border border-outline-variant/5 group active:scale-[0.98] transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="w-14 h-14 rounded-2xl overflow-hidden ring-4 ring-primary/5">
+<img alt="Family" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUmVVi9uzYAwaKCsmLE7P0GdkvJ398v8wJrpZVqmrpzaUUYg_n-x03vTYnoBCupz-gg8Lq0GwX0GZ1y0HeRhUBNNCb5jdJhAyszXO6HphkuhmRT56E-jzt9JiVM5-_KPpGiKqPk2_Wb9iCltsqLI3dUF0_G1FWfl3t6gh4bLkxwmi1se8nFM2JmC6k-97-CXucl3dpza1al9U95aWEmNj59TqbHh9EQRHU5_W-vItNLIs7F3N7sbNZ-OjmO1cvI7TmuMcnK0VFcb8D"/>
+</div>
+<div class="flex flex-col justify-center">
+<span class="font-headline font-bold text-[16px] text-on-surface">משפחת כהן</span>
+<span class="text-xs font-medium text-on-surface-variant">יום שלישי, 10 במאי</span>
+</div>
+</div>
+<div class="bg-[#FFF7ED] text-[#EA580C] px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wide">
+                        ממתין
+                    </div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-2 text-on-surface-variant/80">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span class="text-xs font-semibold">19:30 - 23:30 • 4 שעות</span>
+</div>
+<div class="text-xl font-extrabold text-primary">₪300</div>
+</div>
+</div>
+<!-- Shift Item 3 -->
+<div class="bg-white rounded-2xl p-5 shadow-card border border-outline-variant/5 group active:scale-[0.98] transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="w-14 h-14 rounded-2xl overflow-hidden ring-4 ring-primary/5">
+<img alt="Family" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo_a12U9krF1XY2X-FuDc1J-35pu3ePR1N_1-KiyqIaNJWLAmeY2WbBZyvf2NEAWfIu3d2v-BzS6SK_XpVjXnBxeCox4BGYPR88rd1bUyI-CmP4he7XnI2kOvsZWjewCTkCxqbbG-hS-Cao2jT_k3Jn8tM359yIuWuYzl7yqd1X4_pUQdoiYew0hzjuxnga2DfK4PuWgYBmn-Dh1g3nkB6D5tj8m4mw7vNhsYfsu1OB2aitrPdpEXUHDwIj3BDZACyB-fDnHCsDwuq"/>
+</div>
+<div class="flex flex-col justify-center">
+<span class="font-headline font-bold text-[16px] text-on-surface">משפחת אברהם</span>
+<span class="text-xs font-medium text-on-surface-variant">יום ראשון, 8 במאי</span>
+</div>
+</div>
+<div class="bg-[#E7F7EF] text-[#059669] px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wide">
+                        שולם
+                    </div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-2 text-on-surface-variant/80">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span class="text-xs font-semibold">08:00 - 14:00 • 6 שעות</span>
+</div>
+<div class="text-xl font-extrabold text-primary">₪390</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-28 left-6 w-16 h-16 bg-primary text-white rounded-2xl shadow-xl shadow-primary/30 flex items-center justify-center z-40 active:scale-90 transition-all hover:bg-primary-dark">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full glass-nav z-50 border-t border-outline-variant/10 px-4 py-3 pb-8 flex justify-around items-center">
+<div class="flex flex-col items-center justify-center gap-1 text-on-surface-variant/50 cursor-pointer group">
+<span class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">calendar_month</span>
+<span class="text-[10px] font-bold uppercase tracking-tight">Schedule</span>
+</div>
+<div class="flex flex-col items-center justify-center gap-1 text-primary relative cursor-pointer">
+<div class="absolute -top-1 w-1 h-1 bg-primary rounded-full"></div>
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="text-[10px] font-bold uppercase tracking-tight">Shifts</span>
+</div>
+<div class="flex flex-col items-center justify-center gap-1 text-on-surface-variant/50 cursor-pointer group">
+<span class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">payments</span>
+<span class="text-[10px] font-bold uppercase tracking-tight">Earnings</span>
+</div>
+<div class="flex flex-col items-center justify-center gap-1 text-on-surface-variant/50 cursor-pointer group">
+<span class="material-symbols-outlined text-[24px] group-hover:text-primary transition-colors">account_circle</span>
+<span class="text-[10px] font-bold uppercase tracking-tight">Profile</span>
+</div>
+</nav>
+</body></html>

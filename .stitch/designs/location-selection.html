@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-error": "#ffefef",
+              "secondary": "#60586b",
+              "surface-variant": "#cdddfe",
+              "error": "#b41340",
+              "primary-dim": "#6411d5",
+              "primary": "#702ae1",
+              "primary-fixed-dim": "#a67aff",
+              "secondary-fixed-dim": "#dbd0e7",
+              "error-container": "#f74b6d",
+              "on-surface-variant": "#515c70",
+              "error-dim": "#a70138",
+              "surface-container-low": "#ecf1ff",
+              "outline": "#6c778c",
+              "primary-container": "#b28cff",
+              "on-tertiary-container": "#64042d",
+              "on-secondary": "#f8efff",
+              "surface-tint": "#702ae1",
+              "secondary-fixed": "#e9def5",
+              "secondary-container": "#e9def5",
+              "on-primary-container": "#2e006c",
+              "primary-fixed": "#b28cff",
+              "on-primary-fixed-variant": "#390083",
+              "on-background": "#242f41",
+              "on-tertiary-fixed-variant": "#711036",
+              "on-primary": "#f8f0ff",
+              "tertiary-fixed-dim": "#f77c9e",
+              "inverse-surface": "#040e1f",
+              "tertiary-dim": "#8e294c",
+              "secondary-dim": "#534c5f",
+              "on-secondary-container": "#564f61",
+              "tertiary-container": "#ff8eac",
+              "inverse-on-surface": "#929db4",
+              "surface-container-lowest": "#ffffff",
+              "surface": "#f4f6ff",
+              "on-surface": "#242f41",
+              "surface-bright": "#f4f6ff",
+              "surface-container": "#dee8ff",
+              "surface-container-high": "#d5e3ff",
+              "on-tertiary-fixed": "#380016",
+              "tertiary": "#9e3657",
+              "inverse-primary": "#a476ff",
+              "background": "#f4f6ff",
+              "on-tertiary": "#ffeff1",
+              "surface-dim": "#c3d5f8",
+              "on-secondary-fixed": "#433c4e",
+              "on-error-container": "#510017",
+              "outline-variant": "#a2adc4",
+              "tertiary-fixed": "#ff8eac",
+              "on-primary-fixed": "#000000",
+              "surface-container-highest": "#cdddfe",
+              "on-secondary-fixed-variant": "#60586b"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .signature-gradient {
+        background: linear-gradient(135deg, #702ae1 0%, #6411d5 100%);
+      }
+      body {
+        font-family: 'Be Vietnam Pro', sans-serif;
+      }
+      h1, h2, h3 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+    </style>
+<style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md flex flex-row-reverse justify-between items-center px-6 h-16">
+<div class="text-2xl font-black text-primary tracking-tight">Smartaf</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface">arrow_forward</span>
+</button>
+</header>
+<main class="pt-24 pb-12 px-6 max-w-lg mx-auto">
+<!-- Progress Bar -->
+<div class="w-full h-1.5 bg-surface-container rounded-full mb-10">
+<div class="w-3/4 h-full signature-gradient rounded-full"></div>
+</div>
+<!-- Editorial Header Section -->
+<section class="mb-12 text-right">
+<h1 class="text-4xl font-extrabold text-on-surface leading-tight tracking-tight mb-4">
+                בחירת מיקום
+            </h1>
+<p class="text-lg text-on-surface-variant leading-relaxed">
+                כדי שנוכל למצוא עבורכם את המטפלות הטובות ביותר בסביבה שלכם, אנחנו צריכים לדעת איפה אתם גרים.
+            </p>
+</section>
+<!-- Search & Selection Area -->
+<div class="space-y-8">
+<!-- Search Input -->
+<div class="relative">
+<div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">location_on</span>
+</div>
+<input class="w-full h-16 pr-12 pl-6 bg-surface-container-high border-none rounded-lg text-lg focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all duration-300 placeholder:text-outline" placeholder="חפשו את העיר שלכם..." type="text"/>
+</div>
+<!-- Visual Map Representation -->
+<div class="relative h-48 w-full rounded-lg overflow-hidden bg-surface-container-low">
+<img alt="Modern abstract map illustration showing local neighborhood" class="w-full h-full object-cover opacity-60 mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtnXI_1dKc2wKNBZYoSE-ef3MdiQUQ8CaFMtXblPXAntiJp5a_0CsYWPNGzMmqOlUKSnk-pw97xa4X6dEAgqKiC3DN5GtRKkYNSeyHF-Sfizdi7xDpwtNEBvnzo7zabxCMHRqDCodjTj6HxdLjwCc00wsoz4AgylUDBcUIBaf4lY82vsa30xYmNyr3_Ui018uBaj-lC_upXz1jSBA7EDCsw9IiJhH0mvPrRjpSiBNVzNsuhVHmBQMeyYM0BTM_6aNPRm52pJoQkB79"/>
+<div class="absolute inset-0 signature-gradient opacity-10"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="bg-surface-container-lowest p-4 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">explore</span>
+</div>
+</div>
+</div>
+<!-- Quick Selection Bento Grid -->
+<div>
+<h2 class="text-sm font-bold text-outline uppercase tracking-widest mb-4 mr-1">ערים פופולריות</h2>
+<div class="grid grid-cols-2 gap-4">
+<!-- City Card 1 -->
+<button class="group relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-lg hover:shadow-xl transition-all duration-300">
+<span class="text-lg font-bold text-on-surface mb-1">תל אביב</span>
+<span class="text-xs text-on-surface-variant">מרכז</span>
+<div class="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+</div>
+</button>
+<!-- City Card 2 -->
+<button class="group relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-lg hover:shadow-xl transition-all duration-300 border-2 border-primary/20">
+<span class="text-lg font-bold text-primary mb-1">ירושלים</span>
+<span class="text-xs text-on-surface-variant">הרים</span>
+<div class="absolute top-3 left-3 opacity-100">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</button>
+<!-- City Card 3 -->
+<button class="group relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-lg hover:shadow-xl transition-all duration-300">
+<span class="text-lg font-bold text-on-surface mb-1">חיפה</span>
+<span class="text-xs text-on-surface-variant">צפון</span>
+<div class="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+</div>
+</button>
+<!-- City Card 4 -->
+<button class="group relative flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-lg hover:shadow-xl transition-all duration-300">
+<span class="text-lg font-bold text-on-surface mb-1">באר שבע</span>
+<span class="text-xs text-on-surface-variant">דרום</span>
+<div class="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Trust Information Card -->
+<section class="mt-10 p-6 bg-secondary-container rounded-lg flex items-start gap-4">
+<div class="bg-surface-container-lowest p-2 rounded-full shrink-0">
+<span class="material-symbols-outlined text-secondary">verified_user</span>
+</div>
+<div>
+<h3 class="font-bold text-on-secondary-container mb-1">הפרטיות שלכם חשובה לנו</h3>
+<p class="text-sm text-on-secondary-container/80 leading-relaxed">
+                    אנחנו ב-Smartaf משתמשים במיקום שלכם רק כדי להציג מטפלות רלוונטיות. הכתובת המדויקת שלכם לעולם לא תיחשף ללא אישורכם.
+                </p>
+</div>
+</section>
+<!-- Footer Action -->
+<div class="mt-12">
+<button class="w-full py-5 rounded-lg signature-gradient text-on-primary font-bold text-xl shadow-lg active:scale-95 transition-all">
+                המשך לשלב הבא
+            </button>
+<button class="w-full mt-4 py-3 text-on-surface-variant font-medium hover:text-primary transition-colors">
+                דלג לעת עתה
+            </button>
+</div>
+</main>
+</body></html>

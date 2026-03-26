@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Share, StyleSheet, TouchableOpacity, View, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
@@ -13,7 +13,6 @@ import AppChip from '@/components/ui/AppChip';
 import { strings } from '@/locales';
 import { ParentPost } from '@/types/post';
 import {
-  BabysitterDesignTokens,
   BabyCityGeometry,
   BabyCityPalette,
 } from '@/constants/theme';
@@ -227,32 +226,6 @@ export default function ParentPostCard({
           </LinearGradient>
         </TouchableOpacity>
 
-        {/* Icon row: save + share */}
-        <View style={styles.iconRow}>
-          {onToggleSave ? (
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={onToggleSave}
-              activeOpacity={0.85}
-            >
-              <MaterialIcons
-                name={isSaved ? 'bookmark' : 'bookmark-border'}
-                size={20}
-                color={BabyCityPalette.primary}
-              />
-            </TouchableOpacity>
-          ) : null}
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => {
-              const url = `babysitconnect:///babysitter?postId=${post.id}`;
-              Share.share({ message: `${strings.sharePostText}\n${url}` });
-            }}
-            activeOpacity={0.85}
-          >
-            <MaterialIcons name="share" size={20} color={BabyCityPalette.primary} />
-          </TouchableOpacity>
-        </View>
       </View>
     </AnimatedView>
   );
@@ -282,15 +255,13 @@ function MetaChip({
   );
 }
 
-const CARD_BORDER_RADIUS = 16;
+const CARD_BORDER_RADIUS = 24;
 const AVATAR_SIZE = 64;
 const AVATAR_BORDER = 4;
-const AVATAR_OVERHANG = 22; // how many px the avatar bleeds above the card
 
 const styles = StyleSheet.create({
   shellWrap: {
-    // extra top padding so avatar has room to bleed upward
-    paddingTop: AVATAR_SIZE / 2 - AVATAR_BORDER,
+    paddingTop: 10,
     marginBottom: 24,
     shadowColor: '#242f41',
     shadowOffset: { width: 0, height: 22 },
@@ -306,8 +277,8 @@ const styles = StyleSheet.create({
   },
   avatarAnchor: {
     position: 'absolute',
-    top: 0,
-    right: 6,
+    top: 12,
+    right: 12,
     zIndex: 10,
   },
   avatarTouchable: {},
@@ -345,7 +316,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#ffffff',
     borderRadius: CARD_BORDER_RADIUS,
-    paddingTop: AVATAR_OVERHANG + 8,
+    paddingTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 16,
   },
@@ -357,8 +328,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    // indentRTL: push name right so it doesn't overlap the avatar
-    paddingRight: AVATAR_SIZE + 4,
+    paddingRight: AVATAR_SIZE + 18,
   },
   identityWrap: {
     flex: 1,
@@ -463,19 +433,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 15,
     textAlign: 'center',
-  },
-  iconRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 8,
-    marginTop: 10,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: BabysitterDesignTokens.surfaces.cardMuted,
-    borderRadius: BabyCityGeometry.radius.control,
   },
 });

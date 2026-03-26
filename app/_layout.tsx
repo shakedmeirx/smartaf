@@ -58,7 +58,11 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthFlow = (segments[0] === 'auth' || segments[0] === 'auth-verify');
+    const inAuthFlow = (
+      segments[0] === 'welcome' ||
+      segments[0] === 'auth' ||
+      segments[0] === 'auth-verify'
+    );
 
     if (!session && !inAuthFlow) {
       // Save any pending deep link (cold-start URL) so index.tsx can restore it after login
@@ -74,12 +78,12 @@ function AuthGate({ children }: { children: React.ReactNode }) {
         }
       });
       // Not authenticated — redirect to phone entry
-      router.replace('/auth');
+      router.replace('/welcome');
     } else if (session && inAuthFlow) {
       // Just verified OTP — send to home so index.tsx can decide where to go
       router.replace('/');
     }
-  }, [session, isLoading, segments]);
+  }, [session, isLoading, segments, router]);
 
   // Render nothing while the initial session check is in progress.
   // The native splash screen stays visible during this brief pause.
@@ -142,6 +146,7 @@ export default function RootLayout() {
                   <InAppNotificationBanner />
                   <Stack key={langKey} screenOptions={{ animation: 'fade', animationDuration: 200 }}>
                     {/* Auth flow — no header chrome */}
+                    <Stack.Screen name="welcome"           options={{ headerShown: false }} />
                     <Stack.Screen name="auth"              options={{ headerShown: false }} />
                     <Stack.Screen name="auth-verify"       options={{ headerShown: false }} />
 
@@ -167,11 +172,14 @@ export default function RootLayout() {
                     <Stack.Screen name="my-posts"          options={{ headerShown: false }} />
                     <Stack.Screen name="my-ratings"        options={{ headerShown: false }} />
                     <Stack.Screen name="create-post"       options={{ headerShown: false }} />
-                    <Stack.Screen name="family-profile"    options={{ headerShown: false }} />
-                    <Stack.Screen name="chat"              options={{ headerShown: false }} />
-                    <Stack.Screen name="about"             options={{ headerShown: false }} />
-                    <Stack.Screen name="booking-history"   options={{ headerShown: false }} />
-                  </Stack>
+	                    <Stack.Screen name="family-profile"    options={{ headerShown: false }} />
+	                    <Stack.Screen name="chat"              options={{ headerShown: false }} />
+	                    <Stack.Screen name="about"             options={{ headerShown: false }} />
+	                    <Stack.Screen name="booking-history"   options={{ headerShown: false }} />
+	                    <Stack.Screen name="legal-privacy"     options={{ headerShown: false }} />
+	                    <Stack.Screen name="legal-terms"       options={{ headerShown: false }} />
+	                    <Stack.Screen name="legal-contact"     options={{ headerShown: false }} />
+	                  </Stack>
                 </AuthGate>
                 <StatusBar style="dark" />
               </ThemeProvider>

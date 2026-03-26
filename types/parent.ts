@@ -8,6 +8,7 @@ export type ParentOnboardingData = {
   profilePhotoPath: string;
   profilePhotoUrl: string;
   childrenCount: string;
+  childNames: string[];
   childBirthDates: string[];
   pets: string[];
   hourlyBudget: string;
@@ -28,6 +29,7 @@ export type ParentProfileSummary = {
   profilePhotoPath: string | null;
   profilePhotoUrl?: string;
   childrenCount: number | null;
+  childNames: string[];
   childBirthDates: string[];
   childAges: number[];
   childAgeGroups: string[];
@@ -48,6 +50,7 @@ export const initialParentOnboardingData: ParentOnboardingData = {
   profilePhotoPath: '',
   profilePhotoUrl: '',
   childrenCount: '',
+  childNames: [],
   childBirthDates: [],
   pets: [],
   hourlyBudget: '',

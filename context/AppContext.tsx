@@ -337,7 +337,7 @@ async function mergeParentProfileDetailsIntoPosts(rows: Record<string, unknown>[
 
   const { data: profileRows, error } = await supabase
     .from('parent_profiles')
-    .select('id, user_id, city, profile_photo_path')
+    .select('id, user_id, city, latitude, longitude, profile_photo_path')
     .in('user_id', parentIds);
 
   if (error) {

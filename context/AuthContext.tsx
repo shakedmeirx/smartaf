@@ -1,8 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { UserRole } from '@/types/user';
+
+WebBrowser.maybeCompleteAuthSession();
+
+const MOBILE_OAUTH_REDIRECT_URL = 'babysitconnect://auth';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -11,6 +18,7 @@ type DbUser = {
   id: string;
   name: string;
   phone: string | null;
+  email: string | null;
   roles: UserRole[];
 };
 
@@ -29,6 +37,8 @@ type AuthState = {
   isLoading: boolean;
   sendOtp: (phone: string) => Promise<void>;
   verifyOtp: (phone: string, token: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
+  signInWithApple: () => Promise<void>;
   createUser: (role: UserRole, name: string) => Promise<CreateUserResult>;
   addParentRole: () => Promise<AddParentRoleResult>;
   setActiveRole: (role: UserRole | null) => void;
@@ -41,6 +51,31 @@ const AuthContext = createContext<AuthState | null>(null);
 
 function activeRoleStorageKey(userId: string) {
   return `active_role:${userId}`;
+}
+
+function parseOAuthParams(url: string) {
+  const parsedUrl = new URL(url);
+  const combinedParams = new URLSearchParams();
+
+  for (const rawParams of [parsedUrl.search, parsedUrl.hash]) {
+    const normalizedParams = rawParams.replace(/^[?#]/, '');
+    if (!normalizedParams) continue;
+
+    const params = new URLSearchParams(normalizedParams);
+    params.forEach((value, key) => {
+      combinedParams.set(key, value);
+    });
+  }
+
+  return combinedParams;
+}
+
+function getOAuthRedirectUrl() {
+  if (Platform.OS === 'web') {
+    return Linking.createURL('auth');
+  }
+
+  return MOBILE_OAUTH_REDIRECT_URL;
 }
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
@@ -111,7 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     ] = await Promise.all([
       supabase
         .from('users')
-        .select('id, name, phone, role')
+        .select('id, name, phone, email, role')
         .eq('id', userId)
         .maybeSingle(),
       supabase
@@ -143,6 +178,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       id: userRow.id as string,
       name: userRow.name as string,
       phone: (userRow.phone as string | null) ?? null,
+      email: (userRow.email as string | null) ?? null,
       roles,
     });
 
@@ -195,6 +231,86 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // which will call fetchDbUser and update session + dbUser.
   }
 
+  async function completeOAuthSignIn(url: string) {
+    const params = parseOAuthParams(url);
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
+    const authorizationCode = params.get('code');
+    const providerError = params.get('error') ?? params.get('error_code');
+    const providerErrorDescription = params.get('error_description');
+
+    if (providerError) {
+      throw new Error(providerErrorDescription ?? providerError);
+    }
+
+    if (authorizationCode) {
+      const { error } = await supabase.auth.exchangeCodeForSession(authorizationCode);
+      if (error) throw error;
+      return;
+    }
+
+    if (!accessToken || !refreshToken) {
+      throw new Error('Missing OAuth session tokens');
+    }
+
+    const { error } = await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    });
+    if (error) throw error;
+  }
+
+  async function signInWithOAuthProvider(provider: 'google' | 'apple') {
+    const redirectTo = getOAuthRedirectUrl();
+
+    if (Platform.OS === 'web') {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo },
+      });
+      if (error) throw error;
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo,
+        skipBrowserRedirect: true,
+        queryParams:
+          provider === 'google'
+            ? {
+                access_type: 'offline',
+                prompt: 'select_account',
+              }
+            : undefined,
+      },
+    });
+
+    if (error) throw error;
+    if (!data?.url) throw new Error('Missing OAuth URL');
+
+    const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+
+    if (result.type === 'cancel' || result.type === 'dismiss') {
+      return;
+    }
+
+    if (result.type !== 'success' || !result.url) {
+      throw new Error('OAuth sign-in was interrupted');
+    }
+
+    await completeOAuthSignIn(result.url);
+  }
+
+  async function signInWithGoogle() {
+    await signInWithOAuthProvider('google');
+  }
+
+  async function signInWithApple() {
+    await signInWithOAuthProvider('apple');
+  }
+
   // ── User creation ─────────────────────────────────────────────────────────
   // Called after OTP verification when the user selects their first role.
   // Reuses the same public.users row for the same phone-auth account and creates
@@ -209,6 +325,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         role,
         name,
         phone: session.user.phone ?? null,
+        email: session.user.email ?? null,
       },
       { onConflict: 'id' }
     );
@@ -283,6 +400,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         sendOtp,
         verifyOtp,
+        signInWithGoogle,
+        signInWithApple,
         createUser,
         addParentRole,
         setActiveRole,

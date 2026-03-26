@@ -1,56 +1,32 @@
 import { useRef, useState } from 'react';
 import {
-  View,
-  Image,
-  TextInput,
-  StyleSheet,
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StyleSheet,
+  TextInput,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { strings } from '@/locales';
 import { useAuth } from '@/context/AuthContext';
-import { BabyCityPalette } from '@/constants/theme';
+import {
+  BabyCityPalette,
+} from '@/constants/theme';
 import KeyboardAccessoryBar from '@/components/ui/KeyboardAccessoryBar';
 import AppText from '@/components/ui/AppText';
-import AppInput from '@/components/ui/AppInput';
+import SmartafWordmark from '@/components/ui/SmartafWordmark';
 
-// Stitch design tokens
-const C = {
-  bg: '#f4f6ff',             // surface
-  cardBg: '#ffffff',          // surface-container-lowest
-  primary: '#702ae1',
-  primaryDim: '#6411d5',
-  onPrimary: '#f8f0ff',
-  secondaryContainer: '#e9def5',
-  onSecondaryContainer: '#564f61',
-  primaryContainer: '#b28cff',
-  onPrimaryContainer: '#2e006c',
-  surfaceContainerLow: '#ecf1ff',
-  onSurface: '#242f41',
-  onSurfaceVariant: '#515c70',
-  outlineVariant: '#a2adc4',
-} as const;
-
-// Stitch social-proof avatar images
-const SOCIAL_PROOF_AVATARS = [
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuA-s0dD1m_2cLBvEul9elsR3TKyH2N0BAM7_oEHYNiNGGNN5xfO0AdwumMkiC4lsj8eg_LR-ok8N0Ve_dQwpvkIgl4aGtp3HbYUTpOpiv6noDzUP790JN2LS7Z_D0uX6j4oRhVe8KFy4tPzHqsL5yKpqgnwFAHyCTlhxQoVtgM6FgiOs-mzylBLStS49vySfqtxhaG_mTmTPgjHyeAEj9u04uRyrQ1stdlJHLhkjY1CiOAuLdR7KlV1LqsP4tgqYdymeXHqSa8tlSde',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuCFWRFrYQlCYvwwuvkMm4cJXQSaL51bK4nMDy2Mzc8eI1cRtCMtacTKicSD3OjH0UEZAX_sSjCQZopC15rmi7OfpV_63OVU7sZlORwDYyIG2UkO05kJzlVswerDXXQHwa2dEgGCmxTYtKPlSCWLfxdvvb6VDd63wS0N_pMAcWhtDLpo5qh34yv9POGufReSz2wiyqe-FcS_umdN8oG-ykIpmdmmUJNOq51r8bq--ELfZgPGJjyUr4xA7W-UxJB0l2Qnv3IFeivRXHeP',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBg3omT9gk1KeJQWBkLyUOPAkP_727811xj79lBDcE4batU4M5EQ1GFdDqbJKknWPEZbWSQ0HSWHacPKeLoCxy3HKemiRGzYWfQ4lSDkafzBnAQrIPtAn7LxSVntaZ6O31BaAUQwpbDEAREroKZLyhPcE-dPoQofSpqds7yU_ooSEdv9M0vW9eLtGhdRMEFk5XkSi9SRgtOWENdulgYs94ZFiCXIxn48jeolxlQC6Y8l-8_Y5e3L8WGaibBaEH0VpmChBygl2Hr_wcX',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAAer5Nml7VFmRJpAoc1NAtneSlOl-iJH8VRWyTOAOQOAP-KPiICTvaZGSCLJ9d7CyNGKoXXSPsfw7TR8dVEE07qg5xZrpt5z3zaXJl33N9V4vDZFNLoMcmWz7Nfv-nVvBnCmdP9RT5HH6DxBOPBKcP7nWtE_Fh_PGtFrFcVErGut6yS5CrQhoZdUbEBxGqUk2LdLPJTrH9MiiC9EhudWlMqC25rwY1eAyJ-l1_ruQqZMvqDqLEs5bywOg2-7SHJC29K6o-0Y9AbNGP',
-] as const;
-
-// Converts a local Israeli number to E.164 format required by Supabase.
 function toE164(input: string): string {
   const digits = input.replace(/\D/g, '');
   if (input.trim().startsWith('+')) return `+${digits}`;
-  if (digits.startsWith('972'))     return `+${digits}`;
-  if (digits.startsWith('0'))       return `+972${digits.slice(1)}`;
+  if (digits.startsWith('972')) return `+${digits}`;
+  if (digits.startsWith('0')) return `+972${digits.slice(1)}`;
   return `+972${digits}`;
 }
 
@@ -59,9 +35,10 @@ export default function AuthScreen() {
   const phoneRef = useRef<TextInput>(null);
   const phoneAccessoryId = 'auth-phone-accessory';
 
-  const [phone, setPhone]     = useState('');
-  const [error, setError]     = useState('');
+  const [phone, setPhone] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   async function handleSend() {
     const formatted = toE164(phone);
@@ -69,6 +46,7 @@ export default function AuthScreen() {
       setError(strings.authErrorInvalidPhone);
       return;
     }
+
     setLoading(true);
     setError('');
     try {
@@ -83,193 +61,138 @@ export default function AuthScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <View style={styles.backgroundLayer} pointerEvents="none">
+        <View style={styles.backgroundBlobTop} />
+        <View style={styles.backgroundBlobBottom} />
+      </View>
+
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
-          contentContainerStyle={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* ── Top bar ─────────────────────────────────────────────────────── */}
           <View style={styles.topBar}>
-            {/* Left: language button (RTL: appears on left visually) */}
-            <TouchableOpacity>
-              <AppText variant="body" weight="600" style={styles.langButton}>
-                {'עברית'}
-              </AppText>
-            </TouchableOpacity>
-
-            {/* Right: brand (RTL: appears on right visually) */}
             <View style={styles.brandRow}>
-              <AppText variant="bodyLarge" weight="800" style={styles.brandName}>
-                {strings.appName}
-              </AppText>
-              <LinearGradient
-                colors={[C.primary, C.primaryDim]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.brandMark}
-              >
-                <MaterialIcons name="child-care" size={20} color="#ffffff" />
-              </LinearGradient>
+              <SmartafWordmark size="sm" textColor={BabyCityPalette.textPrimary} />
             </View>
-          </View>
 
-          {/* ── Hero ────────────────────────────────────────────────────────── */}
-          <View style={styles.hero}>
-            {/* Decorative blur circles (semi-transparent, no real blur in RN) */}
-            <View style={styles.heroBlurTopRight} />
-            <View style={styles.heroBlurBottomLeft} />
-
-            <AppText variant="h1" weight="800" style={styles.heroHeadline}>
-              {'Smartaf - '}
-            </AppText>
-            <AppText variant="h1" weight="800" style={styles.heroPrimary}>
-              {'למצוא את הטיפול הטוב ביותר בביטחון.'}
-            </AppText>
-            <AppText style={styles.heroBody}>
-              {'הצטרפו לקהילת ההורים והמטפלות הגדולה בישראל. שקט נפשי מתחיל כאן.'}
-            </AppText>
-          </View>
-
-          {/* ── Card: actions + phone ────────────────────────────────────────── */}
-          <View style={styles.card}>
-            {/* Primary CTA — send OTP */}
             <TouchableOpacity
-              style={styles.primaryBtn}
-              onPress={handleSend}
-              activeOpacity={0.88}
-              disabled={loading}
+              activeOpacity={0.8}
+              onPress={() => router.replace('/welcome')}
+              style={styles.backButton}
             >
-              <LinearGradient
-                colors={[C.primary, C.primaryDim]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.primaryBtnGradient}
-              >
-                <AppText variant="bodyLarge" weight="700" style={styles.primaryBtnText}>
-                  {'מתחילים עכשיו'}
-                </AppText>
-                <MaterialIcons name="arrow-back" size={20} color={C.onPrimary} />
-              </LinearGradient>
+              <Ionicons name="chevron-forward" size={18} color={BabyCityPalette.textPrimary} />
             </TouchableOpacity>
+          </View>
 
-            {/* Secondary CTA */}
-            <TouchableOpacity style={styles.secondaryBtn} activeOpacity={0.88}>
-              <AppText variant="bodyLarge" weight="700" style={styles.secondaryBtnText}>
-                {'התחברות'}
-              </AppText>
-            </TouchableOpacity>
+          <View style={styles.header}>
+            <AppText variant="h1" weight="800" style={styles.title}>
+              {strings.authPhoneEntryTitle}
+            </AppText>
+            <AppText variant="bodyLarge" weight="500" style={styles.subtitle}>
+              {strings.authPhoneEntrySubtitle}
+            </AppText>
+          </View>
 
-            {/* Divider */}
-            <View style={styles.dividerRow}>
-              <View style={styles.dividerLine} />
-              <AppText variant="caption" style={styles.dividerText}>{'או באמצעות'}</AppText>
-              <View style={styles.dividerLine} />
-            </View>
+          <View style={styles.card}>
+            <View style={styles.cardGlow} />
 
-            {/* Social login grid */}
-            <View style={styles.socialGrid}>
-              <TouchableOpacity style={styles.socialBtnApple} activeOpacity={0.88}>
-                <MaterialIcons name="apple" size={20} color="#ffffff" />
-                <AppText variant="body" weight="600" style={styles.socialBtnAppleText}>{'Apple'}</AppText>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.socialBtnGoogle} activeOpacity={0.88}>
-                <AppText variant="body" weight="600" style={styles.socialBtnGoogleText}>{'Google'}</AppText>
-              </TouchableOpacity>
-            </View>
-
-            {/* Phone input section */}
-            <View style={styles.phoneSection}>
-              <AppText variant="caption" weight="700" tone="muted" style={styles.inputLabel}>
+            <View style={styles.inputSection}>
+              <AppText variant="caption" weight="700" tone="muted" style={styles.label}>
                 {strings.phoneLabel}
               </AppText>
-              <AppInput
-                ref={phoneRef}
-                value={phone}
-                onChangeText={v => { setPhone(v); setError(''); }}
-                placeholder={strings.phonePlaceholder}
-                keyboardType="phone-pad"
-                textContentType="telephoneNumber"
-                textAlign="right"
-                returnKeyType="done"
-                onSubmitEditing={handleSend}
-                autoFocus
-                inputAccessoryViewID={Platform.OS === 'ios' ? phoneAccessoryId : undefined}
-                containerStyle={styles.inputBlock}
-                inputWrapStyle={styles.inputWrap}
-                style={styles.inputText}
-              />
-              <KeyboardAccessoryBar nativeID={phoneAccessoryId} onPress={handleSend} />
-              <AppText variant="caption" tone="muted" style={styles.hint}>
-                {strings.phoneHint}
-              </AppText>
-              {error !== '' ? (
-                <AppText variant="body" tone="error" style={styles.errorText}>
-                  {error}
-                </AppText>
-              ) : null}
-            </View>
-          </View>
 
-          {/* ── Social proof ─────────────────────────────────────────────────── */}
-          <View style={styles.socialProof}>
-            <View style={styles.avatarCluster}>
-              {SOCIAL_PROOF_AVATARS.map((uri, i) => (
-                <Image
-                  key={i}
-                  source={{ uri }}
-                  style={[styles.avatar, { right: i * 24 }]}
-                  resizeMode="cover"
-                />
-              ))}
-              {/* +15K badge */}
-              <View style={[styles.avatar, styles.avatarBadge, { right: 4 * 24 }]}>
-                <AppText style={styles.avatarBadgeText}>{'15K+'}</AppText>
+              <View style={styles.inputRow}>
+                <View style={styles.countryCodeWrap}>
+                  <AppText variant="bodyLarge" weight="700" align="center" style={styles.countryCode}>
+                    {'+972'}
+                  </AppText>
+                  <MaterialIcons
+                    name="keyboard-arrow-down"
+                    size={18}
+                    color={BabyCityPalette.textSecondary}
+                  />
+                </View>
+
+                <View style={[styles.phoneInputWrap, focused && styles.phoneInputWrapFocused]}>
+                  <TextInput
+                    ref={phoneRef}
+                    value={phone}
+                    onChangeText={(value) => {
+                      setPhone(value);
+                      setError('');
+                    }}
+                    onFocus={() => setFocused(true)}
+                    onBlur={() => setFocused(false)}
+                    placeholder={strings.phonePlaceholder}
+                    placeholderTextColor="rgba(162, 173, 196, 0.75)"
+                    keyboardType="phone-pad"
+                    textContentType="telephoneNumber"
+                    returnKeyType="done"
+                    onSubmitEditing={handleSend}
+                    autoFocus
+                    inputAccessoryViewID={Platform.OS === 'ios' ? phoneAccessoryId : undefined}
+                    style={styles.phoneInput}
+                  />
+                </View>
               </View>
             </View>
-            <AppText variant="caption" weight="500" style={styles.socialProofText}>
-              {'מעל 15,000 הורים כבר מצאו את המטפלת המושלמת'}
-            </AppText>
+
+            <KeyboardAccessoryBar nativeID={phoneAccessoryId} onPress={handleSend} />
+
+            <TouchableOpacity
+              activeOpacity={0.88}
+              onPress={handleSend}
+              disabled={loading}
+              style={styles.primaryButtonShadow}
+            >
+              <LinearGradient
+                colors={[BabyCityPalette.primary, '#6411d5']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.primaryButton}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#ffffff" />
+                ) : (
+                  <>
+                    <AppText variant="bodyLarge" weight="700" style={styles.primaryButtonText}>
+                      {strings.sendCode}
+                    </AppText>
+                    <MaterialIcons name="send" size={20} color="#ffffff" />
+                  </>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
+
+            {error !== '' ? (
+              <AppText variant="body" tone="error" style={styles.errorText}>
+                {error}
+              </AppText>
+            ) : null}
           </View>
 
-          {/* ── Feature tiles ────────────────────────────────────────────────── */}
-          <View style={styles.tilesRow}>
-            {/* Tile 1 — verified profiles */}
-            <View style={[styles.tile, styles.tileLeft]}>
-              <MaterialIcons name="verified-user" size={32} color={C.primary} />
-              <AppText variant="caption" weight="700" style={styles.tileTitle}>
-                {'פרופילים מאומתים'}
-              </AppText>
-              <AppText variant="caption" tone="muted" style={styles.tileBody}>
-                {'אנחנו בודקים כל מטפלת כדי להבטיח ביטחון מלא.'}
+          <View style={styles.securitySection}>
+            <View style={styles.securityRow}>
+              <MaterialIcons
+                name="lock"
+                size={14}
+                color="rgba(162, 173, 196, 0.8)"
+              />
+              <AppText variant="caption" weight="700" style={styles.securityLabel}>
+                {strings.authPhoneEntrySecure}
               </AppText>
             </View>
 
-            {/* Tile 2 — nearby (offset down) */}
-            <View style={[styles.tile, styles.tileRight]}>
-              <MaterialIcons name="near-me" size={32} color={C.onSecondaryContainer} />
-              <AppText variant="caption" weight="700" style={styles.tileTitle}>
-                {'קרוב לבית'}
-              </AppText>
-              <AppText variant="caption" tone="muted" style={styles.tileBody}>
-                {'חיפוש חכם מבוסס מיקום למציאת פתרון מהיר.'}
-              </AppText>
+            <View style={styles.decorativeArea}>
+              <View style={styles.decorativeCircle} />
+              <View style={styles.decorativeRing} />
+              <View style={styles.decorativeGlowOrb} />
             </View>
-          </View>
-
-          {/* ── Footer ──────────────────────────────────────────────────────── */}
-          <View style={styles.footer}>
-            <View style={styles.footerLinks}>
-              <TouchableOpacity><AppText variant="caption" weight="500" style={styles.footerLink}>{'תנאי שימוש'}</AppText></TouchableOpacity>
-              <TouchableOpacity><AppText variant="caption" weight="500" style={styles.footerLink}>{'מדיניות פרטיות'}</AppText></TouchableOpacity>
-              <TouchableOpacity><AppText variant="caption" weight="500" style={styles.footerLink}>{'צור קשר'}</AppText></TouchableOpacity>
-            </View>
-            <AppText variant="caption" tone="muted" style={styles.footerCopy}>
-              {'© 2024 Smartaf. כל הזכויות שמורות.'}
-            </AppText>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -280,312 +203,210 @@ export default function AuthScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: C.bg,
+    backgroundColor: BabyCityPalette.surface,
   },
   flex: {
     flex: 1,
   },
-  scroll: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
+  backgroundLayer: {
+    ...StyleSheet.absoluteFillObject,
   },
-
-  // ── Top bar ─────────────────────────────────────────────────────────────────
-  topBar: {
+  backgroundBlobTop: {
+    position: 'absolute',
+    top: -80,
+    left: -90,
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    backgroundColor: 'rgba(222, 232, 255, 0.7)',
+  },
+  backgroundBlobBottom: {
+    position: 'absolute',
+    bottom: -50,
+    right: -30,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(233, 222, 245, 0.36)',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
     paddingTop: 12,
-    paddingBottom: 8,
-    flexDirection: 'row',           // LTR here: brand on right, lang on left
-    justifyContent: 'space-between',
+    paddingBottom: 32,
+  },
+  topBar: {
+    flexDirection: 'row-reverse',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 52,
   },
   brandRow: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: 8,
   },
-  brandMark: {
+  backButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: C.primary,
-    shadowOpacity: 0.35,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 4,
+    backgroundColor: 'transparent',
   },
-  brandName: {
-    color: C.onSurface,
-    fontSize: 22,
-    lineHeight: 28,
-  },
-  langButton: {
-    color: C.primary,
-    fontSize: 15,
-  },
-
-  // ── Hero ────────────────────────────────────────────────────────────────────
-  hero: {
-    paddingTop: 32,
-    paddingBottom: 16,
+  header: {
     alignItems: 'flex-end',
-    overflow: 'hidden',
+    marginBottom: 34,
   },
-  heroBlurTopRight: {
-    position: 'absolute',
-    top: -20,
-    right: -20,
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: '#b28cff33', // primary-container/20
-  },
-  heroBlurBottomLeft: {
-    position: 'absolute',
-    bottom: -20,
-    left: -20,
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: '#e9def54d', // secondary-container/30
-  },
-  heroHeadline: {
-    fontSize: 32,
-    lineHeight: 40,
-    color: C.onSurface,
+  title: {
     textAlign: 'right',
-    zIndex: 1,
-  },
-  heroPrimary: {
-    fontSize: 32,
+    color: BabyCityPalette.textPrimary,
+    fontSize: 33,
     lineHeight: 42,
-    color: C.primary,
-    textAlign: 'right',
-    zIndex: 1,
+    marginBottom: 14,
   },
-  heroBody: {
-    fontSize: 17,
-    lineHeight: 25,
-    color: C.onSurfaceVariant,
+  subtitle: {
     textAlign: 'right',
-    marginTop: 12,
-    zIndex: 1,
-    alignSelf: 'flex-end',
-    maxWidth: '80%',
+    color: BabyCityPalette.textSecondary,
+    lineHeight: 30,
   },
-
-  // ── Card ────────────────────────────────────────────────────────────────────
   card: {
-    backgroundColor: C.cardBg,
+    position: 'relative',
     borderRadius: 32,
-    paddingHorizontal: 32,
-    paddingVertical: 32,
-    shadowColor: '#242f41',
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 20 },
-    shadowRadius: 50,
-    elevation: 8,
-    gap: 16,
-  },
-  primaryBtn: {
-    borderRadius: 16,
+    backgroundColor: BabyCityPalette.surfaceLow,
+    paddingHorizontal: 24,
+    paddingTop: 28,
+    paddingBottom: 28,
     overflow: 'hidden',
   },
-  primaryBtnGradient: {
-    height: 56,
+  cardGlow: {
+    position: 'absolute',
+    top: -44,
+    left: -44,
+    width: 144,
+    height: 144,
+    borderRadius: 72,
+    backgroundColor: 'rgba(112, 42, 225, 0.05)',
+  },
+  inputSection: {
+    gap: 14,
+  },
+  label: {
+    textAlign: 'right',
+    paddingRight: 4,
+  },
+  inputRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 12,
+  },
+  countryCodeWrap: {
+    width: 102,
+    minHeight: 58,
+    borderRadius: 18,
+    backgroundColor: BabyCityPalette.inputRecessedBg,
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    borderRadius: 16,
+    gap: 4,
+    paddingHorizontal: 10,
   },
-  primaryBtnText: {
-    color: C.onPrimary,
-    fontSize: 18,
+  countryCode: {
+    color: BabyCityPalette.textPrimary,
+    writingDirection: 'ltr',
   },
-  secondaryBtn: {
-    height: 56,
-    backgroundColor: C.secondaryContainer,
-    borderRadius: 16,
-    alignItems: 'center',
+  phoneInputWrap: {
+    flex: 1,
+    minHeight: 58,
+    borderRadius: 18,
+    backgroundColor: BabyCityPalette.inputRecessedBg,
+    borderWidth: 2,
+    borderColor: 'transparent',
     justifyContent: 'center',
+    paddingHorizontal: 16,
   },
-  secondaryBtnText: {
-    color: C.onSecondaryContainer,
-    fontSize: 18,
+  phoneInputWrapFocused: {
+    backgroundColor: '#ffffff',
+    borderColor: BabyCityPalette.primary,
   },
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 4,
+  phoneInput: {
+    fontSize: 21,
+    fontWeight: '700',
+    color: BabyCityPalette.textPrimary,
+    textAlign: 'right',
+    writingDirection: 'ltr',
+    letterSpacing: 1.2,
   },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#a2adc433',
+  primaryButtonShadow: {
+    marginTop: 28,
+    shadowColor: BabyCityPalette.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 14,
+    elevation: 6,
+    borderRadius: 999,
   },
-  dividerText: {
-    color: C.onSurfaceVariant,
-    fontSize: 13,
-  },
-  socialGrid: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  socialBtnApple: {
-    flex: 1,
-    height: 56,
-    backgroundColor: C.onSurface,
-    borderRadius: 16,
-    flexDirection: 'row',
+  primaryButton: {
+    minHeight: 58,
+    borderRadius: 999,
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
   },
-  socialBtnAppleText: {
+  primaryButtonText: {
     color: '#ffffff',
-    fontSize: 15,
-  },
-  socialBtnGoogle: {
-    flex: 1,
-    height: 56,
-    backgroundColor: C.surfaceContainerLow,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#a2adc41a',
-  },
-  socialBtnGoogleText: {
-    color: C.onSurface,
-    fontSize: 15,
-  },
-  phoneSection: {
-    gap: 4,
-    marginTop: 4,
-  },
-  inputLabel: {
-    textAlign: 'right',
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-    marginBottom: 4,
-  },
-  inputBlock: {
-    marginBottom: 0,
-  },
-  inputWrap: {
-    backgroundColor: C.surfaceContainerLow,
-    borderWidth: 0,
-    borderRadius: 14,
-    minHeight: 56,
-  },
-  inputText: {
-    fontSize: 18,
-  },
-  hint: {
-    textAlign: 'right',
-    marginTop: 6,
   },
   errorText: {
-    textAlign: 'right',
-    marginTop: 4,
+    textAlign: 'center',
+    marginTop: 12,
   },
-
-  // ── Social proof ─────────────────────────────────────────────────────────────
-  socialProof: {
+  securitySection: {
+    marginTop: 'auto',
+    paddingTop: 60,
+    alignItems: 'center',
+  },
+  securityRow: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: 14,
-    marginTop: 32,
-    paddingHorizontal: 4,
+    gap: 6,
+    marginBottom: 12,
   },
-  avatarCluster: {
-    flexDirection: 'row-reverse',
-    // 4 real avatars + badge at 24px offset each → total width ~48+24+24+24+24 = 144
-    width: 144,
-    height: 48,
+  securityLabel: {
+    color: 'rgba(108, 119, 140, 0.9)',
+    letterSpacing: 0.8,
+  },
+  decorativeArea: {
+    width: 300,
+    maxWidth: '100%',
+    height: 108,
     position: 'relative',
   },
-  avatar: {
+  decorativeCircle: {
     position: 'absolute',
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 3,
-    borderColor: C.bg,
-    overflow: 'hidden',
-    top: 0,
+    left: 32,
+    top: 26,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: BabyCityPalette.secondaryContainer,
   },
-  avatarBadge: {
-    backgroundColor: C.primaryContainer,
-    alignItems: 'center',
-    justifyContent: 'center',
+  decorativeRing: {
+    position: 'absolute',
+    left: 82,
+    top: 10,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 4,
+    borderColor: BabyCityPalette.surfaceContainer,
   },
-  avatarBadgeText: {
-    color: C.onPrimaryContainer,
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  socialProofText: {
-    color: C.onSurfaceVariant,
-    flex: 1,
-    textAlign: 'right',
-    fontSize: 13,
-  },
-
-  // ── Feature tiles ─────────────────────────────────────────────────────────────
-  tilesRow: {
-    flexDirection: 'row-reverse',
-    gap: 16,
-    marginTop: 40,
-    alignItems: 'flex-start',
-  },
-  tile: {
-    flex: 1,
-    borderRadius: 16,
-    padding: 24,
-    gap: 12,
-    alignItems: 'flex-end',
-  },
-  tileLeft: {
-    backgroundColor: C.surfaceContainerLow,
-  },
-  tileRight: {
-    backgroundColor: '#e9def580', // secondary-container/50
-    marginTop: 16,                // offset down per design
-  },
-  tileTitle: {
-    color: C.onSurface,
-    textAlign: 'right',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  tileBody: {
-    color: C.onSurfaceVariant,
-    textAlign: 'right',
-    fontSize: 13,
-    lineHeight: 19,
-  },
-
-  // ── Footer ─────────────────────────────────────────────────────────────────
-  footer: {
-    marginTop: 48,
-    alignItems: 'center',
-    gap: 12,
-  },
-  footerLinks: {
-    flexDirection: 'row-reverse',
-    gap: 20,
-  },
-  footerLink: {
-    color: C.onSurfaceVariant,
-    fontSize: 13,
-  },
-  footerCopy: {
-    color: C.onSurfaceVariant,
-    fontSize: 11,
-    opacity: 0.6,
+  decorativeGlowOrb: {
+    position: 'absolute',
+    right: -34,
+    bottom: -18,
+    width: 126,
+    height: 126,
+    borderRadius: 63,
+    backgroundColor: 'rgba(233,222,245,0.45)',
   },
 });

@@ -16,6 +16,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import AppChip from '@/components/ui/AppChip';
 import AppPrimaryButton from '@/components/ui/AppPrimaryButton';
 import AppScreen from '@/components/ui/AppScreen';
+import SmartafWordmark from '@/components/ui/SmartafWordmark';
 import AppText from '@/components/ui/AppText';
 import AppShell from '@/components/navigation/AppShell';
 import AvatarCircle from '@/components/ui/AvatarCircle';
@@ -28,13 +29,9 @@ import {
 } from '@/lib/parentProfile';
 import { findPairChatThread } from '@/lib/requestLookup';
 import { supabase } from '@/lib/supabase';
-import { BabyCityGeometry, BabyCityPalette, getRoleTheme } from '@/constants/theme';
+import { BabyCityPalette, getRoleTheme } from '@/constants/theme';
 import { ParentPost } from '@/types/post';
 import type { ParentProfileDetails, ParentProfileSummary } from '@/types/parent';
-
-// Stitch placeholder pet photo (golden retriever from parent-profile design)
-const STITCH_PET_PHOTO =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDbFElj7KL9ShwrwkKuj8-1IeUa5yZIS6zsKxSq0O4b5_lZDMTCEVtaCrc3rreUsqIcZkyx9xHmjjRV07Yy2ykwv4EwwOXUFZ4mhRv-p2hU_HqrubX0cAXNJGp6zaLLWDyuudgZ2Q4uEBsLHqR96OlxAZ76QkepJ9Az9ZVki2YQ8aqoGSt6-lubeffgbUhSQsbWh0YDK9D_rNCnwITQ-nYkSkGcIHUKcGflY75eM7LBXDhieHd2xumc8wrwRSrdH2OHMyKRvgiPDRiQ';
 
 const CARD_SHADOW = {
   shadowColor: '#242f41',
@@ -69,6 +66,7 @@ export default function FamilyProfileScreen() {
         city,
         profile_photo_path,
         children_count,
+        child_names,
         child_birth_dates,
         child_age_groups,
         pets,
@@ -132,13 +130,32 @@ export default function FamilyProfileScreen() {
     }
   }
 
+  const existingThread =
+    family?.userId && currentBabysitterProfileId
+      ? findPairChatThread(chatThreads, family.userId, currentBabysitterProfileId)
+      : null;
+
+  function handleBack() {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace('/babysitter');
+  }
+
   return (
     <AppShell
-      title={strings.familyProfileTitle}
+      title=""
       activeTab="home"
       backgroundColor={theme.screenBackground}
       showBackButton
-      onBack={() => router.back()}
+      onBack={handleBack}
+      hideHeaderMenuButton
+      backButtonVariant="icon"
+      renderHeaderActions={() => (
+        <SmartafWordmark size="sm" textColor={BabyCityPalette.primary} />
+      )}
     >
       <AppScreen
         scrollable
@@ -153,60 +170,73 @@ export default function FamilyProfileScreen() {
           </View>
         ) : family ? (
           <>
-            {/* ── Banner with gradient overlay ── */}
-            <View style={styles.bannerWrap}>
-              <Image
-                source={{
-                  uri: family.profilePhotoUrl ||
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuBT3NZv2Ptj1APxDCMZH2wv89IFmsUhiBHQu84bvclwSvSVpFfUVaqHGCOW7t0-R4jvfK4EtlZIuaeKDhXmihMbTGyoIMH0-xhwYbIo2vxd0gj4ouaSOF_kqeCq7qPW2hmHBb-M1PYksU6ssB_qTdppvclZH6t_WJPhg7fPKoJzdqREfDxIqG35dWzZZmxPIo2XXG7CsNZfMktndr9WHTTpdMFClBhdFQcOqBwaX6HssMk7dFJeKKza4EmFKB8lbJUOhQlYDfJ7E6mA',
-                }}
-                style={styles.bannerImg}
-                resizeMode="cover"
-              />
-              <LinearGradient
-                colors={['transparent', 'rgba(0,0,0,0.35)']}
-                style={StyleSheet.absoluteFill}
-              />
-            </View>
-
-            {/* ── Avatar overlapping banner ── */}
-            <View style={styles.avatarRow}>
-              <View style={styles.avatarBorderWrap}>
-                <AvatarCircle
-                  name={family.fullName || strings.familyFeedAnonymous}
-                  photoUrl={family.profilePhotoUrl}
-                  size={96}
-                />
+            <Animated.View entering={FadeInDown.duration(240)} style={styles.heroSection}>
+              <View style={styles.bannerWrap}>
+                {family.profilePhotoUrl ? (
+                  <Image
+                    source={{ uri: family.profilePhotoUrl }}
+                    style={styles.bannerImage}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <LinearGradient
+                    colors={[BabyCityPalette.surfaceContainer, BabyCityPalette.surfaceLow]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.bannerImage}
+                  />
+                )}
               </View>
-              <View style={styles.identitySection}>
-                <AppText variant="h1" weight="800" style={styles.familyName}>
-                  {`משפחת ${family.lastName || family.firstName || strings.familyFeedAnonymous}`}
-                </AppText>
-                {family.city ? (
-                  <View style={styles.cityRow}>
-                    <MaterialIcons name="location-on" size={16} color={BabyCityPalette.textSecondary} />
-                    <AppText variant="body" tone="muted">{family.city}</AppText>
-                  </View>
-                ) : null}
-              </View>
-            </View>
 
-            {/* About / family note */}
-            <Animated.View entering={FadeInDown.duration(240).delay(60)} style={styles.infoCard}>
+              <View style={styles.heroIdentityRow}>
+                <View style={styles.avatarBorderWrap}>
+                  <AvatarCircle
+                    name={family.fullName || strings.familyFeedAnonymous}
+                    photoUrl={family.profilePhotoUrl}
+                    size={120}
+                    tone="muted"
+                  />
+                </View>
+                <View style={styles.identitySection}>
+                  <AppText variant="h1" weight="800" style={styles.familyName}>
+                    {strings.familyProfileNamePrefix(
+                      family.lastName || family.firstName || strings.familyFeedAnonymous
+                    )}
+                  </AppText>
+                  {family.city ? (
+                    <View style={styles.cityRow}>
+                      <MaterialIcons
+                        name="location-on"
+                        size={16}
+                        color={BabyCityPalette.textSecondary}
+                      />
+                      <AppText variant="body" tone="muted">
+                        {family.city}
+                      </AppText>
+                    </View>
+                  ) : null}
+                </View>
+              </View>
+            </Animated.View>
+
+            <Animated.View entering={FadeInDown.duration(240).delay(60)} style={[styles.infoCard, CARD_SHADOW]}>
               <View style={styles.infoCardHeader}>
                 <MaterialIcons name="favorite" size={20} color={BabyCityPalette.primary} />
-                <AppText variant="h2" weight="700" style={styles.infoCardTitle}>קצת עלינו</AppText>
+                <AppText variant="h2" weight="700" style={styles.infoCardTitle}>
+                  {strings.familyProfileAboutUs}
+                </AppText>
               </View>
               <AppText variant="body" style={styles.noteText}>
                 {family.familyNote || strings.parentProfileNoteEmpty}
               </AppText>
             </Animated.View>
 
-            {/* Children section */}
             <Animated.View entering={FadeInDown.duration(240).delay(110)} style={styles.infoCardAlt}>
               <View style={styles.infoCardHeader}>
                 <MaterialIcons name="child-care" size={20} color={BabyCityPalette.primary} />
-                <AppText variant="h2" weight="700" style={styles.infoCardTitle}>{strings.parentChildrenAges}</AppText>
+                <AppText variant="h2" weight="700" style={styles.infoCardTitle}>
+                  {strings.parentChildrenAges}
+                </AppText>
               </View>
               {family.childAges.length > 0 ? (
                 <ScrollView
@@ -225,7 +255,7 @@ export default function FamilyProfileScreen() {
                       </View>
                       <View>
                         <AppText variant="body" weight="700" style={styles.childName}>
-                          {`ילד ${i + 1}`}
+                          {family.childNames[i]?.trim() || strings.familyProfileChildN(i + 1)}
                         </AppText>
                         <AppText variant="caption" tone="muted">{strings.parentAgeYears(age)}</AppText>
                       </View>
@@ -248,25 +278,38 @@ export default function FamilyProfileScreen() {
               <Animated.View entering={FadeInDown.duration(240).delay(160)} style={[styles.infoCard, CARD_SHADOW]}>
                 <View style={styles.infoCardHeader}>
                   <MaterialIcons name="pets" size={20} color={BabyCityPalette.primary} />
-                  <AppText variant="h2" weight="700" style={styles.infoCardTitle}>{strings.parentPets}</AppText>
+                  <AppText variant="h2" weight="700" style={styles.infoCardTitle}>
+                    {strings.parentPets}
+                  </AppText>
                 </View>
-                <View style={styles.petsRow}>
+                <View style={styles.petsColumn}>
                   {family.pets.map((pet, i) => (
                     <View key={`pet-${i}`} style={styles.petItem}>
-                      <View style={styles.petImageWrap}>
-                        <Image source={{ uri: STITCH_PET_PHOTO }} style={styles.petImage} resizeMode="cover" />
+                      <View style={styles.petIconWrap}>
+                        <MaterialIcons name="pets" size={22} color={BabyCityPalette.primary} />
                       </View>
-                      <AppText variant="caption" weight="600" align="center" style={styles.petLabel}>{pet}</AppText>
+                      <View style={styles.petCopy}>
+                        <AppText variant="body" weight="700" style={styles.petLabel}>
+                          {pet}
+                        </AppText>
+                        <AppText variant="caption" tone="muted" style={styles.petHint}>
+                          חיית מחמד בבית
+                        </AppText>
+                      </View>
                     </View>
                   ))}
                 </View>
               </Animated.View>
             ) : null}
 
-            {/* Posts section */}
             <Animated.View entering={FadeInDown.duration(240).delay(210)}>
               <View style={styles.postsSectionHeader}>
-                <AppText variant="h2" weight="700" style={styles.infoCardTitle}>{strings.parentPostsSection}</AppText>
+                <View style={[styles.postsSectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                  <MaterialIcons name="article" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700" style={styles.infoCardTitle}>
+                  {strings.parentPostsSection}
+                </AppText>
               </View>
               {family.posts.length > 0 ? (
                 <View style={styles.postsWrap}>
@@ -275,10 +318,10 @@ export default function FamilyProfileScreen() {
                       <View style={styles.postCardInner}>
                         <View style={styles.postTopRow}>
                           <View style={styles.postBadge}>
-                            <AppText variant="caption" weight="700" style={styles.postBadgeText}>{'דרוש/ה בייביסיטר'}</AppText>
+                            <AppText variant="caption" weight="700" style={styles.postBadgeText}>{strings.familyProfileBabysitterNeeded}</AppText>
                           </View>
                           <AppText variant="caption" tone="muted" style={styles.postDate}>
-                            {post.date ? `פורסם ${post.date}` : ''}
+                            {post.date ? strings.familyProfilePostedOn(post.date) : ''}
                           </AppText>
                         </View>
                         <AppText variant="body" weight="700" style={styles.postTitle}>
@@ -298,55 +341,30 @@ export default function FamilyProfileScreen() {
                             <AppChip key={group} label={group} tone="warning" size="sm" />
                           ))}
                         </View>
-                        <View style={styles.postStats}>
-                          <View style={styles.postStat}>
-                            <MaterialIcons name="visibility" size={14} color={BabyCityPalette.textSecondary} />
-                            <AppText variant="caption" tone="muted">{'42 צפיות'}</AppText>
-                          </View>
-                          <View style={styles.postStat}>
-                            <MaterialIcons name="chat" size={14} color={BabyCityPalette.textSecondary} />
-                            <AppText variant="caption" tone="muted">{'5 פניות'}</AppText>
-                          </View>
-                        </View>
                       </View>
                     </View>
                   ))}
                 </View>
               ) : (
-                <AppText variant="body" style={styles.noteText}>{strings.parentProfilePostsEmpty}</AppText>
+                <View style={[styles.infoCard, CARD_SHADOW]}>
+                  <AppText variant="body" style={styles.noteText}>
+                    {strings.parentProfilePostsEmpty}
+                  </AppText>
+                </View>
               )}
             </Animated.View>
 
-            {/* CTA */}
             <Animated.View entering={FadeInDown.duration(240).delay(260)} style={styles.ctaWrap}>
               <AppPrimaryButton
-                label={
-                  family?.userId &&
-                  currentBabysitterProfileId &&
-                  findPairChatThread(
-                    chatThreads,
-                    family.userId,
-                    currentBabysitterProfileId
-                  )
-                    ? strings.alreadyChattingCta
-                    : strings.sendMessage
-                }
+                label={existingThread ? strings.alreadyChattingCta : strings.sendMessage}
                 onPress={() => {
-                  if (family?.userId && currentBabysitterProfileId) {
-                    const existingThread = findPairChatThread(
-                      chatThreads,
-                      family.userId,
-                      currentBabysitterProfileId
+                  if (existingThread) {
+                    router.push(
+                      `/chat?requestId=${existingThread.requestId}&name=${encodeURIComponent(
+                        family.fullName || strings.familyFeedAnonymous
+                      )}`
                     );
-
-                    if (existingThread) {
-                      router.push(
-                        `/chat?requestId=${existingThread.requestId}&name=${encodeURIComponent(
-                          family.fullName || strings.familyFeedAnonymous
-                        )}`
-                      );
-                      return;
-                    }
+                    return;
                   }
 
                   router.push(
@@ -396,26 +414,25 @@ const styles = StyleSheet.create({
   notFoundTitle: {
     lineHeight: 40,
   },
-  // Banner
-  bannerWrap: {
-    marginHorizontal: -20,
-    marginTop: -16,
-    height: 192,
-    position: 'relative',
-    overflow: 'hidden',
+  heroSection: {
+    marginBottom: 20,
   },
-  bannerImg: {
+  bannerWrap: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    height: 192,
+    backgroundColor: BabyCityPalette.surfaceContainer,
+  },
+  bannerImage: {
     width: '100%',
     height: 192,
   },
-  // Avatar + identity row (avatar overlaps banner)
-  avatarRow: {
+  heroIdentityRow: {
     flexDirection: 'row-reverse',
     alignItems: 'flex-end',
     gap: 16,
     marginTop: -40,
-    marginBottom: 24,
-    paddingRight: 0,
+    paddingHorizontal: 16,
   },
   avatarBorderWrap: {
     borderRadius: 999,
@@ -427,10 +444,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     elevation: 6,
     overflow: 'hidden',
+    backgroundColor: '#ffffff',
   },
   identitySection: {
     flex: 1,
-    paddingBottom: 4,
+    paddingBottom: 6,
   },
   familyName: {
     textAlign: 'right',
@@ -442,22 +460,15 @@ const styles = StyleSheet.create({
     gap: 4,
     marginTop: 4,
   },
-  // About card (white)
   infoCard: {
     backgroundColor: BabyCityPalette.surfaceLowest,
-    borderRadius: 12,
+    borderRadius: 24,
     padding: 24,
     marginBottom: 16,
-    shadowColor: '#242f41',
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 1,
   },
-  // Alternate card (surface-low bg)
   infoCardAlt: {
     backgroundColor: BabyCityPalette.surfaceLow,
-    borderRadius: 12,
+    borderRadius: 24,
     padding: 24,
     marginBottom: 16,
   },
@@ -486,7 +497,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     backgroundColor: BabyCityPalette.surfaceLowest,
-    borderRadius: 12,
+    borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 16,
     minWidth: 160,
@@ -503,29 +514,33 @@ const styles = StyleSheet.create({
     color: BabyCityPalette.textPrimary,
     textAlign: 'right',
   },
-  // Pets
-  petsRow: {
-    flexDirection: 'row-reverse',
-    flexWrap: 'wrap',
-    gap: 16,
+  petsColumn: {
+    gap: 14,
   },
   petItem: {
+    flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: 6,
+    gap: 12,
   },
-  petImageWrap: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    overflow: 'hidden',
+  petIconWrap: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: BabyCityPalette.surfaceLow,
   },
-  petImage: {
-    width: '100%',
-    height: '100%',
+  petCopy: {
+    flex: 1,
+    alignItems: 'flex-end',
   },
   petLabel: {
     color: BabyCityPalette.textPrimary,
-    maxWidth: 72,
+    textAlign: 'right',
+  },
+  petHint: {
+    textAlign: 'right',
+    marginTop: 2,
   },
   pillRow: {
     flexDirection: 'row-reverse',
@@ -537,8 +552,15 @@ const styles = StyleSheet.create({
   postsSectionHeader: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: 10,
     marginBottom: 12,
+  },
+  postsSectionIconChip: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   postsWrap: {
     gap: 12,
@@ -546,7 +568,7 @@ const styles = StyleSheet.create({
   },
   postCard: {
     backgroundColor: BabyCityPalette.surfaceLow,
-    borderRadius: 12,
+    borderRadius: 20,
     borderRightWidth: 4,
     borderRightColor: BabyCityPalette.primary,
     overflow: 'hidden',
@@ -582,15 +604,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 8,
     marginBottom: 12,
-  },
-  postStats: {
-    flexDirection: 'row-reverse',
-    gap: 16,
-  },
-  postStat: {
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-    gap: 4,
   },
   // CTA
   ctaWrap: {

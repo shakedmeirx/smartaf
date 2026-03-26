@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-dim": "#6411d5",
+              "error-container": "#f74b6d",
+              "tertiary-fixed-dim": "#f77c9e",
+              "on-secondary-container": "#564f61",
+              "on-secondary": "#f8efff",
+              "background": "#f4f6ff",
+              "on-surface-variant": "#515c70",
+              "on-background": "#242f41",
+              "surface-dim": "#c3d5f8",
+              "primary-fixed": "#b28cff",
+              "tertiary-dim": "#8e294c",
+              "secondary-container": "#e9def5",
+              "tertiary-fixed": "#ff8eac",
+              "surface-container": "#dee8ff",
+              "tertiary": "#9e3657",
+              "on-secondary-fixed": "#433c4e",
+              "on-primary-fixed-variant": "#390083",
+              "surface-container-high": "#d5e3ff",
+              "surface-variant": "#cdddfe",
+              "tertiary-container": "#ff8eac",
+              "secondary-fixed-dim": "#dbd0e7",
+              "outline-variant": "#a2adc4",
+              "secondary-fixed": "#e9def5",
+              "on-tertiary-fixed": "#380016",
+              "on-primary": "#f8f0ff",
+              "surface-container-low": "#ecf1ff",
+              "on-tertiary": "#ffeff1",
+              "on-secondary-fixed-variant": "#60586b",
+              "inverse-surface": "#040e1f",
+              "secondary": "#60586b",
+              "surface": "#f4f6ff",
+              "on-primary-fixed": "#000000",
+              "inverse-primary": "#a476ff",
+              "surface-container-lowest": "#ffffff",
+              "outline": "#6c778c",
+              "on-surface": "#242f41",
+              "error-dim": "#a70138",
+              "error": "#b41340",
+              "on-error": "#ffefef",
+              "on-tertiary-container": "#64042d",
+              "on-error-container": "#510017",
+              "surface-bright": "#f4f6ff",
+              "on-tertiary-fixed-variant": "#711036",
+              "secondary-dim": "#534c5f",
+              "primary-fixed-dim": "#a67aff",
+              "on-primary-container": "#2e006c",
+              "surface-container-highest": "#cdddfe",
+              "inverse-on-surface": "#929db4",
+              "surface-tint": "#702ae1",
+              "primary": "#702ae1",
+              "primary-container": "#b28cff"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .active-pill {
+        box-shadow: 0 4px 14px 0 rgba(112, 42, 225, 0.2);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-[#f4f6ff]/80 dark:bg-slate-900/80 backdrop-blur-md docked full-width top-0 z-50 sticky">
+<div class="flex items-center justify-between w-full px-6 py-4 rtl">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#7C3AED] dark:text-[#a78bfa] text-2xl" data-icon="arrow_forward">arrow_forward</span>
+</div>
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold text-lg tracking-tight text-right text-[#242f41] dark:text-slate-400">זמינות שבועית</h1>
+<div class="text-2xl font-black text-[#7C3AED] dark:text-[#a78bfa]">Smartaf</div>
+</div>
+</header>
+<main class="max-w-md mx-auto px-6 pt-8 space-y-8">
+<!-- Status Toggle Section -->
+<section class="bg-surface-container-low rounded-lg p-6 flex items-center justify-between">
+<div class="space-y-1">
+<h2 class="font-headline font-bold text-lg text-on-surface">מקבלת עבודות עכשיו</h2>
+<p class="font-body text-sm text-on-surface-variant">הפרופיל שלך יופיע בתוצאות החיפוש המיידיות</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-14 h-8 bg-outline-variant/30 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</section>
+<!-- Availability Bento Grid -->
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-surface-container-lowest rounded-lg p-6 space-y-6">
+<div class="flex items-center justify-between mb-2">
+<h3 class="font-headline font-extrabold text-xl text-on-surface">לו"ז שבועי</h3>
+<span class="material-symbols-outlined text-primary" data-icon="calendar_month">calendar_month</span>
+</div>
+<div class="space-y-4">
+<!-- Day Row: Sunday -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg">
+<div class="flex flex-col">
+<span class="font-headline font-bold text-on-surface">יום ראשון</span>
+<span class="font-label text-xs text-on-surface-variant">08:00 - 17:00</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-primary text-on-primary px-4 py-2 rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all active:scale-95">בוקר</button>
+<button class="bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium transition-all active:scale-95">ערב</button>
+</div>
+</div>
+<!-- Day Row: Monday -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg">
+<div class="flex flex-col">
+<span class="font-headline font-bold text-on-surface">יום שני</span>
+<span class="font-label text-xs text-on-surface-variant">לא זמינה</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium transition-all active:scale-95">בוקר</button>
+<button class="bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium transition-all active:scale-95">ערב</button>
+</div>
+</div>
+<!-- Day Row: Tuesday -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg border-2 border-primary/20">
+<div class="flex flex-col">
+<span class="font-headline font-bold text-on-surface">יום שלישי</span>
+<span class="font-label text-xs text-on-surface-variant">זמינות מלאה</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-primary text-on-primary px-4 py-2 rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all active:scale-95">בוקר</button>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all active:scale-95">ערב</button>
+</div>
+</div>
+<!-- Day Row: Wednesday -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg">
+<div class="flex flex-col">
+<span class="font-headline font-bold text-on-surface">יום רביעי</span>
+<span class="font-label text-xs text-on-surface-variant">08:00 - 17:00</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-primary text-on-primary px-4 py-2 rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all active:scale-95">בוקר</button>
+<button class="bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium transition-all active:scale-95">ערב</button>
+</div>
+</div>
+<!-- Day Row: Thursday -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg">
+<div class="flex flex-col">
+<span class="font-headline font-bold text-on-surface">יום חמישי</span>
+<span class="font-label text-xs text-on-surface-variant">לא זמינה</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium transition-all active:scale-95">בוקר</button>
+<button class="bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium transition-all active:scale-95">ערב</button>
+</div>
+</div>
+<!-- Day Row: Friday -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg">
+<div class="flex flex-col">
+<span class="font-headline font-bold text-on-surface">יום שישי</span>
+<span class="font-label text-xs text-on-surface-variant">08:00 - 13:00</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-primary text-on-primary px-4 py-2 rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all active:scale-95">בוקר</button>
+<button class="bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium transition-all active:scale-95">ערב</button>
+</div>
+</div>
+<!-- Day Row: Saturday -->
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg">
+<div class="flex flex-col">
+<span class="font-headline font-bold text-on-surface">יום שבת</span>
+<span class="font-label text-xs text-on-surface-variant">19:00 - 23:00</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-full text-sm font-medium transition-all active:scale-95">בוקר</button>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all active:scale-95">ערב</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Tip Card -->
+<div class="bg-secondary-container rounded-lg p-6 flex gap-4 items-start">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="lightbulb">lightbulb</span>
+<div class="space-y-1">
+<h4 class="font-headline font-bold text-on-secondary-container text-sm">טיפ של Smartaf</h4>
+<p class="font-body text-xs text-on-secondary-container leading-relaxed">מטפלות עם זמינות מעודכנת מקבלות פי 3 יותר פניות מהורים בשבוע הראשון.</p>
+</div>
+</div>
+<!-- Primary CTA -->
+<div class="pt-4">
+<button class="w-full bg-gradient-to-br from-primary to-primary-dim text-on-primary font-headline font-bold py-5 rounded-lg text-lg shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                שמור והמשך
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-8 pb-8 pt-4 rtl bg-[#f4f6ff] dark:bg-slate-900 shadow-[0_-8px_30px_rgb(36,47,65,0.06)] rounded-t-[2rem]">
+<div class="flex flex-col items-center justify-center text-[#242f41] dark:text-slate-400 px-4 py-2 hover:text-[#7C3AED] dark:hover:text-[#a78bfa] transition-colors cursor-pointer scale-98 duration-200 ease-out">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">עזרה</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#242f41] dark:text-slate-400 px-4 py-2 hover:text-[#7C3AED] dark:hover:text-[#a78bfa] transition-colors cursor-pointer scale-98 duration-200 ease-out">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">ביטול</span>
+</div>
+</nav>
+</body></html>

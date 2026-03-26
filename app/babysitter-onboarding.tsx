@@ -2,35 +2,30 @@ import React, { useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import {
   View,
-  Image,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import AppText from '@/components/ui/AppText';
-import AppButton from '@/components/ui/AppButton';
 import AppCard from '@/components/ui/AppCard';
 import AppPrimaryButton from '@/components/ui/AppPrimaryButton';
 import AvatarCircle from '@/components/ui/AvatarCircle';
-import AppHeading from '@/components/ui/AppHeading';
-import SectionHeader from '@/components/ui/SectionHeader';
 import Step1BasicInfo from '@/components/onboarding/Step1BasicInfo';
 import Step2About from '@/components/onboarding/Step2About';
 import Step3Experience from '@/components/onboarding/Step3Experience';
 import Step4Preferences from '@/components/onboarding/Step4Preferences';
-import Step5Photos from '@/components/onboarding/Step5Photos';
 import Step6Trust from '@/components/onboarding/Step6Trust';
-import Step7Visibility from '@/components/onboarding/Step7Visibility';
 import {
-  BabyCityGeometry,
   BabyCityPalette,
+  BabyCityShadows,
   getRoleTheme,
 } from '@/constants/theme';
 import { strings } from '@/locales';
@@ -64,7 +59,13 @@ const JOIN_TABLES = {
   availability: 'babysitter_availability',
 } as const;
 
+const SITTER_INTRO_ILLUSTRATION_URL =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDFLrrxcowQ-gdCTSHn5sIkMhnEgW1CrRGQXCkLdGWKfayWjIYuSf3Kmlu8DwogFiEA9oWn6YylohpvxXsM-6yNddcR7lNZ24EXa0SbPa0AJPkE5WW4pZLix4XXFfBdK2aq4nZqNrbKYbGTel0n3dF2-nTvkAVXXiZPq28lmN_VVM3uy9_nm4HC7Cau0_RUxIiX_owiC6O6PlTwf4gdYIlFXMNcBKCJKlyj0PurfgevpJ5zHWV0TgDaoJwAJZgAgF5GH-8ySv_flvUK';
+const SITTER_INTRO_COMMUNITY_URL =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuBZfN8MlrYSX68UBBvZmP0UFV0_6uLhopXkXaLQgBWopv4rP5AdnmbKuWnAmM0ABqv1GGhiBwZ5H6JW_JpTWEFVkfM-flAMC3IqjshCs0sOvIOtkUv0gCDvkJSNZC5c1iOcQRmAXsXw54AFVFPcd0Pkb0NM4UM4ZiNf_b-VA3v34Sal7vq8Zc-W7o49qjLWpGm985AhtRArs76exR0P58_r_-UVFV_38zTLtoRrAiLlCAyFtLTkodf5N8ohpcE2DBw9-YsNpRx8O92c';
+
 export default function BabysitterOnboarding() {
+  const { edit } = useLocalSearchParams<{ edit?: string }>();
   const { dbUser, session } = useAuth();
   const { refreshBabysitterData } = useAppState();
   const theme = getRoleTheme('babysitter');
@@ -77,6 +78,8 @@ export default function BabysitterOnboarding() {
   const [removingGalleryPhotoId, setRemovingGalleryPhotoId] = useState<string | null>(null);
   const [saveError, setSaveError] = useState('');
   const [legacyAge, setLegacyAge] = useState<number | null>(null);
+  const [hasExistingProfile, setHasExistingProfile] = useState(false);
+  const [uiStep, setUiStep] = useState<'welcome' | 'form'>(edit === 'true' ? 'form' : 'welcome');
   const [showComplete, setShowComplete] = useState(false);
   const [savedProfile, setSavedProfile] = useState<{
     name: string;
@@ -126,6 +129,7 @@ export default function BabysitterOnboarding() {
         .maybeSingle();
 
       if (!profile) {
+        setHasExistingProfile(false);
         setData(prev => ({
           ...prev,
           firstName: dbUser?.name ?? prev.firstName,
@@ -136,6 +140,8 @@ export default function BabysitterOnboarding() {
       }
 
       setLegacyAge((profile.age as number | null) ?? null);
+      setHasExistingProfile(true);
+      setUiStep('form');
 
       const profileId = profile.id as string;
       const [
@@ -499,6 +505,11 @@ export default function BabysitterOnboarding() {
   }
 
   function handleBack() {
+    if (uiStep === 'form' && !hasExistingProfile && edit !== 'true') {
+      setUiStep('welcome');
+      return;
+    }
+
     if (router.canGoBack()) {
       router.back();
       return;
@@ -526,10 +537,10 @@ export default function BabysitterOnboarding() {
           </View>
 
           <AppText variant="h1" weight="800" align="center" style={styles.completeHeading}>
-            {'הפרופיל שלך מוכן!'}
+            {strings.babysitterOnboardingCompleteTitle}
           </AppText>
           <AppText variant="body" tone="muted" align="center" style={styles.completeSubtitle}>
-            {'מעכשיו הורים יוכלו למצוא אותך ולהציע לך עבודות ב-Smartaf.'}
+            {strings.babysitterOnboardingCompleteSubtitle}
           </AppText>
 
           {/* Profile preview card — avatar overlaps top-right */}
@@ -547,15 +558,20 @@ export default function BabysitterOnboarding() {
 
             {/* Inner white card */}
             <View style={styles.completeCardInner}>
-              {/* Name + new badge */}
+              {/* Name + community line */}
               <View style={styles.completeCardHeader}>
                 <AppText variant="h3" weight="800" style={styles.completeCardName}>
                   {savedProfile.name}
                 </AppText>
-                <View style={styles.completeNewBadge}>
-                  <MaterialIcons name="star" size={13} color={BabyCityPalette.primary} style={{ marginLeft: 3 }} />
-                  <AppText variant="caption" weight="700" style={styles.completeNewBadgeText}>
-                    {'חדשה בקהילת Smartaf'}
+                <View style={styles.completeBrandLine}>
+                  <MaterialIcons
+                    name="star"
+                    size={14}
+                    color={BabyCityPalette.primary}
+                    style={styles.completeBrandStar}
+                  />
+                  <AppText variant="caption" weight="700" style={styles.completeBrandText}>
+                    {strings.babysitterOnboardingCompleteNewBadge}
                   </AppText>
                 </View>
               </View>
@@ -564,14 +580,14 @@ export default function BabysitterOnboarding() {
               <View style={styles.completeBentoGrid}>
                 <View style={styles.completeBentoCell}>
                   <MaterialIcons name="location-on" size={18} color="#515c70" />
-                  <AppText variant="caption" tone="muted">{'מיקום'}</AppText>
+                  <AppText variant="caption" tone="muted">{strings.babysitterOnboardingCompleteLocation}</AppText>
                   <AppText variant="body" weight="700" style={styles.completeBentoCellValue}>
                     {savedProfile.city || '—'}
                   </AppText>
                 </View>
                 <View style={styles.completeBentoCell}>
                   <MaterialIcons name="payments" size={18} color="#515c70" />
-                  <AppText variant="caption" tone="muted">{'תעריף שעתי'}</AppText>
+                  <AppText variant="caption" tone="muted">{strings.babysitterOnboardingCompleteRate}</AppText>
                   <AppText variant="body" weight="700" style={styles.completeBentoCellValue}>
                     {`₪${savedProfile.hourlyRate}`}
                   </AppText>
@@ -580,7 +596,7 @@ export default function BabysitterOnboarding() {
 
               {/* Trust markers row */}
               <View style={styles.completeTrustRow}>
-                <AppText variant="caption" tone="muted" weight="600">{'פרופיל מאומת'}</AppText>
+                <AppText variant="caption" tone="muted" weight="600">{strings.babysitterOnboardingCompleteVerified}</AppText>
                 <View style={styles.completeTrustIcons}>
                   <View style={[styles.completeTrustIcon, { backgroundColor: '#ff8eac33' }]}>
                     <MaterialIcons name="verified-user" size={14} color="#64042d" />
@@ -595,16 +611,19 @@ export default function BabysitterOnboarding() {
 
           {/* Actions */}
           <AppPrimaryButton
-            label={'מעבר ללוח הבקרה'}
+            label={strings.babysitterOnboardingGoToDashboard}
             onPress={() => router.replace('/babysitter')}
             style={styles.completeBtn}
           />
-          <AppButton
-            label={'צפייה בפרופיל הציבורי שלי'}
-            variant="secondary"
+          <TouchableOpacity
+            activeOpacity={0.82}
             onPress={() => router.push('/my-profile')}
-            style={styles.completeBtn}
-          />
+            style={styles.completeSecondaryAction}
+          >
+            <AppText variant="body" weight="700" style={styles.completeSecondaryActionText}>
+              {strings.babysitterOnboardingViewPublicProfile}
+            </AppText>
+          </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     );
@@ -620,8 +639,172 @@ export default function BabysitterOnboarding() {
     );
   }
 
+  if (uiStep === 'welcome') {
+    return (
+      <SafeAreaView style={styles.welcomeSafe} edges={['top', 'bottom']}>
+        <View style={styles.welcomeGlowTop} pointerEvents="none" />
+        <View style={styles.welcomeGlowBottom} pointerEvents="none" />
+
+        <View style={styles.welcomeHeader}>
+          <TouchableOpacity
+            style={styles.welcomeHelpButton}
+            activeOpacity={0.84}
+            onPress={() => router.push('/about')}
+          >
+            <MaterialIcons name="help-outline" size={20} color="#64748b" />
+          </TouchableOpacity>
+
+          <AppText variant="bodyLarge" weight="800" align="center" style={styles.welcomeBrand}>
+            {strings.appName}
+          </AppText>
+
+          <View style={styles.welcomeHeaderSpacer} />
+        </View>
+
+        <ScrollView
+          style={styles.flex}
+          contentContainerStyle={styles.welcomeScroll}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.welcomeContent}>
+            <View style={styles.welcomeCommunityRow}>
+              <View style={styles.welcomeCommunityLine} />
+              <AppText variant="caption" weight="700" align="center" style={styles.welcomeCommunityLabel}>
+                {strings.babysitterOnboardingWelcomeEyebrow}
+              </AppText>
+              <View style={styles.welcomeCommunityLine} />
+            </View>
+
+            <View style={styles.welcomeHeadlineGroup}>
+              <AppText variant="h1" weight="800" align="center" style={styles.welcomeHeadline}>
+                {strings.babysitterOnboardingWelcomeHeadlineLine1}
+              </AppText>
+              <AppText variant="h1" weight="800" align="center" style={styles.welcomeHeadlineAccent}>
+                {strings.babysitterOnboardingWelcomeHeadlineLine2}
+              </AppText>
+            </View>
+
+            <AppText
+              variant="bodyLarge"
+              tone="muted"
+              align="center"
+              style={styles.welcomeSubtitle}
+            >
+              {strings.babysitterOnboardingWelcomeSubtitle}
+            </AppText>
+
+            <View style={styles.welcomeIllustrationWrap}>
+              <View style={styles.welcomeIllustrationGlow} />
+              <View style={styles.welcomeIllustrationFrame}>
+                <Image
+                  source={{ uri: SITTER_INTRO_ILLUSTRATION_URL }}
+                  style={styles.welcomeIllustrationImage}
+                  resizeMode="cover"
+                />
+              </View>
+            </View>
+
+            <View style={styles.welcomeBenefits}>
+              <View style={styles.welcomeBenefitCard}>
+                <View style={styles.welcomeBenefitIconWrap}>
+                  <MaterialIcons name="payments" size={24} color="#7c3aed" />
+                </View>
+                <View style={styles.welcomeBenefitText}>
+                  <AppText variant="bodyLarge" weight="700" style={styles.welcomeBenefitTitle}>
+                    {strings.babysitterOnboardingWelcomeBenefitRateTitle}
+                  </AppText>
+                  <AppText variant="caption" tone="muted" style={styles.welcomeBenefitBody}>
+                    {strings.babysitterOnboardingWelcomeBenefitRateBody}
+                  </AppText>
+                </View>
+              </View>
+
+              <View style={styles.welcomeBenefitCard}>
+                <View style={styles.welcomeBenefitIconWrap}>
+                  <MaterialIcons name="verified-user" size={24} color="#7c3aed" />
+                </View>
+                <View style={styles.welcomeBenefitText}>
+                  <AppText variant="bodyLarge" weight="700" style={styles.welcomeBenefitTitle}>
+                    {strings.babysitterOnboardingWelcomeBenefitTrustTitle}
+                  </AppText>
+                  <AppText variant="caption" tone="muted" style={styles.welcomeBenefitBody}>
+                    {strings.babysitterOnboardingWelcomeBenefitTrustBody}
+                  </AppText>
+                </View>
+              </View>
+
+              <View style={styles.welcomeBenefitCard}>
+                <View style={styles.welcomeBenefitAvatarWrap}>
+                  <Image
+                    source={{ uri: SITTER_INTRO_COMMUNITY_URL }}
+                    style={styles.welcomeBenefitAvatar}
+                    resizeMode="cover"
+                  />
+                </View>
+                <View style={styles.welcomeBenefitText}>
+                  <AppText variant="bodyLarge" weight="700" style={styles.welcomeBenefitTitle}>
+                    {strings.babysitterOnboardingWelcomeBenefitCommunityTitle}
+                  </AppText>
+                  <AppText variant="caption" tone="muted" style={styles.welcomeBenefitBody}>
+                    {strings.babysitterOnboardingWelcomeBenefitCommunityBody}
+                  </AppText>
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.welcomeSocialBlock}>
+              <View style={styles.welcomeSocialStack}>
+                {['#ede9f5', '#ddd6fe', '#c4b5fd'].map((backgroundColor, index) => (
+                  <View
+                    key={backgroundColor}
+                    style={[
+                      styles.welcomeSocialChip,
+                      { backgroundColor, marginRight: index === 0 ? 0 : -10 },
+                    ]}
+                  >
+                    <MaterialIcons name="person" size={16} color="#7c3aed" />
+                  </View>
+                ))}
+              </View>
+              <AppText variant="caption" weight="700" align="center" style={styles.welcomeSocialLabel}>
+                {strings.babysitterOnboardingWelcomeSocialProof}
+              </AppText>
+            </View>
+          </View>
+        </ScrollView>
+
+        <View style={styles.welcomeFooter}>
+          <TouchableOpacity
+            activeOpacity={0.92}
+            style={styles.welcomePrimaryButton}
+            onPress={() => setUiStep('form')}
+          >
+            <LinearGradient
+              colors={['#7c3aed', '#a855f7']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.welcomePrimaryGradient}
+            >
+              <MaterialIcons name="arrow-forward" size={20} color="#ffffff" />
+              <AppText variant="bodyLarge" weight="800" style={styles.welcomePrimaryText}>
+                {strings.babysitterOnboardingWelcomePrimaryAction}
+              </AppText>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <AppText variant="caption" tone="muted" align="center" style={styles.welcomeLegal}>
+            {strings.babysitterOnboardingWelcomeLegal}
+          </AppText>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      <View style={styles.formAuraTopLeft} pointerEvents="none" />
+      <View style={styles.formAuraBottomRight} pointerEvents="none" />
+
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -629,6 +812,9 @@ export default function BabysitterOnboarding() {
       >
         <View style={styles.flex}>
           <View style={styles.topBar}>
+            <AppText variant="bodyLarge" weight="800" style={styles.topBarBrand}>
+              {strings.appName}
+            </AppText>
             <TouchableOpacity
               style={styles.backButton}
               onPress={handleBack}
@@ -641,72 +827,46 @@ export default function BabysitterOnboarding() {
             </TouchableOpacity>
           </View>
 
-          <View
-            style={[
-              styles.headerCard,
-              { backgroundColor: theme.highlightedSurface },
-            ]}
-          >
-            <AppText variant="caption" weight="700" style={[styles.kicker, { color: theme.filterAccent }]}>
-              {strings.drawerEditProfile}
-            </AppText>
-            <AppHeading
-              title={strings.babysitterOnboardingSingleTitle}
-              subtitle={strings.babysitterOnboardingSingleSubtitle}
-              containerStyle={{ marginVertical: 0 }}
-              style={{ color: theme.title }}
-            />
-          </View>
-
           <ScrollView
             style={styles.flex}
             contentContainerStyle={styles.content}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
+            <View style={styles.progressMetaRow}>
+              <View style={styles.progressTracks}>
+                <View style={[styles.progressTrackActive, { backgroundColor: theme.filterAccent }]} />
+                <View style={[styles.progressTrackActive, { backgroundColor: theme.filterAccent }]} />
+                <View style={styles.progressTrackIdle} />
+                <View style={styles.progressTrackIdle} />
+              </View>
+              <AppText variant="caption" weight="600" style={styles.progressLabel}>
+                {strings.babysitterOnboardingStepsCount}
+              </AppText>
+            </View>
+
+            <View style={styles.formIntroBlock}>
+              <AppText variant="h1" weight="800" style={styles.formIntroTitle}>
+                {strings.babysitterOnboardingFormIntroTitle}
+              </AppText>
+              <AppText variant="body" tone="muted" style={styles.formIntroSubtitle}>
+                {strings.babysitterOnboardingFormIntroSubtitle}
+              </AppText>
+            </View>
+
             {saveError !== '' ? <AppText variant="body" tone="error" style={styles.errorText}>{saveError}</AppText> : null}
 
             <AppCard role="babysitter" style={styles.formCard}>
-              <SectionHeader title={strings.step1Title} titleVariant="h2" style={styles.sectionHeader} />
+              <View style={styles.sectionHeader}>
+                <View style={[styles.sectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                  <MaterialIcons name="person" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700">{strings.step1Title}</AppText>
+              </View>
               <Step1BasicInfo
                 data={data}
                 onChange={updateData}
                 errors={fieldErrors}
-              />
-            </AppCard>
-
-            <AppCard role="babysitter" style={styles.formCard}>
-              <SectionHeader title={strings.step2Title} titleVariant="h2" style={styles.sectionHeader} />
-              <Step2About
-                data={data}
-                onChange={updateData}
-                errors={fieldErrors}
-              />
-            </AppCard>
-
-            <AppCard role="babysitter" style={styles.formCard}>
-              <SectionHeader title={strings.step3Title} titleVariant="h2" style={styles.sectionHeader} />
-              <Step3Experience
-                data={data}
-                onChange={updateData}
-                errors={fieldErrors}
-              />
-            </AppCard>
-
-            <AppCard role="babysitter" style={styles.formCard}>
-              <SectionHeader title={strings.step4Title} titleVariant="h2" style={styles.sectionHeader} />
-              <Step4Preferences
-                data={data}
-                onChange={updateData}
-                errors={fieldErrors}
-              />
-            </AppCard>
-
-            <AppCard role="babysitter" style={styles.formCard}>
-              <SectionHeader title={strings.step5Title} titleVariant="h2" style={styles.sectionHeader} />
-              <Step5Photos
-                data={data}
-                onChange={updateData}
                 onPickProfilePhoto={handlePickProfilePhoto}
                 isUploadingProfilePhoto={isUploadingPhoto}
                 onRemoveProfilePhoto={handleRemoveProfilePhoto}
@@ -719,27 +879,78 @@ export default function BabysitterOnboarding() {
             </AppCard>
 
             <AppCard role="babysitter" style={styles.formCard}>
-              <SectionHeader title={strings.step6Title} titleVariant="h2" style={styles.sectionHeader} />
+              <View style={styles.sectionHeader}>
+                <View style={[styles.sectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                  <MaterialIcons name="edit-note" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700">{strings.step2Title}</AppText>
+              </View>
+              <Step2About
+                data={data}
+                onChange={updateData}
+                errors={fieldErrors}
+              />
+            </AppCard>
+
+            <AppCard role="babysitter" style={styles.formCard}>
+              <View style={styles.sectionHeader}>
+                <View style={[styles.sectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                  <MaterialIcons name="school" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700">{strings.step3Title}</AppText>
+              </View>
+              <Step3Experience
+                data={data}
+                onChange={updateData}
+                errors={fieldErrors}
+              />
+            </AppCard>
+
+            <AppCard role="babysitter" style={styles.formCard}>
+              <View style={styles.sectionHeader}>
+                <View style={[styles.sectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                  <MaterialIcons name="tune" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700">{strings.step4Title}</AppText>
+              </View>
+              <Step4Preferences
+                data={data}
+                onChange={updateData}
+                errors={fieldErrors}
+              />
+            </AppCard>
+
+            <AppCard role="babysitter" style={styles.formCard}>
+              <View style={styles.sectionHeader}>
+                <View style={[styles.sectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                  <MaterialIcons name="verified-user" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700">{strings.step6Title}</AppText>
+              </View>
               <Step6Trust
                 data={data}
                 onChange={updateData}
               />
-
-              <View style={styles.sectionDivider} />
-
-              <SectionHeader title={strings.step7Title} titleVariant="h2" style={styles.sectionHeader} />
-              <Step7Visibility
-                data={data}
-                onChange={updateData}
-                showReviewSummary={false}
-              />
             </AppCard>
+
+            <View style={styles.formTrustCard}>
+              <View style={styles.formTrustIconWrap}>
+                <MaterialIcons name="verified-user" size={28} color={BabyCityPalette.primary} />
+              </View>
+              <View style={styles.formTrustBody}>
+                <AppText variant="bodyLarge" weight="800" style={styles.formTrustTitle}>
+                  {strings.babysitterOnboardingTrustTitle}
+                </AppText>
+                <AppText variant="body" tone="muted" style={styles.formTrustText}>
+                  {strings.babysitterOnboardingTrustBody}
+                </AppText>
+              </View>
+            </View>
           </ScrollView>
 
           <View style={styles.footer}>
-            <AppButton
+            <AppPrimaryButton
               label={strings.babysitterOnboardingSaveButton}
-              size="lg"
               loading={isSaving}
               onPress={handleFinish}
               disabled={isSaving || isUploadingPhoto || isRemovingPhoto || isUploadingGalleryPhoto}
@@ -753,6 +964,245 @@ export default function BabysitterOnboarding() {
 }
 
 const styles = StyleSheet.create({
+  welcomeSafe: {
+    flex: 1,
+    backgroundColor: '#f8f9ff',
+  },
+  welcomeGlowTop: {
+    position: 'absolute',
+    top: 92,
+    left: 18,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: 'rgba(124,58,237,0.07)',
+  },
+  welcomeGlowBottom: {
+    position: 'absolute',
+    right: -34,
+    bottom: 88,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: 'rgba(168,85,247,0.08)',
+  },
+  welcomeHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingTop: 8,
+    paddingBottom: 12,
+    backgroundColor: 'rgba(255,255,255,0.82)',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(226,232,240,0.35)',
+  },
+  welcomeHelpButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f1f5f9',
+  },
+  welcomeHeaderSpacer: {
+    width: 40,
+    height: 40,
+  },
+  welcomeBrand: {
+    color: '#7c3aed',
+    fontSize: 24,
+    lineHeight: 30,
+  },
+  welcomeScroll: {
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 180,
+  },
+  welcomeContent: {
+    alignItems: 'center',
+  },
+  welcomeCommunityRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 18,
+  },
+  welcomeCommunityLine: {
+    width: 28,
+    height: 1,
+    backgroundColor: 'rgba(124,58,237,0.18)',
+  },
+  welcomeCommunityLabel: {
+    color: '#7c3aed',
+    letterSpacing: 2.2,
+    fontSize: 11,
+    lineHeight: 16,
+  },
+  welcomeHeadlineGroup: {
+    alignItems: 'center',
+    gap: 2,
+    marginBottom: 12,
+  },
+  welcomeHeadline: {
+    color: '#1a2133',
+    fontSize: 34,
+    lineHeight: 38,
+  },
+  welcomeHeadlineAccent: {
+    color: '#7c3aed',
+    fontSize: 34,
+    lineHeight: 38,
+  },
+  welcomeSubtitle: {
+    maxWidth: 300,
+    fontSize: 15,
+    lineHeight: 25,
+    opacity: 0.82,
+    marginBottom: 28,
+  },
+  welcomeIllustrationWrap: {
+    width: '100%',
+    marginBottom: 34,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  welcomeIllustrationGlow: {
+    position: 'absolute',
+    inset: -12,
+    borderRadius: 42,
+    backgroundColor: 'rgba(124,58,237,0.06)',
+  },
+  welcomeIllustrationFrame: {
+    width: '100%',
+    aspectRatio: 4 / 3,
+    borderRadius: 40,
+    backgroundColor: '#ffffff',
+    padding: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.92)',
+    shadowColor: '#7c3aed',
+    shadowOpacity: 0.12,
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 30,
+    elevation: 6,
+  },
+  welcomeIllustrationImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 32,
+  },
+  welcomeBenefits: {
+    width: '100%',
+    gap: 14,
+    marginBottom: 28,
+  },
+  welcomeBenefitCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 28,
+    paddingHorizontal: 18,
+    paddingVertical: 18,
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 16,
+    shadowColor: '#7c3aed',
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 28,
+    elevation: 4,
+  },
+  welcomeBenefitIconWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(124,58,237,0.06)',
+  },
+  welcomeBenefitAvatarWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    overflow: 'hidden',
+    borderWidth: 3,
+    borderColor: 'rgba(124,58,237,0.10)',
+  },
+  welcomeBenefitAvatar: {
+    width: '100%',
+    height: '100%',
+  },
+  welcomeBenefitText: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  welcomeBenefitTitle: {
+    color: '#1a2133',
+    marginBottom: 3,
+  },
+  welcomeBenefitBody: {
+    lineHeight: 20,
+    opacity: 0.72,
+  },
+  welcomeSocialBlock: {
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 8,
+  },
+  welcomeSocialStack: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+  },
+  welcomeSocialChip: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 2,
+    borderColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  welcomeSocialLabel: {
+    color: '#7a8699',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  welcomeFooter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: 24,
+    paddingTop: 18,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 18,
+    backgroundColor: 'rgba(248,249,255,0.97)',
+  },
+  welcomePrimaryButton: {
+    width: '100%',
+    marginBottom: 14,
+  },
+  welcomePrimaryGradient: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    borderRadius: 20,
+    paddingVertical: 18,
+    shadowColor: '#7c3aed',
+    shadowOpacity: 0.24,
+    shadowOffset: { width: 0, height: 12 },
+    shadowRadius: 24,
+    elevation: 5,
+  },
+  welcomePrimaryText: {
+    color: '#ffffff',
+  },
+  welcomeLegal: {
+    fontSize: 11,
+    lineHeight: 18,
+    opacity: 0.58,
+    paddingHorizontal: 14,
+  },
   // Completion screen
   completeSafe: { flex: 1, backgroundColor: '#f4f6ff' },
   completeScroll: { paddingHorizontal: 24, paddingTop: 48, paddingBottom: 40, alignItems: 'center' },
@@ -776,7 +1226,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(158,54,87,0.04)',
     borderRadius: 999,
   } as any,
-  completeIconWrap: { marginBottom: 28, position: 'relative', alignItems: 'center', justifyContent: 'center' },
+  completeIconWrap: { marginBottom: 34, position: 'relative', alignItems: 'center', justifyContent: 'center' },
   completeIconGradient: {
     width: 96,
     height: 96,
@@ -807,24 +1257,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(178,140,255,0.3)',
     borderRadius: 32,
   },
-  completeHeading: { marginBottom: 10 },
-  completeSubtitle: { marginBottom: 32, maxWidth: 280 },
+  completeHeading: { marginBottom: 10, color: BabyCityPalette.textPrimary },
+  completeSubtitle: { marginBottom: 36, maxWidth: 288, lineHeight: 28 },
   // Profile card with overlapping avatar
   completeCardOuter: {
     width: '100%',
-    backgroundColor: '#ecf1ff',
-    borderRadius: 16,
-    paddingTop: 4,
-    paddingBottom: 4,
-    marginBottom: 28,
+    backgroundColor: BabyCityPalette.surfaceLow,
+    borderRadius: 28,
+    paddingTop: 6,
+    paddingBottom: 6,
+    marginBottom: 34,
     position: 'relative',
     overflow: 'visible',
-    marginTop: 48, // space for overlapping avatar
+    marginTop: 48,
+    ...BabyCityShadows.soft,
   },
   completeAvatarOverlap: {
     position: 'absolute',
     top: -40,
-    right: 20,
+    right: 24,
     zIndex: 10,
   },
   completeAvatarBorder: {
@@ -832,7 +1283,7 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     borderWidth: 6,
-    borderColor: '#ecf1ff',
+    borderColor: BabyCityPalette.surfaceLow,
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
@@ -843,39 +1294,40 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   completeCardInner: {
-    backgroundColor: '#ffffff',
-    borderRadius: 14,
-    paddingHorizontal: 20,
-    paddingTop: 52, // space for avatar overlap
-    paddingBottom: 20,
+    backgroundColor: BabyCityPalette.surfaceLowest,
+    borderRadius: 24,
+    paddingHorizontal: 24,
+    paddingTop: 54,
+    paddingBottom: 22,
     alignItems: 'flex-end',
   },
   completeCardHeader: {
     alignItems: 'flex-end',
-    marginBottom: 20,
-    gap: 6,
+    marginBottom: 24,
+    gap: 5,
   },
   completeCardName: { textAlign: 'right', color: '#242f41' },
-  completeNewBadge: {
+  completeBrandLine: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#ecf1ff',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
   },
-  completeNewBadgeText: { color: BabyCityPalette.primary },
+  completeBrandStar: {
+    marginRight: 2,
+  },
+  completeBrandText: {
+    color: BabyCityPalette.primary,
+  },
   completeBentoGrid: {
     flexDirection: 'row-reverse',
     gap: 12,
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   completeBentoCell: {
     flex: 1,
-    backgroundColor: '#ecf1ff',
-    borderRadius: 12,
+    backgroundColor: BabyCityPalette.surfaceLow,
+    borderRadius: 20,
     padding: 14,
     alignItems: 'flex-start',
     gap: 3,
@@ -904,10 +1356,37 @@ const styles = StyleSheet.create({
     borderColor: '#ffffff',
     marginLeft: -8,
   },
-  completeBtn: { marginBottom: 12, width: '100%' },
+  completeBtn: { marginBottom: 8, width: '100%' },
+  completeSecondaryAction: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+  },
+  completeSecondaryActionText: {
+    color: BabyCityPalette.primary,
+  },
   container: {
     flex: 1,
     backgroundColor: BabyCityPalette.canvas,
+  },
+  formAuraTopLeft: {
+    position: 'absolute',
+    top: -108,
+    left: -92,
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    backgroundColor: 'rgba(112,42,225,0.06)',
+  },
+  formAuraBottomRight: {
+    position: 'absolute',
+    right: -120,
+    bottom: 60,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    backgroundColor: 'rgba(255,142,172,0.08)',
   },
   flex: {
     flex: 1,
@@ -919,9 +1398,16 @@ const styles = StyleSheet.create({
   },
   topBar: {
     paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 4,
-    alignItems: 'flex-end',
+    paddingTop: 12,
+    paddingBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  topBarBrand: {
+    color: BabyCityPalette.primary,
+    fontSize: 24,
+    lineHeight: 30,
   },
   backButton: {
     flexDirection: 'row-reverse',
@@ -932,51 +1418,122 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: BabyCityPalette.primarySoft,
   },
-  headerCard: {
-    marginHorizontal: 20,
-    marginTop: 8,
-    marginBottom: 8,
-    paddingHorizontal: 22,
-    paddingVertical: 20,
-    borderRadius: 30,
-  },
-  kicker: {
-    marginBottom: 8,
-  },
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 14,
-    paddingBottom: 28,
+    paddingHorizontal: 24,
+    paddingTop: 18,
+    paddingBottom: 34,
+  },
+  progressMetaRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 18,
+  },
+  progressTracks: {
+    flexDirection: 'row-reverse',
+    gap: 6,
+  },
+  progressTrackActive: {
+    width: 34,
+    height: 6,
+    borderRadius: 999,
+  },
+  progressTrackIdle: {
+    width: 34,
+    height: 6,
+    borderRadius: 999,
+    backgroundColor: '#d5e3ff',
+  },
+  progressLabel: {
+    color: BabyCityPalette.textSecondary,
+  },
+  formIntroBlock: {
+    marginBottom: 22,
+    alignItems: 'flex-end',
+  },
+  formIntroTitle: {
+    color: BabyCityPalette.textPrimary,
+    textAlign: 'right',
+    marginBottom: 10,
+  },
+  formIntroSubtitle: {
+    textAlign: 'right',
+    lineHeight: 28,
   },
   errorText: {
     marginBottom: 12,
     backgroundColor: BabyCityPalette.errorSoft,
-    borderRadius: 18,
+    borderRadius: 24,
     paddingHorizontal: 14,
     paddingVertical: 12,
+    textAlign: 'right',
   },
   formCard: {
-    paddingHorizontal: 18,
+    paddingHorizontal: 22,
+    paddingVertical: 24,
+    marginBottom: 18,
+    borderRadius: 30,
+    shadowColor: BabyCityPalette.shadow,
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 10 },
+    shadowRadius: 24,
+    elevation: 3,
+  },
+  sectionHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 16,
+  },
+  sectionIconChip: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  formTrustCard: {
+    flexDirection: 'row-reverse',
+    alignItems: 'flex-start',
+    gap: 14,
+    backgroundColor: '#ecf1ff',
+    borderRadius: 28,
+    paddingHorizontal: 20,
     paddingVertical: 18,
     marginBottom: 16,
   },
-  sectionHeader: {
-    marginBottom: 12,
+  formTrustIconWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: BabyCityPalette.surfaceLowest,
   },
-  sectionDivider: {
-    marginVertical: 16,
+  formTrustBody: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  formTrustTitle: {
+    color: BabyCityPalette.textPrimary,
+    textAlign: 'right',
+    marginBottom: 4,
+  },
+  formTrustText: {
+    textAlign: 'right',
+    lineHeight: 22,
   },
   footer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
     paddingTop: 10,
-    paddingBottom: Platform.OS === 'ios' ? 12 : 16,
-    backgroundColor: 'rgba(236, 241, 255, 0.96)',
+    paddingBottom: Platform.OS === 'ios' ? 12 : 18,
+    backgroundColor: 'rgba(244, 246, 255, 0.94)',
   },
   doneButton: {
     shadowColor: BabyCityPalette.shadow,
-    shadowOpacity: 0.12,
-    shadowOffset: { width: 0, height: 8 },
-    shadowRadius: 18,
+    shadowOpacity: 0.16,
+    shadowOffset: { width: 0, height: 12 },
+    shadowRadius: 22,
     elevation: 4,
   },
 });

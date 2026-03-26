@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-background": "#242f41",
+              "tertiary-fixed-dim": "#f77c9e",
+              "on-primary": "#f8f0ff",
+              "on-tertiary-fixed-variant": "#711036",
+              "on-tertiary-container": "#64042d",
+              "on-secondary": "#f8efff",
+              "primary-container": "#b28cff",
+              "outline": "#6c778c",
+              "secondary-fixed": "#e9def5",
+              "secondary-container": "#e9def5",
+              "surface-tint": "#702ae1",
+              "primary-fixed": "#b28cff",
+              "on-primary-container": "#2e006c",
+              "on-primary-fixed-variant": "#390083",
+              "secondary-fixed-dim": "#dbd0e7",
+              "primary-fixed-dim": "#a67aff",
+              "on-surface-variant": "#515c70",
+              "error-dim": "#a70138",
+              "error-container": "#f74b6d",
+              "surface-container-low": "#ecf1ff",
+              "on-error": "#ffefef",
+              "secondary": "#60586b",
+              "surface-variant": "#cdddfe",
+              "error": "#b41340",
+              "primary-dim": "#6411d5",
+              "primary": "#702ae1",
+              "on-error-container": "#510017",
+              "tertiary-fixed": "#ff8eac",
+              "on-primary-fixed": "#000000",
+              "outline-variant": "#a2adc4",
+              "on-secondary-fixed-variant": "#60586b",
+              "surface-container-highest": "#cdddfe",
+              "tertiary": "#9e3657",
+              "inverse-primary": "#a476ff",
+              "background": "#f4f6ff",
+              "on-tertiary": "#ffeff1",
+              "surface-dim": "#c3d5f8",
+              "on-secondary-fixed": "#433c4e",
+              "surface-container": "#dee8ff",
+              "surface-container-high": "#d5e3ff",
+              "on-tertiary-fixed": "#380016",
+              "on-secondary-container": "#564f61",
+              "tertiary-dim": "#8e294c",
+              "secondary-dim": "#534c5f",
+              "inverse-surface": "#040e1f",
+              "tertiary-container": "#ff8eac",
+              "inverse-on-surface": "#929db4",
+              "surface-bright": "#f4f6ff",
+              "on-surface": "#242f41",
+              "surface": "#f4f6ff",
+              "surface-container-lowest": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        -webkit-tap-highlight-color: transparent;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f4f6ff]/80 backdrop-blur-xl flex flex-row-reverse items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4 flex-row-reverse">
+<button class="material-symbols-outlined text-[#7C3AED] hover:opacity-80 transition-opacity active:scale-95 duration-200" data-icon="arrow_forward">arrow_forward</button>
+<h1 class="font-headline font-bold text-xl tracking-tight text-[#242f41]">היסטוריית הזמנות</h1>
+</div>
+<div class="w-6"></div> <!-- Spacer for balance -->
+</header>
+<main class="pt-24 pb-32 px-6 max-w-md mx-auto">
+<!-- Summary Section -->
+<section class="mb-10">
+<div class="bg-surface-container-low rounded-lg p-6 flex items-center justify-around gap-4">
+<div class="text-center">
+<p class="text-on-surface-variant text-sm font-label mb-1">סה"כ הזמנות</p>
+<p class="text-primary font-headline font-extrabold text-2xl">12</p>
+</div>
+<div class="w-px h-8 bg-outline-variant/15"></div>
+<div class="text-center">
+<p class="text-on-surface-variant text-sm font-label mb-1">סה"כ שעות</p>
+<p class="text-primary font-headline font-extrabold text-2xl">48</p>
+</div>
+</div>
+</section>
+<!-- Booking List Group -->
+<section class="space-y-8">
+<!-- Month Group -->
+<div>
+<h2 class="font-headline font-bold text-lg mb-4 pr-2 text-on-surface">נובמבר 2023</h2>
+<div class="space-y-4">
+<!-- Booking Card 1 -->
+<div class="bg-surface-container-lowest rounded-lg p-5 shadow-[0_8px_30px_rgb(36,47,65,0.04)] hover:scale-[1.01] transition-transform duration-300">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="Profile" class="w-14 h-14 rounded-full object-cover" data-alt="Close up portrait of a smiling woman sitter" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAybeHIgMoaIpb0sHzUxnBZqThMytRCItn3SjaPPOBYOx4bGdFDz_z8HOsfreJkQyEaMqNWglOKsgFvfCZsZx2o3v3-Jskm3D8vliyKyxzu13NJD_PEFJfFfKA-92IT18NLLdxPId-Eope89V2kk531LPWjoR-QvzdbADFySsZnS9txnzbt0EPxGTeLEhgqmrPMFBVFWrzKok5UN-e6fadzK6kaJmKSlPffH0fk4mqfH9Q1gjWxbjiXsCVNG3cY14w3mSvyQntjJD_h"/>
+<div class="absolute -top-1 -right-1 w-4 h-4 bg-tertiary rounded-full border-2 border-surface-container-lowest"></div>
+</div>
+<div>
+<h3 class="font-headline font-bold text-on-surface">משפחת לוי</h3>
+<p class="text-on-surface-variant text-sm">יום שלישי, 14 בנובמבר</p>
+</div>
+</div>
+<span class="bg-secondary-container text-on-secondary-container px-4 py-1 rounded-full text-xs font-bold">הושלם</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="schedule">schedule</span>
+<span class="text-sm font-medium text-on-surface-variant">17:00 - 21:00</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="timer">timer</span>
+<span class="text-sm font-medium text-on-surface-variant">4 שעות</span>
+</div>
+</div>
+<div class="text-left">
+<span class="font-headline font-extrabold text-lg text-primary">₪340</span>
+</div>
+</div>
+</div>
+<!-- Booking Card 2 -->
+<div class="bg-surface-container-lowest rounded-lg p-5 shadow-[0_8px_30px_rgb(36,47,65,0.04)]">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="Profile" class="w-14 h-14 rounded-full object-cover border-2 border-surface-container-low" data-alt="Young man babysitter smiling portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUUsB5Ri6SczrO4oyQeHGa5eWzmxGGeerETGKOyx4Cv7DhnBNM35KYyBWtF5mgYQ4MENH65qrdeactm5wyhx3TSBHanQpHAcU27lStlQhbVZ-ya9tA7Bx-_TFN354Sy1SZPh6uV18VRz1NoLJVZN3mQPaswvBGvhwIJlMPJwWvifITI7JUxB81T9eGNykqP2jv9HtR-Wf7diJ1GXuFCQS4yx-ze6pkks2Cyh04GpRlWbJB7RtARRD9vwrHzkdYu6LfhGMyyczDyfpp"/>
+</div>
+<div>
+<h3 class="font-headline font-bold text-on-surface">משפחת אברהם</h3>
+<p class="text-on-surface-variant text-sm">יום ראשון, 12 בנובמבר</p>
+</div>
+</div>
+<span class="bg-secondary-container text-on-secondary-container px-4 py-1 rounded-full text-xs font-bold">הושלם</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="schedule">schedule</span>
+<span class="text-sm font-medium text-on-surface-variant">08:00 - 13:00</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="timer">timer</span>
+<span class="text-sm font-medium text-on-surface-variant">5 שעות</span>
+</div>
+</div>
+<div class="text-left">
+<span class="font-headline font-extrabold text-lg text-primary">₪425</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Previous Month Group -->
+<div>
+<h2 class="font-headline font-bold text-lg mb-4 pr-2 text-on-surface">אוקטובר 2023</h2>
+<div class="space-y-4 opacity-80">
+<!-- Booking Card 3 -->
+<div class="bg-surface-container-lowest rounded-lg p-5 shadow-[0_8px_30px_rgb(36,47,65,0.04)]">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="Profile" class="w-14 h-14 rounded-full object-cover" data-alt="Portrait of a friendly male sitter" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsxfQZd8qe23KJAqASSfMakdCA8a4JfxEka9IfvRIR0N7J6G6dkJ5FYphvnNTlzQUohdhalLonWiNY6kcXf0FyIuDSGGW_P7c3a-A-RB2XNHX5Z-PodiJWKM8vBFzMBQ27FZnyMrmctgwVzDLuA6mJQwdNdgXy22r6u48jzWiwD4NyE08MnPvxiugGqY_BSmmYz02m1MtFD3WGLTucsmosB5XUauqlGHp750oEHHMSVBQtmxLQboUMeYbUUHKGx9DTj86CmcnYySxM"/>
+</div>
+<div>
+<h3 class="font-headline font-bold text-on-surface">משפחת כהן</h3>
+<p class="text-on-surface-variant text-sm">יום חמישי, 26 באוקטובר</p>
+</div>
+</div>
+<span class="bg-secondary-container text-on-secondary-container px-4 py-1 rounded-full text-xs font-bold">הושלם</span>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/10">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="schedule">schedule</span>
+<span class="text-sm font-medium text-on-surface-variant">19:30 - 23:30</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="timer">timer</span>
+<span class="text-sm font-medium text-on-surface-variant">4 שעות</span>
+</div>
+</div>
+<div class="text-left">
+<span class="font-headline font-extrabold text-lg text-primary">₪360</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full rounded-t-[2rem] z-50 bg-[#ffffff] shadow-[0_-8px_44px_rgba(36,47,65,0.06)]">
+<div class="flex flex-row-reverse justify-around items-center w-full px-4 pb-6 pt-3">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-[#242f41] px-4 py-2 hover:bg-[#ecf1ff] transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">בית</span>
+</a>
+<!-- Active: Orders (History) -->
+<a class="flex flex-col items-center justify-center text-[#7C3AED] bg-[#e9def5] rounded-2xl px-4 py-2 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="history">history</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">הזמנות</span>
+</a>
+<!-- Messages -->
+<a class="flex flex-col items-center justify-center text-[#242f41] px-4 py-2 hover:bg-[#ecf1ff] transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">הודעות</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-[#242f41] px-4 py-2 hover:bg-[#ecf1ff] transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">פרופיל</span>
+</a>
+</div>
+</nav>
+</body></html>

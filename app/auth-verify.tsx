@@ -20,6 +20,7 @@ import {
 } from '@/constants/theme';
 import KeyboardAccessoryBar from '@/components/ui/KeyboardAccessoryBar';
 import AppText from '@/components/ui/AppText';
+import SmartafWordmark from '@/components/ui/SmartafWordmark';
 
 const RESEND_COOLDOWN = 30;
 
@@ -88,9 +89,7 @@ export default function AuthVerifyScreen() {
       >
         <View style={styles.content}>
           <View style={styles.topBar}>
-            <AppText variant="bodyLarge" weight="800" style={styles.brandName}>
-              {strings.authBrandName}
-            </AppText>
+            <SmartafWordmark size="sm" textColor={BabyCityPalette.textPrimary} />
 
             <TouchableOpacity
               activeOpacity={0.8}
@@ -113,8 +112,13 @@ export default function AuthVerifyScreen() {
               {strings.authOtpTitle}
             </AppText>
             <AppText variant="bodyLarge" weight="500" align="center" style={styles.subtitle}>
-              {`${strings.authOtpSubtitle} ${phoneValue}`}
+              {strings.authOtpSubtitle}
             </AppText>
+            {phoneValue ? (
+              <AppText variant="body" tone="muted" align="center" style={styles.phoneCaption}>
+                {phoneValue}
+              </AppText>
+            ) : null}
           </View>
 
           <View style={styles.otpSection}>
@@ -248,21 +252,21 @@ const styles = StyleSheet.create({
   },
   backgroundBlobTop: {
     position: 'absolute',
-    top: -60,
-    left: -80,
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: 'rgba(112, 42, 225, 0.06)',
+    top: -84,
+    left: -88,
+    width: 230,
+    height: 230,
+    borderRadius: 115,
+    backgroundColor: 'rgba(112, 42, 225, 0.05)',
   },
   backgroundBlobBottom: {
     position: 'absolute',
-    bottom: -40,
-    right: -30,
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: 'rgba(233, 222, 245, 0.38)',
+    bottom: -48,
+    right: -40,
+    width: 190,
+    height: 190,
+    borderRadius: 95,
+    backgroundColor: 'rgba(233, 222, 245, 0.32)',
   },
   content: {
     flex: 1,
@@ -276,34 +280,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 28,
-  },
-  brandName: {
-    color: BabyCityPalette.textPrimary,
-    fontSize: 26,
+    marginBottom: 40,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(236, 241, 255, 0.7)',
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
   },
   hero: {
     position: 'relative',
-    marginBottom: 28,
+    marginBottom: 36,
   },
   heroGlow: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 64,
-    backgroundColor: 'rgba(112, 42, 225, 0.12)',
-    transform: [{ scale: 1.18 }],
+    borderRadius: 56,
+    backgroundColor: 'rgba(112, 42, 225, 0.1)',
+    transform: [{ scale: 1.22 }],
   },
   heroIcon: {
-    width: 128,
-    height: 128,
-    borderRadius: 64,
+    width: 112,
+    height: 112,
+    borderRadius: 56,
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
@@ -312,16 +312,21 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 36,
+    marginBottom: 44,
   },
   title: {
     color: BabyCityPalette.textPrimary,
-    marginBottom: 12,
+    fontSize: 34,
+    lineHeight: 42,
+    marginBottom: 14,
   },
   subtitle: {
     color: BabyCityPalette.textSecondary,
-    maxWidth: 320,
-    lineHeight: 28,
+    maxWidth: 300,
+    lineHeight: 30,
+  },
+  phoneCaption: {
+    marginTop: 8,
   },
   otpSection: {
     width: '100%',
@@ -329,16 +334,16 @@ const styles = StyleSheet.create({
   },
   otpRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
     justifyContent: 'center',
   },
   otpBox: {
-    width: 48,
-    height: 64,
-    borderRadius: 16,
+    width: 44,
+    height: 60,
+    borderRadius: 22,
     backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#a2adc4',
+    borderWidth: 1.2,
+    borderColor: 'rgba(162,173,196,0.72)',
     alignItems: 'center',
     justifyContent: 'center',
     ...BabyCityShadows.soft,
@@ -371,8 +376,8 @@ const styles = StyleSheet.create({
   },
   resendWrap: {
     alignItems: 'center',
-    gap: 8,
-    marginTop: 28,
+    gap: 10,
+    marginTop: 30,
   },
   cooldownText: {
     color: BabyCityPalette.textSecondary,
@@ -382,16 +387,17 @@ const styles = StyleSheet.create({
   },
   primaryButtonShadow: {
     width: '100%',
-    marginTop: 28,
+    marginTop: 42,
     shadowColor: BabyCityPalette.primary,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.22,
     shadowRadius: 14,
     elevation: 6,
+    borderRadius: 999,
   },
   primaryButton: {
-    minHeight: 60,
-    borderRadius: 16,
+    minHeight: 58,
+    borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
@@ -402,7 +408,7 @@ const styles = StyleSheet.create({
   supportCard: {
     marginTop: 'auto',
     width: '100%',
-    borderRadius: 20,
+    borderRadius: 24,
     backgroundColor: BabyCityPalette.surfaceLow,
     paddingHorizontal: 18,
     paddingVertical: 18,
@@ -411,9 +417,9 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   supportIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',

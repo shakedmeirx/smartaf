@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#702ae1",
+              "primary-dim": "#6411d5",
+              "surface": "#f8faff",
+              "on-surface": "#1a1c1e",
+              "on-surface-variant": "#44474e",
+              "surface-container": "#eff1f8",
+              "surface-container-low": "#f0f3f9",
+              "surface-container-lowest": "#ffffff",
+              "outline-variant": "#c4c6d0",
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans", "sans-serif"],
+              "body": ["Be Vietnam Pro", "sans-serif"],
+            },
+            boxShadow: {
+              'premium': '0 10px 30px -5px rgba(112, 42, 225, 0.15), 0 4px 12px -2px rgba(112, 42, 225, 0.05)',
+              'message': '0 4px 12px rgba(0, 0, 0, 0.03)',
+              'header': '0 2px 15px rgba(0, 0, 0, 0.02)',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        background-color: #f8faff;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .message-in {
+        border-radius: 24px 24px 24px 6px;
+      }
+      .message-out {
+        border-radius: 24px 24px 6px 24px;
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+      .smartaf-gradient {
+        background: linear-gradient(135deg, #702ae1 0%, #8a4af3 100%);
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen">
+<!-- Smartaf Header -->
+<header class="glass-effect fixed top-0 left-0 right-0 z-50 border-b border-primary/10 shadow-header">
+<div class="flex flex-row-reverse justify-between items-center w-full px-4 py-3 max-w-3xl mx-auto">
+<!-- Leading: Back with Smartaf Brand Feel -->
+<button class="hover:bg-primary/5 active:scale-95 transition-all p-2 rounded-2xl flex items-center gap-1">
+<span class="material-symbols-outlined text-primary font-bold" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<!-- User Info & Brand Identity -->
+<div class="flex flex-row-reverse items-center gap-3">
+<div class="text-right">
+<h1 class="font-headline font-bold text-on-surface text-[15px] leading-tight">מיכל לוי</h1>
+<div class="flex items-center justify-end gap-1.5 mt-0.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span>
+<p class="text-[10px] text-on-surface-variant font-bold tracking-wide uppercase opacity-70">מחוברת כעת</p>
+</div>
+</div>
+<div class="relative">
+<div class="w-12 h-12 rounded-2xl overflow-hidden ring-4 ring-primary/5 shadow-sm">
+<img alt="מיכל לוי" class="w-full h-full object-cover" data-alt="Friendly woman profile picture smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm4T6BP1f1zSP8iNNDxu9JtDk3wEgT1SLPTIie63VMy7Qscjg3oPHqQr5yGro02ijGrsFgWgCTTsPx0jWanWuka92zaW8RpAKL4W6NRGCYyAkln_JRUxSoE1W7QbSUGKyYaycxb9urNqRj7wfJWy0tuKfmIp8-l4dMVL_V893uQ-zLiEYdn7IOeLriFQRzw2akbocD3_6JS-Jl2eL4gk7wTzN0kfsq0Q-TWABn1AgWdN9bzzp1RCcjOmfDHbsNJWH1yt1OD5_7L5Wc"/>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-white p-0.5 rounded-lg shadow-sm">
+<div class="w-4 h-4 rounded-md smartaf-gradient flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-white" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex gap-1">
+<button class="hover:bg-primary/5 p-2.5 rounded-2xl transition-all text-primary">
+<span class="material-symbols-outlined" data-icon="call">call</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Chat Canvas -->
+<main class="flex-grow pt-28 pb-36 px-5 flex flex-col gap-6 max-w-3xl mx-auto w-full">
+<!-- Date Badge -->
+<div class="flex justify-center mb-2">
+<span class="px-6 py-1.5 bg-white/80 backdrop-blur-sm shadow-sm text-primary font-bold text-[11px] rounded-full uppercase tracking-wider border border-primary/5">היום</span>
+</div>
+<!-- Incoming Message -->
+<div class="flex flex-col items-start max-w-[85%] self-start animate-in fade-in slide-in-from-left-4 duration-500">
+<div class="bg-white text-on-surface p-4 message-in shadow-message border border-primary/5">
+<p class="text-[15px] leading-relaxed font-body font-medium">היי! רציתי לשאול אם אתה פנוי מחר אחה"צ לשעתיים של בייביסיטר עם איתי?</p>
+</div>
+<span class="mt-2 text-[10px] text-on-surface-variant/60 px-3 font-semibold tracking-tight">10:15</span>
+</div>
+<!-- Outgoing Message -->
+<div class="flex flex-col items-end max-w-[85%] self-end animate-in fade-in slide-in-from-right-4 duration-500">
+<div class="smartaf-gradient text-white p-4 message-out shadow-premium">
+<p class="text-[15px] leading-relaxed font-body font-medium">אהלן מיכל, בשמחה. מחר ב-16:00 מתאים לך?</p>
+</div>
+<span class="mt-2 text-[10px] text-on-surface-variant/60 px-3 font-semibold tracking-tight text-left w-full">10:17</span>
+</div>
+<!-- Incoming Message with Image -->
+<div class="flex flex-col items-start max-w-[85%] self-start animate-in fade-in slide-in-from-left-4 duration-700">
+<div class="bg-white p-2.5 message-in shadow-message border border-primary/5">
+<div class="rounded-2xl overflow-hidden mb-3 ring-1 ring-black/5">
+<img alt="סדר יום" class="w-full aspect-[4/3] object-cover" data-alt="Soft aesthetic home nursery setup" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIO-t1D_QbY9rUF4AeIc79Ncmjd_kHpEWzbJPdMuKcmsle0-WrUksREPS8puid57GKyaWYj4HhOnhHR4OS18huizf8yql1YK_ZZ9M1QTomxSMaAjFgBLc8UhrBQ8h202CARCg6yfj4SZQe0Bld9T-PSM5vsJ_ZHWrBXxlTqcVv6rDMq1Ksk2jFm3wXEPRCVOaJy4otPKtsouSF5Tyl7EPjIllJfVrVEZwr6gL5MT55qUC3Ag52BEFR9LR-JJV99OgHZ3467svemYRL"/>
+</div>
+<p class="text-[15px] px-2 pb-2 leading-relaxed font-body font-medium">מעולה. שלחתי לך את סדר היום המעודכן שלו כאן בתמונה.</p>
+</div>
+<span class="mt-2 text-[10px] text-on-surface-variant/60 px-3 font-semibold tracking-tight">10:20</span>
+</div>
+<!-- Outgoing Message -->
+<div class="flex flex-col items-end max-w-[85%] self-end animate-in fade-in slide-in-from-right-4 duration-500">
+<div class="smartaf-gradient text-white p-4 message-out shadow-premium">
+<p class="text-[15px] leading-relaxed font-body font-medium">קיבלתי. נראה מצוין, נתראה מחר!</p>
+</div>
+<span class="mt-2 text-[10px] text-on-surface-variant/60 px-3 font-semibold tracking-tight text-left w-full">10:22</span>
+</div>
+</main>
+<!-- Bottom Input Area -->
+<div class="fixed bottom-0 left-0 right-0 glass-effect p-4 pb-10 z-50 border-t border-primary/10">
+<div class="max-w-3xl mx-auto flex flex-row-reverse items-center gap-3">
+<!-- Send Button - Smartaf Signature Gradient -->
+<button class="smartaf-gradient w-14 h-14 min-w-[56px] min-h-[56px] flex items-center justify-center rounded-2xl text-white shadow-premium active:scale-95 transition-all duration-200">
+<span class="material-symbols-outlined rotate-180 text-2xl" data-icon="send" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+<!-- Input Field Container -->
+<div class="flex-grow flex items-center bg-white border border-primary/10 rounded-3xl px-3 py-1.5 shadow-sm focus-within:ring-4 focus-within:ring-primary/5 transition-all duration-300">
+<button class="text-primary/70 hover:text-primary transition-colors p-2 hover:bg-primary/5 rounded-full">
+<span class="material-symbols-outlined text-2xl" data-icon="add_circle">add_circle</span>
+</button>
+<input class="flex-grow bg-transparent border-none focus:ring-0 text-on-surface text-[15px] placeholder-on-surface-variant/40 font-body text-right py-3 px-3" placeholder="הקלדת הודעה..." type="text"/>
+<button class="text-primary/70 hover:text-primary transition-colors p-2 hover:bg-primary/5 rounded-full">
+<span class="material-symbols-outlined text-2xl" data-icon="mood">mood</span>
+</button>
+</div>
+<!-- Voice Action -->
+<button class="text-primary/60 hover:text-primary transition-all p-2.5 hover:bg-primary/5 rounded-2xl active:scale-90">
+<span class="material-symbols-outlined text-2xl" data-icon="mic">mic</span>
+</button>
+</div>
+</div>
+<!-- Decorative Background - Smartaf Brand Atmosphere -->
+<div class="fixed inset-0 -z-10 pointer-events-none overflow-hidden bg-[#fbfdff]">
+<div class="absolute top-[-10%] right-[-15%] w-[80%] h-[60%] rounded-full bg-primary/5 blur-[140px]"></div>
+<div class="absolute bottom-[-5%] left-[-10%] w-[60%] h-[50%] rounded-full bg-primary/8 blur-[120px]"></div>
+</div>
+</body></html>

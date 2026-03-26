@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import AppShell from '@/components/navigation/AppShell';
@@ -13,7 +13,6 @@ import AppText from '@/components/ui/AppText';
 import AppTextArea from '@/components/ui/AppTextArea';
 import DateTimePicker from '@/components/ui/DateTimePicker';
 import ScreenStateCard from '@/components/ui/ScreenStateCard';
-import SectionHeader from '@/components/ui/SectionHeader';
 import BabysitterStatCard from '@/components/babysitter/BabysitterStatCard';
 import BabysitterShiftEntryCard from '@/components/babysitter/BabysitterShiftEntryCard';
 import { useAppState } from '@/context/AppContext';
@@ -38,11 +37,6 @@ import {
 import { normalizeTimeValue } from '@/lib/time';
 import { BabysitterShift, ShiftPaymentStatus } from '@/types/shift';
 
-const SHIFT_FAMILY_IMAGES = [
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAqVsYFTDUnJWlFWgko1vEfVw_xad7Xiew1NS4o7z4Ac12F8h5iv716CFHylH0BSOIfomArBhyOWw77B87oyJGGjgZ-b28PQiqM6DNo-Nzl0V9aLpjExscerdZNwBuEy8-cixnVyRS9AZGpCWoaw6rmbP2Z2UPXopkkXeXlGjPyXbdTOXJfGnWLpxFr-wXLj3gkVcaI7UtKk39UvpjQ3LWVJqDFAFuDVcGUxGE1dubRG42EMvJhxNZHEQ9TKUH5HFUM54tUxM-CB1xK',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuCuiIGiNiwHVGw15yEQTvyW3U8u3H_0vlJDnJjLWVjGB9lyRb_WnBdvgkXiiIKE4fY3pLJYth0Y5lY-JdRvvKdJOnsShk8NpH0rFefkK7Q43kMCf74OU0FQIimo24PnZEzQNmUtUqErKKtAXmtvKTVdN9Adu3UnSF-CFrEgbOWN0ksS0ug2c3_S3nmwGXkXNEbX1rYUGO1Tmp_T4rY3kUccF_uhOEzlpWYJuYHFcjm--ma1OiGs4Z5PL5jbeFtzdTlO7PMR3-AIj8xU',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBJ4E_unPKUBzl7P-_z05fvyZUIa6T3hX_gSETAFJ87F0KUDMGSg5ZkOaKLd5cSWYZP6ZWW6MrJdLGrc1zjFADFWhJKcagWVjpvbou9rVddfwzX-iZSo_M7ZMO2Ll1bckUlSp8x6uusKyoZhZQHyAplCbaQaxo9A-EuljvdMkFTmx5-PO49AG9Be-T30rzbnh3QkdRuCdf6tlMgqPQtRNUmhu28JnUkdx6y2bvANNFDfpUsoBZnpRNuKQB0KRJAc9A_mXIW9YDxSIco',
-];
 
 type KnownFamily = {
   parentId: string;
@@ -123,6 +117,7 @@ export default function BabysitterShiftsScreen() {
   const [historyFiltersOpen, setHistoryFiltersOpen] = useState(false);
   const [autoOpenedTrackedRequestId, setAutoOpenedTrackedRequestId] = useState<string | null>(null);
   const [paymentUpdatingShiftId, setPaymentUpdatingShiftId] = useState<string | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
 
   const knownFamilies = useMemo<KnownFamily[]>(() => {
     const map = new Map<string, KnownFamily>();
@@ -299,7 +294,7 @@ export default function BabysitterShiftsScreen() {
   }, [currentBabysitterProfileId]);
 
   useEffect(() => {
-    if (!params.parentName && !params.date && !params.startTime) {
+    if (!params.parentName && !params.date && !params.startTime && !params.requestId && !params.parentId) {
       return;
     }
 
@@ -308,6 +303,7 @@ export default function BabysitterShiftsScreen() {
     setSelectedRequestId(previous => previous ?? params.requestId ?? null);
     setShiftDate(previous => previous || (params.date ?? ''));
     setStartTime(previous => previous || normalizeTimeValue(params.startTime));
+    setFormOpen(true);
   }, [params.date, params.parentId, params.parentName, params.requestId, params.startTime]);
 
   useEffect(() => {
@@ -367,6 +363,7 @@ export default function BabysitterShiftsScreen() {
     setNotes('');
     setEditingShiftId(null);
     setErrorText('');
+    setFormOpen(false);
   }
 
   function resetHistoryFilters() {
@@ -389,6 +386,7 @@ export default function BabysitterShiftsScreen() {
     setPaymentStatus(shift.paymentStatus);
     setNotes(shift.notes);
     setErrorText('');
+    setFormOpen(true);
     setHistoryFiltersOpen(false);
 
     requestAnimationFrame(() => {
@@ -543,6 +541,16 @@ export default function BabysitterShiftsScreen() {
     resetForm();
   }
 
+  function handleToggleForm() {
+    if (formOpen) {
+      setErrorText('');
+      setFormOpen(false);
+      return;
+    }
+
+    setFormOpen(true);
+  }
+
   if (!currentBabysitterProfileId && !loading) {
     return (
       <AppShell
@@ -579,322 +587,370 @@ export default function BabysitterShiftsScreen() {
         backgroundColor={theme.screenBackground}
         scrollViewRef={scrollRef}
       >
-        <AppCard role="babysitter" variant="panel" style={styles.summaryCard}>
-          <View style={styles.summaryHeader}>
-            <SectionHeader
-              title={strings.babysitterShiftManagerTitle}
-              subtitle={strings.babysitterShiftManagerSubtitle}
-            />
-            <View style={styles.summaryAmountPill}>
-              <AppText variant="caption" tone="muted" style={styles.summaryAmountLabel}>
-                {strings.babysitterShiftManagerSummaryIncome}
-              </AppText>
-              <AppText variant="h3" weight="800" style={styles.summaryAmountValue}>
-                {formatShiftCurrency(totals.amount)}
-              </AppText>
-            </View>
-          </View>
-
-          <View style={styles.summaryGrid}>
-            <BabysitterStatCard
-              label={strings.babysitterShiftManagerSummaryShifts}
-              value={String(totals.count)}
-              icon="briefcase-outline"
+        <View style={styles.heroSection}>
+          <AppText variant="caption" weight="700" style={[styles.heroEyebrow, { color: theme.filterAccent }]}>
+            {strings.babysitterShiftManagerTitle}
+          </AppText>
+          <AppText variant="h1" weight="800" style={[styles.heroTitle, { color: theme.title }]}>
+            {strings.babysitterShiftManagerTitle}
+          </AppText>
+          <AppText variant="body" style={styles.heroSubtitle}>
+            {strings.babysitterShiftManagerSubtitle}
+          </AppText>
+          <View style={styles.heroChips}>
+            <AppChip
+              label={`${totals.count} ${strings.babysitterShiftManagerSummaryShifts}`}
               tone="primary"
-              fill={false}
-              layout="stacked"
-              style={styles.gridItemHalf}
+              size="sm"
             />
-            <BabysitterStatCard
-              label={strings.babysitterShiftManagerSummaryHours}
-              value={formatShiftHours(totals.hours)}
-              icon="time-outline"
+            <AppChip
+              label={`${formatShiftHours(totals.hours)} ${strings.babysitterShiftManagerSummaryHours}`}
               tone="accent"
-              fill={false}
-              layout="stacked"
-              style={styles.gridItemHalf}
+              size="sm"
             />
-            <BabysitterStatCard
-              label={strings.babysitterShiftPaid}
-              value={formatShiftCurrency(totals.paidAmount)}
-              icon="cash-outline"
+            <AppChip
+              label={formatShiftCurrency(totals.amount)}
               tone="success"
-              fill={false}
-              layout="stacked"
-              style={styles.gridItemHalf}
-            />
-            <BabysitterStatCard
-              label={strings.babysitterShiftUnpaid}
-              value={formatShiftCurrency(totals.unpaidAmount)}
-              icon="wallet-outline"
-              tone="muted"
-              fill={false}
-              layout="stacked"
-              style={styles.gridItemHalf}
+              size="sm"
             />
           </View>
-        </AppCard>
+        </View>
+
+        {/* ── Summary tiles ── */}
+        <View style={styles.summaryGrid}>
+          <BabysitterStatCard
+            label={strings.babysitterShiftManagerSummaryShifts}
+            value={String(totals.count)}
+            icon="briefcase-outline"
+            tone="primary"
+            fill={false}
+            layout="stacked"
+            style={styles.gridItemHalf}
+          />
+          <BabysitterStatCard
+            label={strings.babysitterShiftManagerSummaryHours}
+            value={formatShiftHours(totals.hours)}
+            icon="time-outline"
+            tone="accent"
+            fill={false}
+            layout="stacked"
+            style={styles.gridItemHalf}
+          />
+          <BabysitterStatCard
+            label={strings.babysitterShiftPaid}
+            value={formatShiftCurrency(totals.paidAmount)}
+            icon="cash-outline"
+            tone="success"
+            fill={false}
+            layout="stacked"
+            style={styles.gridItemHalf}
+          />
+          <BabysitterStatCard
+            label={strings.babysitterShiftUnpaid}
+            value={formatShiftCurrency(totals.unpaidAmount)}
+            icon="wallet-outline"
+            tone="muted"
+            fill={false}
+            layout="stacked"
+            style={styles.gridItemHalf}
+          />
+        </View>
 
         {/* ── Stitch monthly hero summary ── */}
         <View style={styles.stitchHero}>
-          <AppText variant="h2" weight="800" style={styles.stitchHeroTitle}>
-            {strings.babysitterShiftManagerTitle}
-          </AppText>
+          <View style={styles.stitchHeroAccentLine} />
+          <View style={styles.stitchHeroHeader}>
+            <View style={styles.stitchHeroDateChip}>
+              <AppText style={styles.stitchHeroDateChipText}>
+                {new Date().toLocaleDateString('he-IL', { month: 'long', year: 'numeric' })}
+              </AppText>
+            </View>
+            <AppText variant="bodyLarge" weight="700" style={styles.stitchHeroTitle}>
+              {`סיכום חודש • Smartaf`}
+            </AppText>
+          </View>
           <View style={styles.stitchSummaryRow}>
             {/* Hours tile */}
             <View style={styles.stitchSummaryTile}>
-              <View style={styles.stitchStatIconWrap}>
-                <MaterialIcons name="schedule" size={22} color={BabyCityPalette.primary} />
-              </View>
-              <View style={styles.stitchStatText}>
-                <AppText variant="caption" tone="muted" style={styles.stitchSummaryLabel}>
-                  {strings.babysitterShiftManagerSummaryHours}
-                </AppText>
-                <AppText variant="h2" weight="800" style={styles.stitchSummaryValue}>
-                  {formatShiftHours(totals.hours)}
-                </AppText>
-              </View>
+              <AppText style={styles.stitchSummaryLabel}>
+                {strings.babysitterShiftManagerSummaryHours}
+              </AppText>
+              <AppText variant="h2" weight="800" style={styles.stitchSummaryValue}>
+                {formatShiftHours(totals.hours)}
+              </AppText>
             </View>
             {/* Income tile */}
             <View style={styles.stitchSummaryTile}>
-              <View style={[styles.stitchStatIconWrap, styles.stitchStatIconIncome]}>
-                <MaterialIcons name="payments" size={22} color={BabyCityPalette.primary} />
-              </View>
-              <View style={styles.stitchStatText}>
-                <AppText variant="caption" tone="muted" style={styles.stitchSummaryLabel}>
-                  {strings.babysitterShiftManagerSummaryIncome}
-                </AppText>
-                <AppText variant="h2" weight="800" style={[styles.stitchSummaryValue, styles.stitchSummaryIncome]}>
-                  {formatShiftCurrency(totals.amount)}
-                </AppText>
-              </View>
+              <AppText style={styles.stitchSummaryLabel}>
+                {strings.babysitterShiftManagerSummaryIncome}
+              </AppText>
+              <AppText variant="h2" weight="800" style={styles.stitchSummaryValue}>
+                {formatShiftCurrency(totals.amount)}
+              </AppText>
             </View>
           </View>
         </View>
 
         <AppCard role="babysitter" variant="panel" style={styles.formCard}>
-          <SectionHeader
-            title={editingShift ? strings.babysitterShiftEditTitle : strings.babysitterShiftFormTitle}
-            subtitle={editingShift ? strings.babysitterShiftEditSubtitle : strings.babysitterShiftFormSubtitle}
-          />
+          <TouchableOpacity
+            activeOpacity={0.88}
+            onPress={handleToggleForm}
+            style={styles.formToggleButton}
+          >
+            <View style={styles.formToggleTitleWrap}>
+              <AppText variant="bodyLarge" weight="700" style={styles.formToggleTitle}>
+                {editingShift ? strings.babysitterShiftEditTitle : strings.babysitterShiftFormTitle}
+              </AppText>
+              {formOpen ? (
+                <AppText variant="caption" tone="muted" style={styles.formToggleSubtitle}>
+                  {strings.babysitterShiftFormSubtitle}
+                </AppText>
+              ) : null}
+            </View>
+            <View style={styles.formToggleIconWrap}>
+              <MaterialIcons
+                name={formOpen ? 'close' : editingShift ? 'edit' : 'add'}
+                size={22}
+                color={BabyCityPalette.primary}
+              />
+            </View>
+          </TouchableOpacity>
 
-          {editingShift ? (
-            <AppCard role="babysitter" variant="panel" style={styles.editingBanner}>
-              <View style={styles.editingBannerRow}>
-                <AppChip
-                  label={strings.babysitterShiftTracked}
-                  tone="primary"
-                  size="sm"
-                />
-                <View style={styles.editingBannerText}>
-                  <AppText variant="bodyLarge" weight="700" style={styles.editingBannerTitle}>
-                    {editingShift.parentName}
+          {formOpen ? (
+            <>
+              {editingShift ? (
+                <AppCard role="babysitter" variant="panel" style={styles.editingBanner}>
+                  <View style={styles.editingBannerRow}>
+                    <AppChip
+                      label={strings.babysitterShiftTracked}
+                      tone="primary"
+                      size="sm"
+                    />
+                    <View style={styles.editingBannerText}>
+                      <AppText variant="bodyLarge" weight="700" style={styles.editingBannerTitle}>
+                        {editingShift.parentName}
+                      </AppText>
+                      <AppText variant="body" tone="muted" style={styles.editingBannerSubtitle}>
+                        {strings.babysitterShiftEditSubtitle}
+                      </AppText>
+                    </View>
+                  </View>
+                </AppCard>
+              ) : null}
+
+              {existingTrackedShift && existingTrackedShift.id !== editingShiftId ? (
+                <AppCard role="babysitter" variant="panel" style={styles.duplicateCard}>
+                  <View style={styles.formSectionHeader}>
+                    <View style={[styles.formSectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                      <MaterialIcons name="info-outline" size={20} color={BabyCityPalette.primary} />
+                    </View>
+                    <View style={styles.duplicateTextWrap}>
+                      <AppText variant="bodyLarge" weight="700">{strings.babysitterShiftTrackedTitle}</AppText>
+                      <AppText variant="caption" tone="muted" style={styles.duplicateHint}>
+                        {strings.babysitterShiftTrackedHint}
+                      </AppText>
+                    </View>
+                  </View>
+                  <BabysitterShiftEntryCard
+                    shift={existingTrackedShift}
+                    onEditPress={startEditingShift}
+                  />
+                </AppCard>
+              ) : null}
+
+              {knownFamilies.length > 0 ? (
+                <View style={styles.knownFamiliesWrap}>
+                  <AppText variant="caption" weight="700" tone="muted" style={styles.knownFamiliesLabel}>
+                    {strings.babysitterShiftKnownFamilies}
                   </AppText>
-                  <AppText variant="body" tone="muted" style={styles.editingBannerSubtitle}>
-                    {strings.babysitterShiftEditSubtitle}
-                  </AppText>
+                  <View style={styles.knownFamiliesRow}>
+                    {knownFamilies.map(family => (
+                      <AppChip
+                        key={family.parentId}
+                        label={family.parentName}
+                        tone="accent"
+                        variant="filter"
+                        selected={selectedParentId === family.parentId}
+                        onPress={() => applyKnownFamily(family)}
+                        size="sm"
+                      />
+                    ))}
+                  </View>
+                </View>
+              ) : null}
+
+              <AppInput
+                label={strings.babysitterShiftParentLabel}
+                value={parentName}
+                onChangeText={handleParentNameChange}
+                placeholder={strings.babysitterShiftParentPlaceholder}
+                containerStyle={styles.fieldBlock}
+              />
+
+              <DateTimePicker
+                mode="date"
+                label={strings.babysitterShiftDateLabel}
+                value={shiftDate}
+                onChange={value => {
+                  setShiftDate(value);
+                  setErrorText('');
+                }}
+                errorText={!shiftDate && errorText === strings.babysitterShiftValidationDate ? errorText : undefined}
+              />
+
+              <View style={styles.timeRow}>
+                <View style={styles.timeField}>
+                  <DateTimePicker
+                    mode="time"
+                    label={strings.babysitterShiftStartLabel}
+                    value={startTime}
+                    onChange={value => {
+                      setStartTime(value);
+                      setErrorText('');
+                    }}
+                    errorText={!startTime && errorText === strings.babysitterShiftValidationStart ? errorText : undefined}
+                  />
+                </View>
+                <View style={styles.timeField}>
+                  <DateTimePicker
+                    mode="time"
+                    label={strings.babysitterShiftEndLabel}
+                    value={endTime}
+                    onChange={value => {
+                      setEndTime(value);
+                      setErrorText('');
+                    }}
+                    errorText={
+                      errorText === strings.babysitterShiftValidationEnd ||
+                      errorText === strings.babysitterShiftValidationTimeRange
+                        ? errorText
+                        : undefined
+                    }
+                  />
                 </View>
               </View>
-            </AppCard>
-          ) : null}
 
-          {existingTrackedShift && existingTrackedShift.id !== editingShiftId ? (
-            <AppCard role="babysitter" variant="panel" style={styles.duplicateCard}>
-              <SectionHeader
-                title={strings.babysitterShiftTrackedTitle}
-                subtitle={strings.babysitterShiftTrackedHint}
+              <AppInput
+                label={strings.hourlyRate}
+                value={hourlyRate}
+                onChangeText={value => {
+                  setHourlyRate(value);
+                  setErrorText('');
+                }}
+                placeholder={strings.hourlyRatePlaceholder}
+                keyboardType="numeric"
+                containerStyle={styles.fieldBlock}
               />
-              <BabysitterShiftEntryCard
-                shift={existingTrackedShift}
-                onEditPress={startEditingShift}
-              />
-            </AppCard>
-          ) : null}
 
-          {knownFamilies.length > 0 ? (
-            <View style={styles.knownFamiliesWrap}>
-              <AppText variant="caption" weight="700" tone="muted" style={styles.knownFamiliesLabel}>
-                {strings.babysitterShiftKnownFamilies}
-              </AppText>
-              <View style={styles.knownFamiliesRow}>
-                {knownFamilies.map(family => (
+              <View style={styles.filterGroup}>
+                <AppText variant="caption" weight="700" tone="muted" style={styles.filterLabel}>
+                  {strings.babysitterShiftPaymentLabel}
+                </AppText>
+                <View style={styles.filterChips}>
                   <AppChip
-                    key={family.parentId}
-                    label={family.parentName}
-                    tone="accent"
+                    label={strings.babysitterShiftUnpaid}
+                    tone="muted"
                     variant="filter"
-                    selected={selectedParentId === family.parentId}
-                    onPress={() => applyKnownFamily(family)}
+                    selected={paymentStatus === 'unpaid'}
+                    onPress={() => setPaymentStatus('unpaid')}
                     size="sm"
                   />
-                ))}
+                  <AppChip
+                    label={strings.babysitterShiftPaid}
+                    tone="success"
+                    variant="filter"
+                    selected={paymentStatus === 'paid'}
+                    onPress={() => setPaymentStatus('paid')}
+                    size="sm"
+                  />
+                </View>
               </View>
-            </View>
-          ) : null}
 
-          <AppInput
-            label={strings.babysitterShiftParentLabel}
-            value={parentName}
-            onChangeText={handleParentNameChange}
-            placeholder={strings.babysitterShiftParentPlaceholder}
-            containerStyle={styles.fieldBlock}
-          />
+              <View style={styles.shiftSummaryCard}>
+                <View style={styles.shiftSummaryLeft}>
+                  <AppText variant="caption" weight="700" tone="muted" style={styles.shiftSummaryTotalLabel}>
+                    {strings.babysitterShiftTotalLabel}
+                  </AppText>
+                  <AppText
+                    variant="h2"
+                    weight="800"
+                    style={[
+                      styles.shiftSummaryTotalAmount,
+                      totalAmount === null && styles.shiftSummaryTotalAmountEmpty,
+                    ]}
+                  >
+                    {totalAmount !== null ? formatShiftCurrency(totalAmount) : '—'}
+                  </AppText>
+                  <AppText variant="caption" tone="muted" style={styles.shiftSummaryHoursLine}>
+                    {hoursWorked !== null
+                      ? `${formatShiftHours(hoursWorked)} ${strings.babysitterShiftManagerSummaryHours}`
+                      : strings.babysitterShiftHoursAutoHint}
+                  </AppText>
+                </View>
+                <View style={styles.shiftSummaryIconWrap}>
+                  <MaterialIcons name="payments" size={24} color={BabyCityPalette.primary} />
+                </View>
+              </View>
 
-          <DateTimePicker
-            mode="date"
-            label={strings.babysitterShiftDateLabel}
-            value={shiftDate}
-            onChange={value => {
-              setShiftDate(value);
-              setErrorText('');
-            }}
-            errorText={!shiftDate && errorText === strings.babysitterShiftValidationDate ? errorText : undefined}
-          />
-
-          <View style={styles.timeRow}>
-            <View style={styles.timeField}>
-              <DateTimePicker
-                mode="time"
-                label={strings.babysitterShiftStartLabel}
-                value={startTime}
-                onChange={value => {
-                  setStartTime(value);
+              <AppTextArea
+                label={strings.babysitterShiftNotesLabel}
+                value={notes}
+                onChangeText={value => {
+                  setNotes(value);
                   setErrorText('');
                 }}
-                errorText={!startTime && errorText === strings.babysitterShiftValidationStart ? errorText : undefined}
+                placeholder={strings.babysitterShiftNotesPlaceholder}
+                containerStyle={styles.notesField}
               />
-            </View>
-            <View style={styles.timeField}>
-              <DateTimePicker
-                mode="time"
-                label={strings.babysitterShiftEndLabel}
-                value={endTime}
-                onChange={value => {
-                  setEndTime(value);
-                  setErrorText('');
-                }}
-                errorText={
-                  errorText === strings.babysitterShiftValidationEnd ||
-                  errorText === strings.babysitterShiftValidationTimeRange
-                    ? errorText
-                    : undefined
+
+              {errorText ? (
+                <AppText variant="body" tone="error" style={styles.errorText}>
+                  {errorText}
+                </AppText>
+              ) : null}
+
+              <AppPrimaryButton
+                label={
+                  saving
+                    ? editingShift
+                      ? strings.babysitterShiftUpdating
+                      : strings.babysitterShiftSaving
+                    : editingShift
+                      ? strings.babysitterShiftUpdate
+                      : strings.babysitterShiftSave
                 }
+                loading={saving}
+                onPress={handleSaveShift}
+                style={styles.saveButton}
               />
-            </View>
-          </View>
 
-          <AppInput
-            label={strings.hourlyRate}
-            value={hourlyRate}
-            onChangeText={value => {
-              setHourlyRate(value);
-              setErrorText('');
-            }}
-            placeholder={strings.hourlyRatePlaceholder}
-            keyboardType="numeric"
-            containerStyle={styles.fieldBlock}
-          />
-
-          <View style={styles.filterGroup}>
-            <AppText variant="caption" weight="700" tone="muted" style={styles.filterLabel}>
-              {strings.babysitterShiftPaymentLabel}
-            </AppText>
-            <View style={styles.filterChips}>
-              <AppChip
-                label={strings.babysitterShiftUnpaid}
-                tone="muted"
-                variant="filter"
-                selected={paymentStatus === 'unpaid'}
-                onPress={() => setPaymentStatus('unpaid')}
-                size="sm"
-              />
-              <AppChip
-                label={strings.babysitterShiftPaid}
-                tone="success"
-                variant="filter"
-                selected={paymentStatus === 'paid'}
-                onPress={() => setPaymentStatus('paid')}
-                size="sm"
-              />
-            </View>
-          </View>
-
-          <View style={styles.calculatedRow}>
-            <View style={styles.calculatedField}>
-              <AppInput
-                label={strings.babysitterShiftHoursLabel}
-                value={hoursWorked !== null ? formatShiftHours(hoursWorked) : ''}
-                editable={false}
-                placeholder={strings.babysitterShiftHoursAutoHint}
-                hint={strings.babysitterShiftHoursAutoHint}
-                containerStyle={styles.fieldBlock}
-              />
-            </View>
-            <View style={styles.calculatedField}>
-              <AppInput
-                label={strings.babysitterShiftTotalLabel}
-                value={totalAmount !== null ? formatShiftCurrency(totalAmount) : ''}
-                editable={false}
-                placeholder={strings.babysitterShiftTotalAutoHint}
-                hint={strings.babysitterShiftTotalAutoHint}
-                containerStyle={styles.fieldBlock}
-              />
-            </View>
-          </View>
-
-          <AppTextArea
-            label={strings.babysitterShiftNotesLabel}
-            value={notes}
-            onChangeText={value => {
-              setNotes(value);
-              setErrorText('');
-            }}
-            placeholder={strings.babysitterShiftNotesPlaceholder}
-            containerStyle={styles.notesField}
-          />
-
-          {errorText ? (
-            <AppText variant="body" tone="error" style={styles.errorText}>
-              {errorText}
-            </AppText>
-          ) : null}
-
-          <AppPrimaryButton
-            label={
-              saving
-                ? editingShift
-                  ? strings.babysitterShiftUpdating
-                  : strings.babysitterShiftSaving
-                : editingShift
-                  ? strings.babysitterShiftUpdate
-                  : strings.babysitterShiftSave
-            }
-            loading={saving}
-            onPress={handleSaveShift}
-            style={styles.saveButton}
-          />
-
-          {editingShift ? (
-            <AppPrimaryButton
-              label={strings.cancel}
-              onPress={resetForm}
-              style={styles.cancelButton}
-              backgroundColor={BabyCityPalette.surface}
-              borderColor={BabyCityPalette.border}
-              textColor={BabyCityPalette.textPrimary}
-            />
+              {editingShift ? (
+                <AppPrimaryButton
+                  label={strings.cancel}
+                  onPress={resetForm}
+                  style={styles.cancelButton}
+                  backgroundColor={BabyCityPalette.surface}
+                  borderColor={BabyCityPalette.border}
+                  textColor={BabyCityPalette.textPrimary}
+                />
+              ) : null}
+            </>
           ) : null}
         </AppCard>
 
-        <SectionHeader
-          title={strings.babysitterShiftRecentTitle}
-          subtitle={
-            shifts.length > 0
-              ? strings.babysitterShiftHistoryFilteredSummary(filteredShifts.length, shifts.length)
-              : strings.babysitterShiftManagerEmptyHint
-          }
-          style={styles.recentHeader}
-        />
+        <View style={[styles.formSectionHeader, styles.recentHeader]}>
+          <View style={[styles.formSectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+            <MaterialIcons name="history" size={20} color={BabyCityPalette.primary} />
+          </View>
+          <View style={styles.recentHeaderText}>
+            <AppText variant="bodyLarge" weight="700">{strings.babysitterShiftRecentTitle}</AppText>
+            {shifts.length > 0 ? (
+              <AppText variant="caption" tone="muted">
+                {strings.babysitterShiftHistoryFilteredSummary(filteredShifts.length, shifts.length)}
+              </AppText>
+            ) : null}
+          </View>
+        </View>
 
         {shifts.length > 0 ? (
           <>
@@ -920,7 +976,9 @@ export default function BabysitterShiftsScreen() {
                   onPress={() => setHistoryFiltersOpen(prev => !prev)}
                 />
               </View>
-              <SectionHeader title={strings.babysitterShiftHistoryFilters} />
+              <AppText variant="bodyLarge" weight="700" style={{ textAlign: 'right' }}>
+                {strings.babysitterShiftHistoryFilters}
+              </AppText>
             </View>
 
             {!historyFiltersOpen && activeHistoryFilterChips.length > 0 ? (
@@ -938,7 +996,12 @@ export default function BabysitterShiftsScreen() {
 
             {historyFiltersOpen ? (
               <AppCard role="babysitter" variant="panel" style={styles.historyFiltersCard}>
-                <SectionHeader title={strings.babysitterShiftHistoryFilters} />
+                <View style={[styles.formSectionHeader, { marginBottom: 14 }]}>
+                  <View style={[styles.formSectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                    <MaterialIcons name="tune" size={20} color={BabyCityPalette.primary} />
+                  </View>
+                  <AppText variant="bodyLarge" weight="700">{strings.babysitterShiftHistoryFilters}</AppText>
+                </View>
 
                 <View style={styles.filterGroup}>
                   <AppText variant="caption" weight="700" tone="muted" style={styles.filterLabel}>
@@ -1123,7 +1186,6 @@ export default function BabysitterShiftsScreen() {
           />
         ) : (
           (() => {
-            let shiftCounter = 0;
             const groups = groupShiftsByMonth(filteredShifts);
             return groups.map(({ month, shifts: monthShifts }, groupIndex) => {
               const isOlderMonth = groupIndex > 0;
@@ -1137,12 +1199,10 @@ export default function BabysitterShiftsScreen() {
                     {month}
                   </AppText>
                   {monthShifts.map(shift => {
-                    const photoIndex = shiftCounter++;
                     return (
                       <BabysitterShiftEntryCard
                         key={shift.id}
                         shift={shift}
-                        placeholderPhotoUrl={SHIFT_FAMILY_IMAGES[photoIndex % SHIFT_FAMILY_IMAGES.length]}
                         onEditPress={startEditingShift}
                         onDeletePress={handleDeleteShift}
                         onTogglePaymentPress={handleTogglePaymentStatus}
@@ -1164,69 +1224,121 @@ export default function BabysitterShiftsScreen() {
 }
 
 const styles = StyleSheet.create({
-  summaryCard: {
-    marginBottom: BabysitterDesignTokens.spacing.cardGap,
+  heroSection: {
+    paddingHorizontal: 4,
+    marginBottom: 20,
+    gap: 6,
+  },
+  heroEyebrow: {},
+  heroTitle: {
+    fontSize: 30,
+    lineHeight: 38,
+    textAlign: 'right',
+  },
+  heroSubtitle: {
+    textAlign: 'right',
+    lineHeight: 22,
+    color: BabyCityPalette.textSecondary,
+  },
+  heroChips: {
+    flexDirection: 'row-reverse',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 4,
+  },
+  formSectionHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 14,
+  },
+  formSectionIconChip: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recentHeaderText: {
+    flex: 1,
+    alignItems: 'flex-end',
+    gap: 2,
   },
   // Stitch monthly hero
   stitchHero: {
-    backgroundColor: '#ecf1ff',
-    borderRadius: 16,
-    padding: 20,
+    backgroundColor: '#ffffff',
+    borderRadius: 28,
+    paddingHorizontal: 24,
+    paddingTop: 6,
+    paddingBottom: 24,
     marginBottom: 20,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: `${BabyCityPalette.primary}0d`,
+    shadowColor: '#7c3aed',
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
+  },
+  stitchHeroAccentLine: {
+    height: 4,
+    backgroundColor: BabyCityPalette.primary,
+    opacity: 0.65,
+    marginHorizontal: -24,
+    marginBottom: 20,
+  },
+  stitchHeroHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
   },
   stitchHeroTitle: {
     textAlign: 'right',
-    fontSize: 20,
-    marginBottom: 16,
     color: BabyCityPalette.textPrimary,
+  },
+  stitchHeroDateChip: {
+    backgroundColor: `${BabyCityPalette.primary}0d`,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  stitchHeroDateChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: BabyCityPalette.primary,
+    letterSpacing: 0.5,
   },
   // Stitch 2-tile summary row
   stitchSummaryRow: {
-    flexDirection: 'column',
+    flexDirection: 'row-reverse',
     gap: 12,
   },
   stitchSummaryTile: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-    gap: 16,
-    shadowColor: '#242f41',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 1,
-  },
-  stitchStatIconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#e9def5',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  stitchStatIconIncome: {
-    backgroundColor: 'rgba(178,140,255,0.2)',
-  },
-  stitchStatText: {
     flex: 1,
+    backgroundColor: `${BabyCityPalette.primary}0d`,
+    borderRadius: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    flexDirection: 'column',
     alignItems: 'flex-end',
+    gap: 4,
+    borderWidth: 1,
+    borderColor: `${BabyCityPalette.primary}1a`,
   },
   stitchSummaryValue: {
     textAlign: 'right',
-    color: BabyCityPalette.textPrimary,
+    color: BabyCityPalette.primary,
     fontSize: 24,
-  },
-  stitchSummaryIncome: {
-    color: BabyCityPalette.textPrimary,
   },
   stitchSummaryLabel: {
     textAlign: 'right',
-    marginBottom: 2,
+    fontSize: 11,
+    fontWeight: '600',
+    color: BabyCityPalette.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   // Month header for grouped shift list
   monthHeader: {
@@ -1267,6 +1379,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    marginBottom: BabysitterDesignTokens.spacing.cardGap,
   },
   gridItemHalf: {
     width: '48.4%',
@@ -1275,8 +1388,42 @@ const styles = StyleSheet.create({
   formCard: {
     marginBottom: BabysitterDesignTokens.spacing.cardGap,
   },
+  formToggleButton: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: BabyCityGeometry.spacing.md,
+  },
+  formToggleTitleWrap: {
+    flex: 1,
+    alignItems: 'flex-end',
+    gap: 4,
+  },
+  formToggleTitle: {
+    textAlign: 'right',
+    color: BabyCityPalette.textPrimary,
+  },
+  formToggleSubtitle: {
+    textAlign: 'right',
+    lineHeight: 18,
+  },
+  formToggleIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: `${BabyCityPalette.primary}0d`,
+  },
   duplicateCard: {
     marginBottom: BabyCityGeometry.spacing.md,
+  },
+  duplicateTextWrap: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  duplicateHint: {
+    textAlign: 'right',
   },
   editingBanner: {
     marginBottom: BabyCityGeometry.spacing.md,
@@ -1317,12 +1464,45 @@ const styles = StyleSheet.create({
   timeField: {
     flex: 1,
   },
-  calculatedRow: {
+  shiftSummaryCard: {
     flexDirection: 'row-reverse',
-    gap: BabyCityGeometry.spacing.md,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: `${BabyCityPalette.primary}2e`,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    marginBottom: BabyCityGeometry.spacing.sm,
   },
-  calculatedField: {
-    flex: 1,
+  shiftSummaryLeft: {
+    alignItems: 'flex-end',
+    gap: 2,
+  },
+  shiftSummaryTotalLabel: {
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  shiftSummaryTotalAmount: {
+    color: BabyCityPalette.primary,
+    fontSize: 28,
+    lineHeight: 34,
+  },
+  shiftSummaryTotalAmountEmpty: {
+    opacity: 0.35,
+  },
+  shiftSummaryHoursLine: {
+    marginTop: 2,
+  },
+  shiftSummaryIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: `${BabyCityPalette.primary}10`,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   notesField: {
     marginBottom: BabyCityGeometry.spacing.sm,

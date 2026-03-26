@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-bright": "#f8faff",
+              "outline": "#6c778c",
+              "on-surface-variant": "#515c70",
+              "surface": "#f8faff",
+              "on-background": "#1a212e",
+              "on-surface": "#1a212e",
+              "primary": "#702ae1",
+              "on-primary": "#ffffff",
+              "primary-container": "#f3e8ff",
+              "secondary-container": "#e9def5",
+              "background": "#f8faff",
+              "surface-container": "#f0f4ff",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-low": "#f4f7ff",
+              "outline-variant": "#d1d9e6",
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1.25rem", "lg": "2.5rem", "xl": "3.5rem", "full": "9999px"},
+            boxShadow: {
+              'premium': '0 10px 40px -10px rgba(112, 42, 225, 0.08)',
+              'premium-hover': '0 20px 50px -12px rgba(112, 42, 225, 0.15)',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #f8faff;
+            color: #1a212e;
+        }
+        .editorial-headline {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #929db4;
+            opacity: 0.7;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(112, 42, 225, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen pb-32 overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-white/80 backdrop-blur-2xl border-b border-surface-container fixed top-0 w-full z-50">
+<div class="flex flex-row-reverse items-center justify-between w-full px-6 h-16 max-w-2xl mx-auto">
+<div class="font-['Plus_Jakarta_Sans'] font-extrabold tracking-tight text-right text-2xl text-primary uppercase">
+            Smartaf
+        </div>
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform hover:bg-surface-container rounded-full p-1">
+<span class="material-symbols-outlined text-primary" data-icon="menu">menu</span>
+</button>
+<div class="w-9 h-9 rounded-full ring-2 ring-primary/10 overflow-hidden">
+<img alt="Parent Profile" data-alt="User profile avatar of a parent" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7Mrp9RLjYRNOQRmBR00hkQ-QRhdqmAvV5GRc_6j4-BEp7GuWKpL92ohVnc1mNZ-f5UBbYUpWKxaY3dWeFskHRnmJ7aiBT6BGuYDh9n86udMIVadhMTRx-vVTx6kYUbke8EWp22FwfeneSycGN4-BS8amufGIjJvYrGEJErX22RkeyO6YVUGGZwVXx7ayEX5Dkxqk78HfBV8mrlyO-dhJymVbaaQgzh7e9qQGIB5JSf-5CJJPtLg2Li6z-H-ncRnvXc4q18zcEs5tv"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-2xl mx-auto">
+<!-- Page Title Section -->
+<header class="mb-10 text-right animate-in fade-in slide-in-from-bottom-4 duration-700">
+<h1 class="editorial-headline text-[32px] font-extrabold tracking-tight text-on-surface mb-2 leading-tight">פרסום פוסט חדש</h1>
+<p class="text-on-surface-variant/80 font-medium">שתפו את הצרכים שלכם ומצאו את המטפלת המושלמת</p>
+</header>
+<form class="space-y-6">
+<!-- Basic Details Card -->
+<section class="bg-surface-container-lowest rounded-2xl p-6 shadow-premium border border-white/40">
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-bold mb-2.5 text-on-surface/80 mr-1">כותרת הפוסט</label>
+<input class="w-full bg-surface-container-low border border-transparent rounded-xl px-5 py-4 text-on-surface transition-all placeholder:text-outline-variant focus:bg-white focus:border-primary/20" placeholder="למשל: דרושה בייביסיטר לשלישי בערב" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-bold mb-2.5 text-on-surface/80 mr-1">תיאור ופרטים נוספים</label>
+<textarea class="w-full bg-surface-container-low border border-transparent rounded-xl px-5 py-4 text-on-surface transition-all placeholder:text-outline-variant focus:bg-white focus:border-primary/20 min-h-[140px]" placeholder="ספרו קצת על הצרכים שלכם..." rows="4"></textarea>
+</div>
+</div>
+</section>
+<!-- Logistics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<section class="bg-surface-container-lowest rounded-2xl p-6 shadow-premium border border-white/40">
+<div class="flex items-center gap-2.5 mb-5">
+<div class="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="calendar_today">calendar_today</span>
+</div>
+<label class="text-sm font-bold text-on-surface/80">תאריך ושעה</label>
+</div>
+<div class="space-y-3">
+<input class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3.5 text-on-surface transition-all focus:bg-white focus:border-primary/20" type="date"/>
+<input class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3.5 text-on-surface placeholder:text-outline-variant transition-all focus:bg-white focus:border-primary/20" placeholder="שעות (למשל: 18:00-22:00)" type="text"/>
+</div>
+</section>
+<section class="bg-surface-container-lowest rounded-2xl p-6 shadow-premium border border-white/40">
+<div class="flex items-center gap-2.5 mb-5">
+<div class="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="location_on">location_on</span>
+</div>
+<label class="text-sm font-bold text-on-surface/80">מיקום</label>
+</div>
+<input class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3.5 text-on-surface placeholder:text-outline-variant transition-all focus:bg-white focus:border-primary/20" placeholder="עיר / אזור" type="text"/>
+</section>
+</div>
+<!-- Children Details Card -->
+<section class="bg-surface-container-lowest rounded-2xl p-6 shadow-premium border border-white/40">
+<div class="flex items-center gap-2.5 mb-6">
+<div class="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="child_care">child_care</span>
+</div>
+<h3 class="font-bold text-on-surface/80">פרטי הילדים</h3>
+</div>
+<div class="grid grid-cols-1 gap-6">
+<div>
+<label class="block text-[11px] font-bold text-outline/60 uppercase tracking-widest mb-3 mr-1">מספר ילדים</label>
+<div class="flex p-1.5 bg-surface-container-low rounded-2xl gap-2">
+<button class="flex-1 py-3.5 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 transition-all" type="button">1</button>
+<button class="flex-1 py-3.5 rounded-xl hover:bg-white text-on-surface-variant font-bold transition-all" type="button">2</button>
+<button class="flex-1 py-3.5 rounded-xl hover:bg-white text-on-surface-variant font-bold transition-all" type="button">3+</button>
+</div>
+</div>
+<div>
+<label class="block text-[11px] font-bold text-outline/60 uppercase tracking-widest mb-3 mr-1">טווח גילאי הילדים</label>
+<input class="w-full bg-surface-container-low border border-transparent rounded-xl px-5 py-3.5 text-on-surface placeholder:text-outline-variant transition-all focus:bg-white focus:border-primary/20" placeholder="למשל: שנתיים ו-4 שנים" type="text"/>
+</div>
+</div>
+</section>
+<!-- Requirements Section -->
+<section class="bg-surface-container-low/50 rounded-2xl p-6 border border-primary/5">
+<label class="block text-sm font-bold mb-5 text-on-surface/80 mr-1">דרישות נוספות</label>
+<div class="flex flex-wrap gap-2.5">
+<button class="px-5 py-3 rounded-full bg-white text-on-surface-variant border border-outline-variant/30 text-[13px] font-semibold hover:border-primary hover:text-primary transition-all shadow-sm" type="button">עזרה בשיעורי בית</button>
+<button class="px-5 py-3 rounded-full bg-white text-on-surface-variant border border-outline-variant/30 text-[13px] font-semibold hover:border-primary hover:text-primary transition-all shadow-sm" type="button">ניידות עם רכב</button>
+<button class="px-5 py-3 rounded-full bg-white text-on-surface-variant border border-outline-variant/30 text-[13px] font-semibold hover:border-primary hover:text-primary transition-all shadow-sm" type="button">בישול קל</button>
+<button class="px-5 py-3 rounded-full bg-white text-on-surface-variant border border-outline-variant/30 text-[13px] font-semibold hover:border-primary hover:text-primary transition-all shadow-sm" type="button">ללא עישון</button>
+<button class="px-5 py-3 rounded-full bg-primary-container text-primary text-[13px] font-bold flex items-center gap-1.5 transition-all hover:scale-105" type="button">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                    אחר
+                </button>
+</div>
+</section>
+<!-- Primary CTA -->
+<div class="pt-4">
+<button class="w-full py-5 rounded-2xl bg-primary text-on-primary text-lg font-bold shadow-xl shadow-primary/30 hover:shadow-primary/40 active:scale-[0.98] transition-all flex items-center justify-center gap-3" type="submit">
+<span>פרסם פוסט</span>
+<span class="material-symbols-outlined text-[20px]" data-icon="send">send</span>
+</button>
+</div>
+</form>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-white/90 backdrop-blur-3xl border-t border-surface-container-low shadow-[0_-8px_40px_rgba(0,0,0,0.04)]">
+<div class="flex flex-row-reverse justify-around items-center w-full px-4 pb-8 pt-3 max-w-2xl mx-auto">
+<a class="flex flex-col items-center justify-center text-on-surface/40 hover:text-primary transition-all px-4 py-2" href="#">
+<span class="material-symbols-outlined text-[26px]" data-icon="home">home</span>
+<span class="text-[11px] font-bold mt-1">בית</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface/40 hover:text-primary transition-all px-4 py-2" href="#">
+<span class="material-symbols-outlined text-[26px]" data-icon="forum">forum</span>
+<span class="text-[11px] font-bold mt-1">הפוסטים שלי</span>
+</a>
+<a class="relative flex flex-col items-center justify-center text-primary group" href="#">
+<div class="absolute -top-12 w-14 h-14 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30 ring-4 ring-white transition-transform group-active:scale-90">
+<span class="material-symbols-outlined text-white text-[28px] font-bold" data-icon="add" style="font-variation-settings: 'wght' 600;">add</span>
+</div>
+<span class="text-[11px] font-extrabold mt-8">צור פוסט</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface/40 hover:text-primary transition-all px-4 py-2" href="#">
+<span class="material-symbols-outlined text-[26px]" data-icon="person">person</span>
+<span class="text-[11px] font-bold mt-1">פרופיל</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface/40 hover:text-primary transition-all px-4 py-2" href="#">
+<span class="material-symbols-outlined text-[26px]" data-icon="settings">settings</span>
+<span class="text-[11px] font-bold mt-1">הגדרות</span>
+</a>
+</div>
+</nav>
+</body></html>

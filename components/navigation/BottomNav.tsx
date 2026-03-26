@@ -30,12 +30,14 @@ export default function BottomNav({
   inactiveColor = BabyCityPalette.textSecondary,
   bottomInset,
 }: Props) {
+  const compactBottomInset = bottomInset > 0 ? Math.max(bottomInset - 12, 10) : 10;
+
   return (
     <View
       style={[
         styles.bottomBar,
         {
-          paddingBottom: Math.max(bottomInset, 16),
+          paddingBottom: compactBottomInset,
         },
       ]}
     >
@@ -58,6 +60,7 @@ export default function BottomNav({
                 name={active && item.activeIcon ? item.activeIcon : item.icon}
                 size={22}
                 color={active ? activeColor : inactiveColor}
+                style={styles.iconGlyph}
               />
               {item.badgeCount ? (
                 <View
@@ -75,7 +78,7 @@ export default function BottomNav({
             <AppText
               variant="caption"
               weight={active ? '700' : '600'}
-              style={{ color: active ? activeColor : inactiveColor }}
+              style={[styles.bottomLabel, { color: active ? activeColor : inactiveColor }]}
             >
               {item.label}
             </AppText>
@@ -92,7 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     gap: 4,
     paddingHorizontal: 8,
-    paddingTop: 8,
+    paddingTop: 4,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     backgroundColor: '#ffffff',
@@ -106,8 +109,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
-    paddingVertical: 10,
+    gap: 2,
+    paddingVertical: 6,
   },
   iconPill: {
     width: 64,
@@ -115,7 +118,18 @@ const styles = StyleSheet.create({
     borderRadius: BabyCityGeometry.radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'center',
     position: 'relative',
+  },
+  iconGlyph: {
+    width: 24,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    includeFontPadding: false,
+  },
+  bottomLabel: {
+    width: '100%',
+    textAlign: 'center',
   },
   bottomBadge: {
     position: 'absolute',

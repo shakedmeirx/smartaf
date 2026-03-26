@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator, Alert, Modal, Share,
   StyleSheet, TouchableOpacity, View,
@@ -30,7 +30,13 @@ const STAR_COUNT = 5;
 
 export default function BabysitterProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { currentUserId, chatThreads, sentRequests } = useAppState();
+  const {
+    currentUserId,
+    chatThreads,
+    sentRequests,
+    favoriteBabysitterIds,
+    toggleFavorite,
+  } = useAppState();
   const theme = getRoleTheme('parent');
 
   const [babysitter, setBabysitter] = useState<Awaited<ReturnType<typeof loadBabysitterProfileById>>['babysitter']>(null);
@@ -55,6 +61,25 @@ export default function BabysitterProfileScreen() {
     currentUserId && id
       ? findPairChatThread(chatThreads, currentUserId, id)
       : null;
+  const isFavorite = !!id && favoriteBabysitterIds.has(id);
+
+  const loadProfile = useCallback(async (showLoader = true) => {
+    if (!id) return;
+    if (showLoader) setLoading(true);
+    setNotFound(false);
+    const result = await loadBabysitterProfileById(id);
+    setBabysitter(result.babysitter);
+    setGalleryPhotoUrls(result.galleryPhotoUrls);
+    setNotFound(result.notFound);
+    setLoading(false);
+  }, [id]);
+
+  const fetchRatings = useCallback(async () => {
+    if (!id) return;
+    const result = await loadBabysitterRatings(id);
+    setRatings(result.ratings);
+    setAverageStars(result.averageStars);
+  }, [id]);
 
   useEffect(() => {
     if (!id) {
@@ -62,9 +87,10 @@ export default function BabysitterProfileScreen() {
       setLoading(false);
       return;
     }
-    loadProfile();
-    fetchRatings();
-  }, [id]);
+
+    void loadProfile();
+    void fetchRatings();
+  }, [id, loadProfile, fetchRatings]);
 
   // Pre-fill existing rating when modal opens
   useEffect(() => {
@@ -75,31 +101,12 @@ export default function BabysitterProfileScreen() {
         setRatingText(existing.reviewText ?? '');
       }
     });
-  }, [rateModalVisible]);
-
-  async function loadProfile() {
-    if (!id) return;
-    const isFirstLoad = !refreshing;
-    if (isFirstLoad) setLoading(true);
-    setNotFound(false);
-    const result = await loadBabysitterProfileById(id);
-    setBabysitter(result.babysitter);
-    setGalleryPhotoUrls(result.galleryPhotoUrls);
-    setNotFound(result.notFound);
-    setLoading(false);
-  }
-
-  async function fetchRatings() {
-    if (!id) return;
-    const result = await loadBabysitterRatings(id);
-    setRatings(result.ratings);
-    setAverageStars(result.averageStars);
-  }
+  }, [rateModalVisible, id, currentUserId]);
 
   async function handleRefresh() {
     try {
       setRefreshing(true);
-      await Promise.all([loadProfile(), fetchRatings()]);
+      await Promise.all([loadProfile(false), fetchRatings()]);
     } finally {
       setRefreshing(false);
     }
@@ -126,6 +133,11 @@ export default function BabysitterProfileScreen() {
     await Share.share({ message: `${strings.shareBabysitterText}\n${url}` });
   }
 
+  async function handleToggleFavorite() {
+    if (!id) return;
+    await toggleFavorite(id);
+  }
+
   function handleBack() {
     if (router.canGoBack()) {
       router.back();
@@ -136,7 +148,28 @@ export default function BabysitterProfileScreen() {
 
   if (loading) {
     return (
-      <AppShell title={strings.navProfile} activeTab="home" backgroundColor={theme.screenBackground} subtitle={null} showBackButton onBack={handleBack}>
+      <AppShell
+        title=""
+        activeTab="home"
+        backgroundColor={theme.screenBackground}
+        subtitle={null}
+        showBackButton
+        onBack={handleBack}
+        hideHeaderMenuButton
+        backButtonVariant="icon"
+        renderHeaderActions={() => (
+          <TouchableOpacity
+            style={styles.headerActionButton}
+            onPress={() => void handleToggleFavorite()}
+          >
+            <Ionicons
+              name={isFavorite ? 'heart' : 'heart-outline'}
+              size={20}
+              color={isFavorite ? BabyCityPalette.error : BabyCityPalette.primary}
+            />
+          </TouchableOpacity>
+        )}
+      >
         <View style={styles.centered}>
           <ActivityIndicator size="large" color={theme.filterAccent} />
         </View>
@@ -146,7 +179,28 @@ export default function BabysitterProfileScreen() {
 
   if (notFound || !babysitter || !id) {
     return (
-      <AppShell title={strings.navProfile} activeTab="home" backgroundColor={theme.screenBackground} subtitle={null} showBackButton onBack={handleBack}>
+      <AppShell
+        title=""
+        activeTab="home"
+        backgroundColor={theme.screenBackground}
+        subtitle={null}
+        showBackButton
+        onBack={handleBack}
+        hideHeaderMenuButton
+        backButtonVariant="icon"
+        renderHeaderActions={() => (
+          <TouchableOpacity
+            style={styles.headerActionButton}
+            onPress={() => void handleToggleFavorite()}
+          >
+            <Ionicons
+              name={isFavorite ? 'heart' : 'heart-outline'}
+              size={20}
+              color={isFavorite ? BabyCityPalette.error : BabyCityPalette.primary}
+            />
+          </TouchableOpacity>
+        )}
+      >
         <View style={styles.centered}>
           <AppText variant="bodyLarge" tone="muted" align="center" style={styles.notFoundText}>
             {strings.profileNotFound}
@@ -158,7 +212,29 @@ export default function BabysitterProfileScreen() {
 
   return (
     <>
-      <AppShell title={strings.navProfile} activeTab="home" backgroundColor={theme.screenBackground} subtitle={null} showBackButton onBack={handleBack} onShare={handleShare}>
+      <AppShell
+        title=""
+        activeTab="home"
+        backgroundColor={theme.screenBackground}
+        subtitle={null}
+        showBackButton
+        onBack={handleBack}
+        onShare={handleShare}
+        hideHeaderMenuButton
+        backButtonVariant="icon"
+        renderHeaderActions={() => (
+          <TouchableOpacity
+            style={styles.headerActionButton}
+            onPress={() => void handleToggleFavorite()}
+          >
+            <Ionicons
+              name={isFavorite ? 'heart' : 'heart-outline'}
+              size={20}
+              color={isFavorite ? BabyCityPalette.error : BabyCityPalette.primary}
+            />
+          </TouchableOpacity>
+        )}
+      >
         <BabysitterProfileView
           babysitter={babysitter}
           galleryPhotoUrls={galleryPhotoUrls}
@@ -256,6 +332,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  headerActionButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.72)',
   },
   notFoundText: {
     maxWidth: 300,

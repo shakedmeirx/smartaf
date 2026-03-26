@@ -10,11 +10,12 @@ type Props = {
   value: string;
   onChangeText: (text: string) => void;
   placeholder: string;
-  filterLabel: string;
-  onFilterPress: () => void;
+  filterLabel?: string;
+  onFilterPress?: () => void;
   filterActive?: boolean;
   filterCount?: number;
   roleAccentColor?: string;
+  showFilterButton?: boolean;
 };
 
 export default function SearchField({
@@ -26,40 +27,43 @@ export default function SearchField({
   filterActive = false,
   filterCount = 0,
   roleAccentColor = BabyCityPalette.primary,
+  showFilterButton = true,
 }: Props) {
   return (
     <View style={styles.row}>
-      <TouchableOpacity
-        activeOpacity={0.88}
-        style={[
-          styles.filterButton,
-          filterActive && {
-            backgroundColor: BabyCityPalette.primarySoft,
-            borderColor: roleAccentColor,
-          },
-        ]}
-        onPress={onFilterPress}
-      >
-        {filterCount > 0 ? (
-          <View style={[styles.filterBadge, { backgroundColor: roleAccentColor }]}>
-            <AppText variant="caption" weight="700" style={styles.filterBadgeText}>
-              {filterCount > 9 ? '9+' : String(filterCount)}
-            </AppText>
-          </View>
-        ) : null}
-        <AppText
-          variant="body"
-          weight="700"
-          style={{ color: filterActive ? roleAccentColor : BabyCityPalette.textSecondary }}
+      {showFilterButton ? (
+        <TouchableOpacity
+          activeOpacity={0.88}
+          style={[
+            styles.filterButton,
+            filterActive && {
+              backgroundColor: BabyCityPalette.primarySoft,
+              borderColor: roleAccentColor,
+            },
+          ]}
+          onPress={onFilterPress}
         >
-          {filterLabel}
-        </AppText>
-        <Ionicons
-          name="options-outline"
-          size={18}
-          color={filterActive ? roleAccentColor : BabyCityPalette.textSecondary}
-        />
-      </TouchableOpacity>
+          {filterCount > 0 ? (
+            <View style={[styles.filterBadge, { backgroundColor: roleAccentColor }]}>
+              <AppText variant="caption" weight="700" style={styles.filterBadgeText}>
+                {filterCount > 9 ? '9+' : String(filterCount)}
+              </AppText>
+            </View>
+          ) : null}
+          <AppText
+            variant="body"
+            weight="700"
+            style={{ color: filterActive ? roleAccentColor : BabyCityPalette.textSecondary }}
+          >
+            {filterLabel}
+          </AppText>
+          <Ionicons
+            name="options-outline"
+            size={18}
+            color={filterActive ? roleAccentColor : BabyCityPalette.textSecondary}
+          />
+        </TouchableOpacity>
+      ) : null}
 
       <View style={styles.searchWrap}>
         <TextInput
@@ -85,16 +89,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     alignItems: 'center',
     gap: BabyCityGeometry.spacing.sm,
-    marginBottom: BabyCityGeometry.spacing.md,
   },
   searchWrap: {
     flex: 1,
-    minHeight: BabyCityGeometry.controlHeights.search,
+    minHeight: BabyCityGeometry.controlHeights.input,
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    borderRadius: 9999,
+    borderRadius: 22,
     backgroundColor: BabyCityPalette.surfaceContainer,
-    paddingHorizontal: BabyCityGeometry.spacing.md,
+    paddingHorizontal: 14,
   },
   input: {
     flex: 1,
@@ -105,9 +108,9 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   searchIconWrap: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: BabyCityPalette.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',

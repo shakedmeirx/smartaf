@@ -13,6 +13,17 @@ export function resizeChildBirthDates(count: number, current: string[] = []) {
   return next;
 }
 
+export function resizeChildNames(count: number, current: string[] = []) {
+  const safeCount = Math.max(0, count);
+  const next = current.slice(0, safeCount);
+
+  while (next.length < safeCount) {
+    next.push('');
+  }
+
+  return next;
+}
+
 function ageGroupForBirthDate(value: string): ParentChildAgeGroup | null {
   const age = calculateAgeFromBirthDate(value);
   if (age === null) return null;

@@ -1,7 +1,6 @@
 import { forwardRef, useRef, useState } from 'react';
 import { Platform, View, TextInput, StyleSheet } from 'react-native';
 import {
-  BabyCityGeometry,
   BabyCityPalette,
 } from '@/constants/theme';
 import { strings } from '@/locales';
@@ -127,35 +126,45 @@ export default LabeledInput;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 22,
+    marginBottom: 24,
   },
   label: {
-    marginBottom: 10,
+    marginBottom: 8,
+    paddingHorizontal: 4,
+    fontSize: 13,
+    lineHeight: 18,
   },
   input: {
-    minHeight: BabyCityGeometry.controlHeights.input,
-    borderWidth: 1,
-    borderColor: BabyCityPalette.border,
-    borderRadius: BabyCityGeometry.radius.control,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    minHeight: 58,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
+    borderRadius: 24,
+    paddingVertical: 16,
+    paddingHorizontal: 22,
     fontSize: 16,
+    lineHeight: 22,
     color: BabyCityPalette.textPrimary,
-    backgroundColor: BabyCityPalette.surface,
+    backgroundColor: BabyCityPalette.inputRecessedBg,
   },
   inputFocused: {
     borderColor: BabyCityPalette.primary,
-    backgroundColor: BabyCityPalette.surfaceMuted,
+    backgroundColor: BabyCityPalette.surfaceLowest,
+    shadowColor: BabyCityPalette.primary,
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 2,
   },
   inputError: {
     borderColor: BabyCityPalette.error,
     backgroundColor: BabyCityPalette.errorSoft,
   },
   inputMultiline: {
-    minHeight: 110,
+    minHeight: 136,
     textAlignVertical: 'top',
   },
   errorText: {
     marginTop: 8,
+    paddingHorizontal: 4,
   },
 });

@@ -52,8 +52,8 @@ export default function BabysitterShiftEntryCard({
 }: Props) {
   const isPaid = shift.paymentStatus === 'paid';
 
-  const statusBg = isPaid ? '#dcfce7' : '#fef9c3';
-  const statusText = isPaid ? '#15803d' : '#a16207';
+  const statusBg = isPaid ? '#E7F7EF' : '#FFF7ED';
+  const statusText = isPaid ? '#059669' : '#EA580C';
   const statusLabel = isPaid ? strings.babysitterShiftPaid : strings.babysitterShiftUnpaid;
 
   const timeRangeLabel = `${shift.startTime} - ${shift.endTime} • ${formatShiftHours(shift.hoursWorked)} ${strings.babysitterShiftManagerSummaryHours}`;
@@ -99,7 +99,7 @@ export default function BabysitterShiftEntryCard({
           </View>
         </View>
 
-        {/* Avatar with check_circle overlay */}
+        {/* Avatar */}
         <View style={styles.avatarWrap}>
           {placeholderPhotoUrl ? (
             <Image
@@ -112,7 +112,7 @@ export default function BabysitterShiftEntryCard({
               <MaterialIcons name="history" size={22} color={BabyCityPalette.textSecondary} />
             </View>
           )}
-          <View style={styles.checkBadge}>
+          <View style={styles.avatarBadge}>
             <MaterialIcons name="check-circle" size={16} color={BabyCityPalette.primary} />
           </View>
         </View>
@@ -216,19 +216,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkBadge: {
-    position: 'absolute',
-    bottom: -2,
-    right: -2,
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.12,
-    shadowRadius: 3,
-    elevation: 2,
-  },
   infoCol: {
     flex: 1,
     alignItems: 'flex-end',
@@ -275,6 +262,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 999,
+  },
+  avatarBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
   statusText: {
     fontSize: 11,

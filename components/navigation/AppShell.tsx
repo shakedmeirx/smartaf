@@ -1,13 +1,13 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Dimensions,
   Image,
   Modal,
   PanResponder,
   Pressable,
+  ScrollView,
   StyleSheet,
   View,
-  ViewStyle,
   TouchableOpacity,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -22,6 +22,7 @@ import { supabase } from '@/lib/supabase';
 import { getBabysitterPhotoUrl } from '@/lib/babysitterPhotos';
 import { getParentPhotoUrl } from '@/lib/parentPhotos';
 import AppText from '@/components/ui/AppText';
+import SmartafWordmark from '@/components/ui/SmartafWordmark';
 import TopBar from '@/components/navigation/TopBar';
 import BottomNav, { BottomNavItem } from '@/components/navigation/BottomNav';
 
@@ -36,10 +37,25 @@ type AppShellProps = {
   backgroundColor?: string;
   subtitle?: string | null;
   titleContent?: ReactNode;
+  renderTitleContent?: (controls: {
+    openMenu: () => void;
+    drawerPhotoUrl: string | null;
+    drawerInitials: string;
+  }) => ReactNode;
   showBackButton?: boolean;
   onBack?: () => void;
   onShare?: () => void;
   enableRootTabSwipe?: boolean;
+  renderHeaderActions?: (controls: {
+    openMenu: () => void;
+    drawerPhotoUrl: string | null;
+    drawerInitials: string;
+  }) => ReactNode;
+  hideHeaderMenuButton?: boolean;
+  backButtonVariant?: 'pill' | 'icon';
+  swapHeaderEdgeControls?: boolean;
+  floatingActionButton?: ReactNode;
+  bottomOverlay?: ReactNode;
 };
 
 type DrawerNavItemProps = {
@@ -90,10 +106,17 @@ export default function AppShell({
   backgroundColor,
   subtitle,
   titleContent,
+  renderTitleContent,
   showBackButton = false,
   onBack,
   onShare,
   enableRootTabSwipe = false,
+  renderHeaderActions,
+  hideHeaderMenuButton = false,
+  backButtonVariant = 'pill',
+  swapHeaderEdgeControls = false,
+  floatingActionButton,
+  bottomOverlay,
 }: AppShellProps) {
   const { activeRole, dbUser, signOut } = useAuth();
   const { incomingRequests, unreadConversationIds } = useAppState();
@@ -123,7 +146,8 @@ export default function AppShell({
   useEffect(() => {
     const userId = dbUser?.id;
 
-    if (!menuOpen || !userId) {
+    if (!userId) {
+      setDrawerPhotoUrl(null);
       return;
     }
 
@@ -159,7 +183,7 @@ export default function AppShell({
     return () => {
       cancelled = true;
     };
-  }, [dbUser?.id, menuOpen, role]);
+  }, [dbUser?.id, role]);
 
   async function handleSignOut() {
     setMenuOpen(false);
@@ -177,7 +201,7 @@ export default function AppShell({
     });
   }
 
-  function navigateToRootTab(targetTab: AppTab) {
+  const navigateToRootTab = useCallback((targetTab: AppTab) => {
     if (targetTab === activeTab) return;
 
     if (targetTab === 'home') {
@@ -203,7 +227,7 @@ export default function AppShell({
     if (targetTab === 'profile') {
       router.replace('/my-profile');
     }
-  }
+  }, [activeTab, role]);
 
   const rootTabOrder: AppTab[] =
     role === 'parent'
@@ -211,7 +235,7 @@ export default function AppShell({
       : ['home', 'saved', 'chats', 'profile'];
   const currentRootTabIndex = rootTabOrder.indexOf(activeTab);
 
-  function navigateHorizontal(direction: 'forward' | 'backward') {
+  const navigateHorizontal = useCallback((direction: 'forward' | 'backward') => {
     if (!enableRootTabSwipe || currentRootTabIndex === -1) return;
 
     const nextIndex =
@@ -220,7 +244,7 @@ export default function AppShell({
 
     if (!nextTab) return;
     navigateToRootTab(nextTab);
-  }
+  }, [enableRootTabSwipe, currentRootTabIndex, rootTabOrder, navigateToRootTab]);
 
   const rightEdgeResponder = useMemo(
     () =>
@@ -236,7 +260,7 @@ export default function AppShell({
           }
         },
       }),
-    [enableRootTabSwipe, currentRootTabIndex, role, activeTab]
+    [enableRootTabSwipe, navigateHorizontal]
   );
 
   const leftEdgeResponder = useMemo(
@@ -253,7 +277,7 @@ export default function AppShell({
           }
         },
       }),
-    [enableRootTabSwipe, currentRootTabIndex, role, activeTab]
+    [enableRootTabSwipe, navigateHorizontal]
   );
 
   const navItems = useMemo<BottomNavItem[]>(() => {
@@ -314,28 +338,120 @@ export default function AppShell({
         onPress: () => router.replace('/my-profile'),
       },
     ];
-  }, [pendingIncomingCount, role]);
+  }, [chatsBadgeCount, role]);
 
   const normalizedActiveTab =
     activeTab === 'settings'
       ? 'profile'
       : activeTab;
+  const primaryDrawerItems =
+    role === 'parent'
+      ? [
+          {
+            key: 'home',
+            label: strings.navHome,
+            icon: 'home' as const,
+            isActive: activeTab === 'home',
+            onPress: () => closeMenuAndRun(() => router.replace('/parent')),
+          },
+          {
+            key: 'chats',
+            label: strings.navChats,
+            icon: 'chat-bubble' as const,
+            isActive: activeTab === 'chats',
+            badgeCount: chatsBadgeCount,
+            onPress: () => closeMenuAndRun(() => router.replace('/parent-requests')),
+          },
+          {
+            key: 'favorites',
+            label: strings.navFavorites,
+            icon: 'favorite' as const,
+            isActive: activeTab === 'favorites',
+            onPress: () => closeMenuAndRun(() => router.replace('/parent-favorites')),
+          },
+        ]
+      : [
+          {
+            key: 'home',
+            label: strings.navHome,
+            icon: 'home' as const,
+            isActive: activeTab === 'home',
+            onPress: () => closeMenuAndRun(() => router.replace('/babysitter')),
+          },
+          {
+            key: 'chats',
+            label: strings.navChats,
+            icon: 'chat-bubble' as const,
+            isActive: activeTab === 'chats',
+            badgeCount: chatsBadgeCount,
+            onPress: () => closeMenuAndRun(() => router.replace('/babysitter-inbox')),
+          },
+          {
+            key: 'saved',
+            label: strings.navSaved,
+            icon: 'bookmark' as const,
+            isActive: activeTab === 'saved',
+            onPress: () => closeMenuAndRun(() => router.replace('/babysitter-saved')),
+          },
+        ];
+  const babysitterToolItems =
+    role === 'babysitter'
+      ? [
+          {
+            key: 'calendar',
+            label: strings.drawerCalendar,
+            icon: 'calendar-today' as const,
+            onPress: () => closeMenuAndRun(() => router.push('/babysitter-calendar')),
+          },
+          {
+            key: 'stats',
+            label: strings.drawerStatistics,
+            icon: 'bar-chart' as const,
+            onPress: () => closeMenuAndRun(() => router.push('/babysitter-stats')),
+          },
+          {
+            key: 'shifts',
+            label: strings.drawerShiftManager,
+            icon: 'payments' as const,
+            onPress: () => closeMenuAndRun(() => router.push('/babysitter-shifts')),
+          },
+          {
+            key: 'availability',
+            label: strings.drawerAvailability,
+            icon: 'event-available' as const,
+            onPress: () => closeMenuAndRun(() => router.push('/babysitter-availability')),
+          },
+        ]
+      : [];
+  const shellControls = {
+    openMenu: () => setMenuOpen(true),
+    drawerPhotoUrl,
+    drawerInitials,
+  };
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.headerBackground }]} edges={['top']}>
       <TopBar
         title={title}
         subtitle={resolvedSubtitle}
-        titleContent={titleContent}
+        titleContent={renderTitleContent ? renderTitleContent(shellControls) : titleContent}
+        customActions={
+          renderHeaderActions
+            ? renderHeaderActions(shellControls)
+            : undefined
+        }
         titleColor={theme.title}
         subtitleColor={theme.subtitle}
         borderColor={theme.headerBorder}
         backgroundColor={theme.headerBackground}
         menuBackground={theme.menuBackground}
         showBackButton={showBackButton}
+        hideMenuButton={hideHeaderMenuButton}
+        backButtonVariant={backButtonVariant}
+        swapEdgeControls={swapHeaderEdgeControls}
         onBack={onBack}
         onShare={onShare}
-        onOpenMenu={() => setMenuOpen(true)}
+        onOpenMenu={shellControls.openMenu}
       />
 
       <View style={[styles.content, { backgroundColor: resolvedBackgroundColor }]}>
@@ -365,6 +481,30 @@ export default function AppShell({
         bottomInset={insets.bottom}
       />
 
+      {floatingActionButton ? (
+        <View
+          pointerEvents="box-none"
+          style={[
+            styles.floatingActionWrap,
+            { bottom: Math.max(insets.bottom, 16) + 72 },
+          ]}
+        >
+          {floatingActionButton}
+        </View>
+      ) : null}
+
+      {bottomOverlay ? (
+        <View
+          pointerEvents="box-none"
+          style={[
+            styles.bottomOverlayWrap,
+            { bottom: Math.max(insets.bottom, 16) + 60 },
+          ]}
+        >
+          {bottomOverlay}
+        </View>
+      ) : null}
+
       <Modal
         visible={menuOpen}
         transparent
@@ -373,143 +513,133 @@ export default function AppShell({
       >
         <View style={styles.modalRoot}>
           {/* Drawer panel */}
-          <View style={[styles.drawer, { paddingTop: insets.top + 20 }]}>
-
-            {/* Brand block */}
-            <View style={styles.drawerBrand}>
-              <View style={styles.drawerBrandIcon}>
-                <MaterialIcons name="child-care" size={22} color="#ffffff" />
-              </View>
-              <AppText variant="bodyLarge" weight="800" style={styles.drawerBrandName}>
-                Smartaf
-              </AppText>
-            </View>
-
-            {/* User block */}
-            <View style={styles.drawerUserBlock}>
-              <View style={styles.drawerAvatarWrap}>
-                {drawerPhotoUrl ? (
-                  <Image source={{ uri: drawerPhotoUrl }} style={styles.drawerAvatarImage} />
-                ) : (
-                  <View style={[styles.drawerAvatarFallback] as ViewStyle[]}>
-                    <AppText variant="h2" weight="800" style={{ color: theme.activeColor }}>
-                      {drawerInitials}
-                    </AppText>
+          <View style={styles.drawer}>
+            <ScrollView
+              style={styles.drawerScroll}
+              showsVerticalScrollIndicator={false}
+              nestedScrollEnabled
+              bounces={false}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={[
+                styles.drawerScrollContent,
+                {
+                  paddingTop: insets.top + 20,
+                  paddingBottom: Math.max(insets.bottom, 18) + 26,
+                },
+              ]}
+            >
+              <View style={styles.drawerScrollInner}>
+                <View>
+                  {/* Brand block */}
+                  <View style={styles.drawerBrand}>
+                    <SmartafWordmark size="md" textColor={BabyCityPalette.primary} />
                   </View>
-                )}
-                {/* Verified badge */}
-                <LinearGradient
-                  colors={[BabyCityPalette.primary, '#6411d5']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.drawerVerifiedBadge}
-                >
-                  <MaterialIcons name="verified" size={12} color="#ffffff" />
-                </LinearGradient>
+
+                  {/* User block */}
+                  <View style={styles.drawerUserBlock}>
+                    <View style={styles.drawerAvatarWrap}>
+                      {drawerPhotoUrl ? (
+                        <Image source={{ uri: drawerPhotoUrl }} style={styles.drawerAvatarImage} />
+                      ) : (
+                        <View style={styles.drawerAvatarFallback}>
+                          <AppText variant="h2" weight="800" style={{ color: theme.activeColor }}>
+                            {drawerInitials}
+                          </AppText>
+                        </View>
+                      )}
+                      {/* Verified badge */}
+                      <LinearGradient
+                        colors={[BabyCityPalette.primary, '#6411d5']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.drawerVerifiedBadge}
+                      >
+                        <MaterialIcons name="verified" size={12} color="#ffffff" />
+                      </LinearGradient>
+                    </View>
+                    <AppText variant="h2" weight="800" style={styles.drawerUserName}>
+                      {drawerDisplayName}
+                    </AppText>
+                    <View style={styles.drawerMetaRow}>
+                      <AppText variant="caption" weight="800" style={styles.drawerMetaLabel}>
+                        {strings.appName.toUpperCase()}
+                      </AppText>
+                      <View style={styles.drawerRoleChip}>
+                        <AppText variant="caption" weight="700" style={styles.drawerRoleChipText}>
+                          {drawerRoleLabel}
+                        </AppText>
+                      </View>
+                    </View>
+                  </View>
+
+                  {/* Main nav section */}
+                  <View style={styles.drawerNavGroup}>
+                    <AppText variant="caption" weight="800" style={styles.drawerSectionHeader}>
+                      {strings.drawerMainMenu}
+                    </AppText>
+
+                    {primaryDrawerItems.map(item => (
+                      <DrawerNavItem
+                        key={item.key}
+                        label={item.label}
+                        icon={item.icon}
+                        isActive={item.isActive}
+                        badgeCount={item.badgeCount}
+                        onPress={item.onPress}
+                      />
+                    ))}
+                  </View>
+
+                  {babysitterToolItems.length > 0 ? (
+                    <View style={styles.drawerNavGroup}>
+                      <AppText variant="caption" weight="800" style={styles.drawerSectionHeader}>
+                        {strings.drawerWorkTools}
+                      </AppText>
+
+                      {babysitterToolItems.map(item => (
+                        <DrawerNavItem
+                          key={item.key}
+                          label={item.label}
+                          icon={item.icon}
+                          onPress={item.onPress}
+                        />
+                      ))}
+                    </View>
+                  ) : null}
+
+                  <View style={styles.drawerNavGroup}>
+                    <AppText variant="caption" weight="800" style={styles.drawerSectionHeader}>
+                      {strings.drawerSettingsSupport}
+                    </AppText>
+
+                    <DrawerNavItem
+                      label={strings.drawerEditProfile}
+                      icon="edit"
+                      onPress={handleEditProfile}
+                    />
+                  </View>
+
+                  {/* Settings section */}
+                  <View style={styles.drawerNavGroup}>
+                    <DrawerNavItem
+                      label={strings.navSettings}
+                      icon="settings"
+                      isActive={activeTab === 'settings'}
+                      onPress={() => closeMenuAndRun(() => router.push('/settings'))}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.drawerLogoutSection}>
+                  <TouchableOpacity style={styles.drawerLogoutRow} onPress={handleSignOut} activeOpacity={0.75}>
+                    <MaterialIcons name="logout" size={22} color={BabyCityPalette.error} />
+                    <AppText variant="body" weight="900" style={styles.drawerLogoutText}>
+                      {strings.signOut}
+                    </AppText>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <AppText variant="bodyLarge" weight="700" style={styles.drawerUserName}>
-                {drawerDisplayName}
-              </AppText>
-              <View style={styles.drawerRoleChip}>
-                <AppText variant="caption" weight="700" style={styles.drawerRoleChipText}>
-                  {drawerRoleLabel}
-                </AppText>
-              </View>
-            </View>
-
-            {/* Main nav section */}
-            <View style={styles.drawerNavGroup}>
-              <AppText variant="caption" weight="800" style={styles.drawerSectionHeader}>
-                {strings.drawerMainMenu}
-              </AppText>
-
-              <DrawerNavItem
-                label={strings.navHome}
-                icon="home"
-                isActive={activeTab === 'home'}
-                onPress={() => closeMenuAndRun(() => router.replace(role === 'parent' ? '/parent' : '/babysitter'))}
-              />
-
-              {role === 'parent' ? (
-                <DrawerNavItem
-                  label={strings.navFavorites}
-                  icon="favorite"
-                  isActive={activeTab === 'favorites'}
-                  onPress={() => closeMenuAndRun(() => router.replace('/parent-favorites'))}
-                />
-              ) : (
-                <DrawerNavItem
-                  label={strings.navSaved}
-                  icon="bookmark"
-                  isActive={activeTab === 'saved'}
-                  onPress={() => closeMenuAndRun(() => router.replace('/babysitter-saved'))}
-                />
-              )}
-
-              <DrawerNavItem
-                label={strings.navChats}
-                icon="chat-bubble"
-                isActive={activeTab === 'chats'}
-                badgeCount={chatsBadgeCount}
-                onPress={() => closeMenuAndRun(() => router.replace(role === 'parent' ? '/parent-requests' : '/babysitter-inbox'))}
-              />
-
-              {role === 'babysitter' ? (
-                <>
-                  <DrawerNavItem
-                    label={strings.drawerCalendar}
-                    icon="calendar-today"
-                    onPress={() => closeMenuAndRun(() => router.push('/babysitter-calendar'))}
-                  />
-                  <DrawerNavItem
-                    label={strings.drawerStatistics}
-                    icon="bar-chart"
-                    onPress={() => closeMenuAndRun(() => router.push('/babysitter-stats'))}
-                  />
-                  <DrawerNavItem
-                    label={strings.drawerShiftManager}
-                    icon="payments"
-                    onPress={() => closeMenuAndRun(() => router.push('/babysitter-shifts'))}
-                  />
-                  <DrawerNavItem
-                    label={strings.drawerAvailability}
-                    icon="event-available"
-                    onPress={() => closeMenuAndRun(() => router.push('/babysitter-availability'))}
-                  />
-                </>
-              ) : null}
-
-              <DrawerNavItem
-                label={strings.drawerEditProfile}
-                icon="edit"
-                onPress={handleEditProfile}
-              />
-            </View>
-
-            {/* Settings section */}
-            <View style={styles.drawerNavGroup}>
-              <AppText variant="caption" weight="800" style={styles.drawerSectionHeader}>
-                {strings.drawerSettingsSupport}
-              </AppText>
-
-              <DrawerNavItem
-                label={strings.navSettings}
-                icon="settings"
-                isActive={activeTab === 'settings'}
-                onPress={() => closeMenuAndRun(() => router.push('/settings'))}
-              />
-            </View>
-
-            {/* Logout at bottom */}
-            <View style={styles.drawerLogoutSection}>
-              <TouchableOpacity style={styles.drawerLogoutRow} onPress={handleSignOut} activeOpacity={0.75}>
-                <MaterialIcons name="logout" size={22} color={BabyCityPalette.error} />
-                <AppText variant="body" weight="900" style={styles.drawerLogoutText}>
-                  {strings.signOut}
-                </AppText>
-              </TouchableOpacity>
-            </View>
-
+            </ScrollView>
           </View>
 
           {/* Overlay */}
@@ -541,21 +671,35 @@ const styles = StyleSheet.create({
   edgeSwipeZoneLeft: {
     left: 0,
   },
+  floatingActionWrap: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    zIndex: 30,
+    paddingHorizontal: 24,
+    alignItems: 'flex-start',
+  },
+  bottomOverlayWrap: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    zIndex: 29,
+    paddingHorizontal: 24,
+  },
   modalRoot: {
     flex: 1,
     flexDirection: 'row-reverse',
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 29, 61, 0.32)',
+    backgroundColor: 'rgba(244, 246, 255, 0.64)',
   },
   drawer: {
     width: DRAWER_WIDTH,
+    height: '100%',
     backgroundColor: BabyCityPalette.canvas,
     borderTopLeftRadius: 48,
     borderBottomLeftRadius: 48,
-    paddingHorizontal: 20,
-    paddingBottom: 24,
     shadowColor: BabyCityPalette.shadow,
     shadowOpacity: 0.15,
     shadowRadius: 44,
@@ -563,58 +707,46 @@ const styles = StyleSheet.create({
     elevation: 12,
     overflow: 'hidden',
   },
+  drawerScroll: {
+    flex: 1,
+  },
+  drawerScrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 26,
+  },
+  drawerScrollInner: {
+    flexGrow: 1,
+    justifyContent: 'space-between',
+  },
 
   /* Brand */
   drawerBrand: {
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-    gap: 10,
-    marginBottom: 24,
-  },
-  drawerBrandIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: BabyCityPalette.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: BabyCityPalette.primary,
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
-  },
-  drawerBrandName: {
-    color: BabyCityPalette.primary,
-    fontSize: 22,
-    letterSpacing: -0.3,
+    marginBottom: 22,
   },
 
   /* User block */
   drawerUserBlock: {
-    alignItems: 'flex-end',
-    marginBottom: 20,
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: BabyCityPalette.borderSoft,
+    alignItems: 'center',
+    marginBottom: 26,
+    paddingBottom: 12,
   },
   drawerAvatarWrap: {
     position: 'relative',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   drawerAvatarImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 3,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    borderWidth: 4,
     borderColor: BabyCityPalette.surfaceLowest,
     backgroundColor: BabyCityPalette.surface,
   },
   drawerAvatarFallback: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 3,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    borderWidth: 4,
     borderColor: BabyCityPalette.surfaceLowest,
     backgroundColor: BabyCityPalette.surfaceLow,
     alignItems: 'center',
@@ -624,9 +756,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -2,
     left: -2,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
@@ -634,31 +766,41 @@ const styles = StyleSheet.create({
   },
   drawerUserName: {
     color: BabyCityPalette.textPrimary,
-    textAlign: 'right',
-    marginBottom: 6,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  drawerMetaRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 8,
+  },
+  drawerMetaLabel: {
+    color: BabyCityPalette.outline,
+    letterSpacing: 1.6,
+    textTransform: 'uppercase',
   },
   drawerRoleChip: {
     backgroundColor: BabyCityPalette.secondaryContainer,
     borderRadius: BabyCityGeometry.radius.pill,
     paddingHorizontal: 12,
-    paddingVertical: 3,
+    paddingVertical: 4,
   },
   drawerRoleChipText: {
     color: BabyCityPalette.onSecondaryContainer,
-    letterSpacing: 0.3,
+    letterSpacing: 0.2,
   },
 
   /* Nav groups */
   drawerNavGroup: {
-    marginBottom: 8,
+    marginBottom: 12,
   },
   drawerSectionHeader: {
     color: BabyCityPalette.outline,
     textTransform: 'uppercase',
-    letterSpacing: 2,
-    paddingHorizontal: 16,
-    marginBottom: 4,
-    marginTop: 8,
+    letterSpacing: 2.2,
+    paddingHorizontal: 10,
+    marginBottom: 8,
+    marginTop: 10,
     textAlign: 'right',
   },
 
@@ -667,23 +809,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 16,
-    marginBottom: 2,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    borderRadius: 20,
+    marginBottom: 6,
   },
   drawerNavItemActive: {
     backgroundColor: BabyCityPalette.secondaryContainer,
+    shadowColor: BabyCityPalette.primary,
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 2,
   },
   drawerNavItemInner: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: 12,
+    gap: 14,
     flex: 1,
   },
   drawerNavItemText: {
     color: BabyCityPalette.textPrimary,
-    fontSize: 15,
+    fontSize: 16,
     textAlign: 'right',
   },
   drawerNavItemTextActive: {
@@ -710,18 +857,18 @@ const styles = StyleSheet.create({
 
   /* Logout */
   drawerLogoutSection: {
-    marginTop: 'auto',
+    marginTop: 18,
     borderTopWidth: 1,
     borderTopColor: `${BabyCityPalette.outline}1a`,
-    paddingTop: 12,
+    paddingTop: 14,
   },
   drawerLogoutRow: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
     gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 15,
+    borderRadius: 20,
   },
   drawerLogoutText: {
     color: BabyCityPalette.error,

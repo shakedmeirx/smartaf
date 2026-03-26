@@ -51,6 +51,9 @@ export function rowToParentProfileSummary(row: Record<string, unknown>): ParentP
   const lastName = stringValue(row.last_name);
   const fallbackName = joinedName(row.users ?? row.user);
   const profilePhotoPath = nullableStringValue(row.profile_photo_path);
+  const childNames = Array.isArray(row.child_names)
+    ? row.child_names.map(value => stringValue(value))
+    : [];
   const childBirthDates = stringArrayValue(row.child_birth_dates);
 
   return {
@@ -66,6 +69,7 @@ export function rowToParentProfileSummary(row: Record<string, unknown>): ParentP
     profilePhotoPath,
     profilePhotoUrl: resolveParentPhotoUrl(profilePhotoPath),
     childrenCount: numberValue(row.children_count),
+    childNames,
     childBirthDates,
     childAges: deriveChildAgesFromBirthDates(childBirthDates),
     childAgeGroups: stringArrayValue(row.child_age_groups),
@@ -104,7 +108,10 @@ export function rowToFamilyPreview(row: Record<string, unknown>): FamilyPreview 
 
 export function rowToParentPost(
   row: Record<string, unknown>,
-  parentProfile?: Pick<ParentProfileSummary, 'id' | 'fullName' | 'city' | 'profilePhotoUrl'>
+  parentProfile?: Pick<
+    ParentProfileSummary,
+    'id' | 'fullName' | 'city' | 'profilePhotoUrl' | 'latitude' | 'longitude'
+  >
 ): ParentPost {
   return {
     id: stringValue(row.id),
@@ -113,6 +120,8 @@ export function rowToParentPost(
     parentName: parentProfile?.fullName || joinedName(row.users ?? row.user),
     parentCity: parentProfile?.city ?? '',
     parentProfilePhotoUrl: parentProfile?.profilePhotoUrl,
+    latitude: parentProfile?.latitude ?? null,
+    longitude: parentProfile?.longitude ?? null,
     area: stringValue(row.area),
     date: nullableStringValue(row.date),
     time: nullableStringValue(row.time),
@@ -141,6 +150,9 @@ export function normalizeParentOnboardingDraft(
     profilePhotoUrl:
       stringValue(value.profilePhotoUrl) || resolveParentPhotoUrl(value.profilePhotoPath) || '',
     childrenCount: stringValue(value.childrenCount),
+    childNames: Array.isArray(value.childNames)
+      ? value.childNames.map(item => stringValue(item))
+      : [],
     childBirthDates: Array.isArray(value.childBirthDates)
       ? value.childBirthDates.map(item => stringValue(item))
       : [],

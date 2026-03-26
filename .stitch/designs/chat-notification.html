@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "surface-tint": "#702ae1",
+                "tertiary-fixed": "#ff8eac",
+                "primary-fixed": "#b28cff",
+                "tertiary": "#9e3657",
+                "surface-dim": "#c3d5f8",
+                "primary-container": "#b28cff",
+                "surface-container-low": "#ecf1ff",
+                "tertiary-fixed-dim": "#f77c9e",
+                "on-tertiary-fixed": "#380016",
+                "surface-bright": "#f4f6ff",
+                "surface": "#f4f6ff",
+                "on-error": "#ffefef",
+                "primary-dim": "#6411d5",
+                "error-container": "#f74b6d",
+                "on-tertiary-container": "#64042d",
+                "on-primary-container": "#2e006c",
+                "on-secondary": "#f8efff",
+                "inverse-primary": "#a476ff",
+                "on-primary": "#f8f0ff",
+                "error-dim": "#a70138",
+                "secondary-fixed-dim": "#dbd0e7",
+                "on-surface": "#242f41",
+                "inverse-surface": "#040e1f",
+                "surface-container": "#dee8ff",
+                "on-secondary-fixed": "#433c4e",
+                "background": "#f4f6ff",
+                "secondary-container": "#e9def5",
+                "primary": "#702ae1",
+                "tertiary-container": "#ff8eac",
+                "on-primary-fixed-variant": "#390083",
+                "tertiary-dim": "#8e294c",
+                "on-surface-variant": "#515c70",
+                "surface-variant": "#cdddfe",
+                "secondary-dim": "#534c5f",
+                "on-secondary-fixed-variant": "#60586b",
+                "inverse-on-surface": "#929db4",
+                "on-secondary-container": "#564f61",
+                "on-tertiary": "#ffeff1",
+                "on-primary-fixed": "#000000",
+                "primary-fixed-dim": "#a67aff",
+                "surface-container-lowest": "#ffffff",
+                "secondary": "#60586b",
+                "on-tertiary-fixed-variant": "#711036",
+                "surface-container-high": "#d5e3ff",
+                "on-background": "#242f41",
+                "outline-variant": "#a2adc4",
+                "error": "#b41340",
+                "surface-container-highest": "#cdddfe",
+                "on-error-container": "#510017",
+                "secondary-fixed": "#e9def5",
+                "outline": "#6c778c"
+              },
+              fontFamily: {
+                "headline": ["Plus Jakarta Sans"],
+                "body": ["Be Vietnam Pro"],
+                "label": ["Be Vietnam Pro"]
+              },
+              borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #f4f6ff;
+        }
+        h1, h2, h3 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased overflow-hidden">
+<!-- Discovery Screen Background (Blurred) -->
+<main class="min-h-screen w-full relative blur-[6px] transition-all duration-700 opacity-60">
+<!-- TopAppBar Placeholder (Bluntly follows JSON for structure even if blurred) -->
+<header class="fixed top-0 w-full z-10 bg-[#f4f6ff]/80 backdrop-blur-xl shadow-sm">
+<div class="flex items-center justify-between px-6 h-16 w-full max-w-7xl mx-auto">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[#7C3AED]">menu</span>
+</div>
+<h1 class="text-xl font-black text-[#242f41] font-headline tracking-tight">הודעות</h1>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high">
+<img alt="User" class="w-full h-full object-cover" data-alt="Portrait of a male user profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYyhF-kN50yilm25fSBDzuOpB6NpZDh3J6YcuANvgStl7XSNf57lwYx22KDo2rGuZjVgptYLDZrCaxL6yqgKYDQGopYOeb-SJcRwTl2V1ITevBn-9RQi9uxfJGRD33I5mjnUcvQ1QF7nf8L5IoAUYawdM7JAvIHhSitMVJQbQ7hp1MC3rL-7rQE4OOC731Yvj-zG-rX3M5Z_pMrUeNnSHNPhkNa-4v4YiNvsOyCgKGZAXqMul2NVz5dQDUIXTt6XyTTvueddIUc0uZ"/>
+</div>
+</div>
+</header>
+<!-- Discovery Content Canvas (Bento Grid Style) -->
+<div class="max-w-7xl mx-auto px-6 pt-24 pb-32">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Large Feature Card -->
+<div class="md:col-span-2 bg-surface-container-lowest p-8 rounded-lg shadow-sm flex flex-col justify-end min-h-[400px] relative overflow-hidden">
+<img alt="Babysitting context" class="absolute inset-0 w-full h-full object-cover opacity-20" data-alt="Close up of mother and child playing" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfSAEphf6_-6GXGQFwxDUBBcdBlqhUyPvdGbg3YBAJ8AexUsB0u7fPoxW0-O25UATPwXWC_kKpZl1z3IMF0qjv6a1KqaGSeLysJrD4IVARSw7gW4LOcF9DKUX6jPmr0rkhFghqMM0YgfySv6sVdm72ejpo6PTlazLW6Rt0euUOAQ-iY7HPDe7AcodV7RuVa_cHiEBv7tHeLiHk4c_asfIasVxZgNcRtRJW9c6qvA4vzWaRoRUaQUxIFBPtr5Nz3VGUSLaCkPng3EBJ"/>
+<div class="relative z-10">
+<span class="px-4 py-1 bg-primary-container text-on-primary-container rounded-full text-xs font-bold mb-4 inline-block">מומלץ השבוע</span>
+<h2 class="text-4xl font-black font-headline text-on-surface mb-2 tracking-tight">למצוא את המטפלת המושלמת</h2>
+<p class="text-on-surface-variant max-w-md">גלו את הקהילה שלנו של מטפלות מוסמכות ומנוסות באזור שלכם.</p>
+</div>
+</div>
+<!-- Secondary Cards -->
+<div class="bg-surface-container p-6 rounded-lg flex flex-col justify-between">
+<div class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary">verified_user</span>
+</div>
+<div>
+<h3 class="text-xl font-bold font-headline mb-2">ביטחון מעל הכל</h3>
+<p class="text-sm text-on-surface-variant">כל המטפלות עוברות תהליך אימות קפדני וראיונות אישיים.</p>
+</div>
+</div>
+<div class="bg-secondary-container p-6 rounded-lg flex flex-col justify-between">
+<div class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary">schedule</span>
+</div>
+<div>
+<h3 class="text-xl font-bold font-headline mb-2">זמינות מיידית</h3>
+<p class="text-sm text-on-surface-variant">צריכים עזרה לעכשיו? מצאו מטפלות פנויות בזמן אמת.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- BottomNavBar Placeholder (Bluntly follows JSON for structure even if blurred) -->
+<nav class="fixed bottom-0 w-full rounded-t-[2rem] z-10 bg-white/90 backdrop-blur-lg shadow-[0_-4px_20px_0_rgba(36,47,65,0.06)]">
+<div class="flex justify-around items-center px-4 pb-6 pt-3 w-full">
+<div class="flex flex-col items-center justify-center text-[#242f41] opacity-70">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[12px] font-medium font-body">בית</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#242f41] opacity-70">
+<span class="material-symbols-outlined">search</span>
+<span class="text-[12px] font-medium font-body">חיפוש</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#702ae1] bg-[#e9def5] rounded-full px-5 py-2">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="text-[12px] font-medium font-body">צ'אט</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#242f41] opacity-70">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[12px] font-medium font-body">פרופיל</span>
+</div>
+</div>
+</nav>
+</main>
+<!-- FLOATING CHAT NOTIFICATION BANNER (The Focus) -->
+<div class="fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-[100] animate-bounce-subtle">
+<div class="bg-surface-container-lowest rounded-lg p-5 shadow-[0_20px_50px_rgba(36,47,65,0.12)] border border-outline-variant/10 flex items-center gap-4 group cursor-pointer active:scale-95 transition-all duration-200">
+<!-- Asymmetrical Avatar Layout -->
+<div class="relative">
+<div class="w-16 h-16 rounded-full ring-4 ring-secondary-container overflow-hidden">
+<img alt="Michal Levi" class="w-full h-full object-cover" data-alt="Warm smiling portrait of Michal Levi" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnd3bTSSLbHHlzAjyQDAen9XeNK-9i_3imSXB6hyRLaGbW5YyXzYbbhT-ObtvROZkWBS6rTIdxE_jrdjgaMgjs3Qw8JQNY2uC9SPdKSeRNTzkDfbWoqRqX5Rd8YrZqZ8KNSxv3E8OnMRdOJQMv1WhW5Z_4t_chup6jiVdNVzQW8KwC9TayaFwflGNyse00IYO7_N1W1PrnPnx14d5bU2yibaHwLKZbJGn-H3eY8ge_vrFl_LOC0mG-N57v3tMJkDx4eN4J-8FqB08w"/>
+</div>
+<div class="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full border-4 border-surface-container-lowest flex items-center justify-center">
+<div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+</div>
+</div>
+<!-- Content Area -->
+<div class="flex-1 overflow-hidden">
+<div class="flex justify-between items-start mb-1">
+<h4 class="font-headline font-extrabold text-on-surface text-lg leading-tight">מיכל לוי</h4>
+<span class="text-[10px] font-label font-medium text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full uppercase tracking-wider">עכשיו</span>
+</div>
+<p class="text-on-surface-variant font-body text-sm line-clamp-1">היי! רציתי לשאול אם אתה פנוי מחר...</p>
+</div>
+<!-- Action Icon -->
+<div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</div>
+</div>
+<!-- Subtle Visual Flourish: Glass Glow -->
+<div class="absolute -z-10 top-0 left-0 w-full h-full bg-primary/5 blur-3xl rounded-full"></div>
+</div>
+<!-- Background Decoration for Atmosphere -->
+<div class="fixed -bottom-20 -left-20 w-80 h-80 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="fixed -top-20 -right-20 w-80 h-80 bg-tertiary/10 rounded-full blur-[100px] pointer-events-none"></div>
+</body></html>

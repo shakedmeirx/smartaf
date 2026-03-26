@@ -107,26 +107,29 @@ export default function BirthdayField({ label, value, onChange, errorText }: Pro
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 22,
+    marginBottom: 24,
   },
   label: {
-    marginBottom: 10,
+    marginBottom: 8,
+    paddingHorizontal: 4,
+    fontSize: 13,
+    lineHeight: 18,
   },
   field: {
-    minHeight: 62,
+    minHeight: 58,
     borderWidth: 1.5,
-    borderColor: BabyCityPalette.border,
-    borderRadius: 16,
-    paddingHorizontal: 18,
-    backgroundColor: BabyCityPalette.surface,
+    borderColor: 'transparent',
+    borderRadius: 24,
+    paddingHorizontal: 22,
+    backgroundColor: BabyCityPalette.inputRecessedBg,
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
   },
   fieldActive: {
-    borderColor: BabyCityPalette.accent,
-    backgroundColor: BabyCityPalette.accentSoft,
+    borderColor: BabyCityPalette.primary,
+    backgroundColor: BabyCityPalette.surfaceLowest,
   },
   fieldError: {
     borderColor: BabyCityPalette.error,
@@ -134,6 +137,7 @@ const styles = StyleSheet.create({
   },
   value: {
     flex: 1,
+    textAlign: 'right',
   },
   placeholder: {
     color: BabyCityPalette.textTertiary,
@@ -174,5 +178,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     marginTop: 8,
+    paddingHorizontal: 4,
   },
 });

@@ -5,9 +5,10 @@ import {
   Pressable,
   RefreshControl,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
@@ -34,12 +35,11 @@ import AppChip from '@/components/ui/AppChip';
 import AppPrimaryButton from '@/components/ui/AppPrimaryButton';
 import AppCard from '@/components/ui/AppCard';
 import AppText from '@/components/ui/AppText';
+import AvatarCircle from '@/components/ui/AvatarCircle';
 import BabysitterProfileHeroCard from '@/components/babysitter/BabysitterProfileHeroCard';
 import BabysitterStatCard from '@/components/babysitter/BabysitterStatCard';
 import ParentOwnedPostCard from '@/components/parent/ParentOwnedPostCard';
-import ProfileHeroCard from '@/components/parent/ProfileHeroCard';
-import ProfileDetailsCard, { ProfileDetailsRow } from '@/components/parent/ProfileDetailsCard';
-import SectionHeader from '@/components/ui/SectionHeader';
+import ScreenStateCard from '@/components/ui/ScreenStateCard';
 import {
   isProfilePhotoPermissionError,
   removeBabysitterProfilePhoto,
@@ -52,7 +52,6 @@ import {
   BabyCityGeometry,
   BabysitterDesignTokens,
   BabyCityPalette,
-  ParentDesignTokens,
   getRoleTheme,
 } from '@/constants/theme';
 
@@ -71,7 +70,6 @@ export default function MyProfileScreen() {
   const [photoError, setPhotoError] = useState('');
   const [parentProfile, setParentProfile] = useState<ParentProfileDetails | null>(null);
   const [babysitterProfile, setBabysitterProfile] = useState<Babysitter | null>(null);
-  const [galleryPhotoUrls, setGalleryPhotoUrls] = useState<string[]>([]);
   const [receivedRatings, setReceivedRatings] = useState<BabysitterRating[]>([]);
   const [avgStars, setAvgStars] = useState<number | null>(null);
 
@@ -79,7 +77,6 @@ export default function MyProfileScreen() {
     if (!session?.user.id || !activeRole) {
       setParentProfile(null);
       setBabysitterProfile(null);
-      setGalleryPhotoUrls([]);
       setLoading(false);
       return;
     }
@@ -102,6 +99,7 @@ export default function MyProfileScreen() {
             city,
             profile_photo_path,
             children_count,
+            child_names,
             child_birth_dates,
             child_age_groups,
             pets,
@@ -148,14 +146,12 @@ export default function MyProfileScreen() {
           : null
       );
       setBabysitterProfile(null);
-      setGalleryPhotoUrls([]);
       setLoading(false);
       return;
     }
 
     const result = await loadBabysitterProfileByUserId(session.user.id);
     setBabysitterProfile(result.babysitter);
-    setGalleryPhotoUrls(result.galleryPhotoUrls);
     setParentProfile(null);
     setLoading(false);
 
@@ -389,37 +385,47 @@ export default function MyProfileScreen() {
     ]);
   }
 
-  const parentDetailsRows: ProfileDetailsRow[] = parentProfile
+  const parentIdentityFields = parentProfile
     ? [
         {
-          key: 'first-name',
-          label: strings.firstName,
-          value: parentProfile.firstName || strings.notFilled,
-        },
-        {
-          key: 'last-name',
-          label: strings.lastName,
-          value: parentProfile.lastName || strings.notFilled,
+          key: 'name',
+          label: strings.fullNameLabel,
+          value: parentProfile.fullName || strings.notFilled,
+          icon: 'person-outline' as const,
         },
         {
           key: 'address',
           label: strings.parentFullAddress,
           value: parentProfile.addressFull || strings.notFilled,
+          icon: 'home-outline' as const,
         },
         {
           key: 'city',
           label: strings.cityLabel,
           value: parentProfile.city || strings.notFilled,
-        },
-        {
-          key: 'children-count',
-          label: strings.parentChildrenCount,
-          value:
-            parentProfile.childrenCount !== null
-              ? String(parentProfile.childrenCount)
-              : strings.notFilled,
+          icon: 'location-outline' as const,
         },
       ]
+    : [];
+
+  const parentChildrenItems = parentProfile
+    ? (
+        parentProfile.childAges.length > 0
+          ? parentProfile.childAges.map((age, index) => ({
+              key: `age-${index}`,
+              label:
+                parentProfile.childNames[index]?.trim() ||
+                strings.parentProfileChildItemLabel(index + 1),
+              detail: strings.parentAgeYears(age),
+            }))
+          : parentProfile.childAgeGroups.map((group, index) => ({
+              key: `group-${index}`,
+              label:
+                parentProfile.childNames[index]?.trim() ||
+                strings.parentProfileChildItemLabel(index + 1),
+              detail: group,
+            }))
+      )
     : [];
 
   if (loading) {
@@ -526,7 +532,12 @@ export default function MyProfileScreen() {
 
           <Animated.View entering={FadeInDown.duration(240).delay(110)}>
             <AppCard role="babysitter" variant="panel" style={styles.infoCard}>
-              <SectionHeader title={strings.bioLabel} titleVariant="h2" />
+              <View style={styles.cardSectionHeader}>
+                <View style={[styles.cardSectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                  <MaterialIcons name="edit-note" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700">{strings.bioLabel}</AppText>
+              </View>
               <AppText variant="body" style={styles.noteText}>
                 {softWrapLongTokens(babysitterProfile.bio || strings.babysitterProfileEmptyHint)}
               </AppText>
@@ -535,7 +546,12 @@ export default function MyProfileScreen() {
 
           <Animated.View entering={FadeInDown.duration(240).delay(150)}>
             <AppCard role="babysitter" variant="panel" style={styles.infoCard}>
-              <SectionHeader title={strings.spokenLanguages} titleVariant="h2" />
+              <View style={styles.cardSectionHeader}>
+                <View style={[styles.cardSectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                  <MaterialIcons name="translate" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700">{strings.spokenLanguages}</AppText>
+              </View>
               {babysitterProfile.languages.length > 0 ? (
                 <View style={styles.ageGroupRow}>
                   {babysitterProfile.languages.map(language => (
@@ -552,7 +568,12 @@ export default function MyProfileScreen() {
 
           <Animated.View entering={FadeInDown.duration(240).delay(190)}>
             <AppCard role="babysitter" variant="panel" style={styles.infoCard}>
-              <SectionHeader title={strings.availabilityProfile} titleVariant="h2" />
+              <View style={styles.cardSectionHeader}>
+                <View style={[styles.cardSectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                  <MaterialIcons name="calendar-today" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700">{strings.availabilityProfile}</AppText>
+              </View>
               {babysitterProfile.availability.length > 0 ? (
                 <View style={styles.ageGroupRow}>
                   {babysitterProfile.availability.map(slot => (
@@ -569,7 +590,12 @@ export default function MyProfileScreen() {
 
           <Animated.View entering={FadeInDown.duration(240).delay(230)}>
             <AppCard role="babysitter" variant="panel" style={styles.infoCard}>
-              <SectionHeader title={strings.trustLabel} titleVariant="h2" />
+              <View style={styles.cardSectionHeader}>
+                <View style={[styles.cardSectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                  <MaterialIcons name="verified-user" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <AppText variant="bodyLarge" weight="700">{strings.trustLabel}</AppText>
+              </View>
               {babysitterProfile.isVerified ||
               babysitterProfile.hasFirstAid ||
               babysitterProfile.hasReferences ||
@@ -598,17 +624,21 @@ export default function MyProfileScreen() {
 
           <Animated.View entering={FadeInDown.duration(240).delay(270)}>
             <AppCard role="babysitter" variant="panel" style={styles.infoCard}>
-              <SectionHeader
-                title={strings.ratingsTitle}
-                titleVariant="h2"
-                subtitle={
-                  avgStars !== null
-                    ? receivedRatings.length === 1
-                      ? strings.ratingsSummaryOne(avgStars)
-                      : strings.ratingsSummary(avgStars, receivedRatings.length)
-                    : undefined
-                }
-              />
+              <View style={styles.cardSectionHeader}>
+                <View style={[styles.cardSectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
+                  <MaterialIcons name="star" size={20} color={BabyCityPalette.primary} />
+                </View>
+                <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                  <AppText variant="bodyLarge" weight="700">{strings.ratingsTitle}</AppText>
+                  {avgStars !== null ? (
+                    <AppText variant="caption" tone="muted">
+                      {receivedRatings.length === 1
+                        ? strings.ratingsSummaryOne(avgStars)
+                        : strings.ratingsSummary(avgStars, receivedRatings.length)}
+                    </AppText>
+                  ) : null}
+                </View>
+              </View>
               {receivedRatings.length === 0 ? (
                 <AppText variant="body" tone="muted">
                   {strings.ratingsEmpty}
@@ -651,151 +681,305 @@ export default function MyProfileScreen() {
             refreshControl: <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />,
           }}
         >
-          <AppCard role="babysitter" variant="hero" style={styles.emptyProfileCard}>
-            <SectionHeader
-              title={strings.babysitterProfileEmpty}
-              subtitle={strings.babysitterProfileEmptyHint}
-            />
-            <AppPrimaryButton
-              label={strings.startOnboarding}
-              onPress={() => router.push('/babysitter-onboarding')}
-              style={styles.emptyButton}
-            />
-          </AppCard>
+          <ScreenStateCard
+            role="babysitter"
+            icon="person-outline"
+            title={strings.babysitterProfileEmpty}
+            body={strings.babysitterProfileEmptyHint}
+            actionLabel={strings.startOnboarding}
+            onActionPress={() => router.push('/babysitter-onboarding')}
+            size="large"
+            style={styles.emptyProfileCard}
+          />
         </AppScreen>
       </AppShell>
     );
   }
 
   return (
-    <AppShell title={strings.myProfile} activeTab="profile" backgroundColor={theme.screenBackground} enableRootTabSwipe>
-      <AppScreen
-        scrollable
-        backgroundColor={theme.screenBackground}
-        scrollProps={{
-          refreshControl: <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />,
-        }}
-      >
-        {parentProfile ? (
-          <>
-            <ProfileHeroCard
-              name={parentProfile.fullName || strings.notFilled}
-              subtitle={parentProfile.city || strings.notFilled}
-              photoUrl={parentProfile.profilePhotoUrl}
-              badgeLabel={strings.iAmParent}
-              badgeTone="primary"
-              photoAccessorySlot={
-                <Pressable
-                  onPress={openParentPhotoMenu}
-                  disabled={photoBusy}
-                  style={styles.photoAccessoryButton}
-                  hitSlop={8}
-                >
-                  {photoBusy ? (
-                    <ActivityIndicator size="small" color={BabyCityPalette.primary} />
-                  ) : (
-                    <Ionicons name="pencil-outline" size={16} color={BabyCityPalette.primary} />
-                  )}
-                </Pressable>
-              }
-              actionSlot={
-                <AppPrimaryButton
-                  label={strings.settingsEditProfile}
-                  onPress={() => router.push('/parent-onboarding')}
-                />
-              }
-            />
-            {photoError ? (
-              <AppText variant="caption" tone="error" style={styles.heroErrorText}>
-                {photoError}
-              </AppText>
-            ) : null}
-
-            <ProfileDetailsCard
-              title={strings.parentProfileTitle}
-              rows={parentDetailsRows}
-            />
-
-            <ProfileDetailsCard
-              title={
-                parentProfile.childAges.length > 0
-                  ? strings.parentChildrenAges
-                  : strings.parentChildAgeGroups
-              }
-            >
-              <View style={styles.chipsWrap}>
-                {(parentProfile.childAges.length > 0
-                  ? parentProfile.childAges.map(age => strings.parentAgeYears(age))
-                  : parentProfile.childAgeGroups
-                ).length > 0 ? (
-                  (parentProfile.childAges.length > 0
-                    ? parentProfile.childAges.map(age => strings.parentAgeYears(age))
-                    : parentProfile.childAgeGroups
-                  ).map(value => (
-                    <AppChip key={value} label={value} tone="accent" size="sm" />
-                  ))
-                ) : (
-                  <AppText variant="body" tone="muted">
-                    {strings.notFilled}
-                  </AppText>
-                )}
-              </View>
-            </ProfileDetailsCard>
-
-            <ProfileDetailsCard title={strings.parentPets}>
-              <View style={styles.chipsWrap}>
-                {parentProfile.pets.length > 0 ? (
-                  parentProfile.pets.map(pet => (
-                    <AppChip key={pet} label={pet} tone="success" size="sm" />
-                  ))
-                ) : (
-                  <AppText variant="body" tone="muted">
-                    {strings.notFilled}
-                  </AppText>
-                )}
-              </View>
-            </ProfileDetailsCard>
-
-            <ProfileDetailsCard title={strings.parentFamilyNote}>
-              <AppText variant="bodyLarge" style={styles.parentNoteText}>
-                {parentProfile.familyNote || strings.parentProfileNoteEmpty}
-              </AppText>
-            </ProfileDetailsCard>
-
-            <ProfileDetailsCard title={strings.parentPostsSection}>
-              {parentProfile.posts.length > 0 ? (
-                <View style={styles.parentPostsWrap}>
-                  {parentProfile.posts.map(post => (
-                    <ParentOwnedPostCard
-                      key={post.id}
-                      post={post}
-                      mode="profile"
-                      onPress={() => router.push('/my-posts')}
-                      onEdit={() => router.push({ pathname: '/create-post', params: { postId: post.id } })}
-                    />
-                  ))}
-                </View>
-              ) : (
-                <AppText variant="body" tone="muted">
-                  {strings.parentProfilePostsEmpty}
-                </AppText>
-              )}
-            </ProfileDetailsCard>
-          </>
-        ) : (
-          <AppCard role="parent" variant="hero" style={styles.emptyProfileCard}>
-            <SectionHeader
-              title={strings.parentProfileEmpty}
-              subtitle={strings.parentProfileEmptyHint}
-            />
+    <AppShell
+      title={strings.myProfile}
+      activeTab="profile"
+      backgroundColor={theme.screenBackground}
+      enableRootTabSwipe
+      bottomOverlay={
+        parentProfile ? (
+          <View style={styles.parentBottomOverlay}>
             <AppPrimaryButton
               label={strings.settingsEditProfile}
-              onPress={() => router.push('/parent-onboarding')}
-              style={styles.emptyButton}
+              onPress={() => router.push('/parent-onboarding?edit=true')}
+              style={styles.parentBottomButton}
             />
-          </AppCard>
-        )}
-      </AppScreen>
+          </View>
+        ) : undefined
+      }
+    >
+      <View style={styles.parentScreen}>
+        <View style={styles.parentBackdropOrbTop} />
+        <View style={styles.parentBackdropOrbBottom} />
+        <AppScreen
+          scrollable
+          backgroundColor={theme.screenBackground}
+          contentContainerStyle={styles.parentScreenContent}
+          scrollProps={{
+            refreshControl: <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />,
+            showsVerticalScrollIndicator: false,
+          }}
+        >
+          {parentProfile ? (
+            <>
+              <View style={styles.parentHeroSection}>
+                <View style={styles.parentAvatarShell}>
+                  <View style={styles.parentAvatarFrame}>
+                    <View style={styles.parentAvatarWrap}>
+                      <Pressable
+                        onPress={openParentPhotoMenu}
+                        disabled={photoBusy}
+                        style={styles.parentPhotoAccessoryButton}
+                        hitSlop={10}
+                      >
+                        {photoBusy ? (
+                          <ActivityIndicator size="small" color={BabyCityPalette.onPrimary} />
+                        ) : (
+                          <Ionicons name="camera-outline" size={18} color={BabyCityPalette.onPrimary} />
+                        )}
+                      </Pressable>
+                      <View style={styles.parentAvatarBadge}>
+                        <AppText variant="caption" weight="700" style={styles.parentAvatarBadgeText}>
+                          {strings.iAmParent}
+                        </AppText>
+                      </View>
+                      <View style={styles.parentAvatarCircle}>
+                        <AvatarCircle
+                          name={parentProfile.fullName || strings.appName}
+                          photoUrl={parentProfile.profilePhotoUrl}
+                          size={116}
+                          tone="accent"
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+
+                <AppText variant="h1" weight="800" style={styles.parentHeroName}>
+                  {parentProfile.fullName || strings.notFilled}
+                </AppText>
+                <AppText variant="body" style={styles.parentHeroSubtitle}>
+                  {strings.parentProfileHeroSubtitle}
+                </AppText>
+                {photoError ? (
+                  <AppText variant="caption" tone="error" style={styles.parentHeroErrorText}>
+                    {photoError}
+                  </AppText>
+                ) : null}
+              </View>
+
+              <AppCard role="parent" variant="panel" style={styles.parentEditorialCard}>
+                <View style={styles.parentSectionHeader}>
+                  <View style={styles.parentSectionIconChip}>
+                    <MaterialIcons name="person" size={20} color={BabyCityPalette.primary} />
+                  </View>
+                  <AppText variant="bodyLarge" weight="700">
+                    {strings.parentProfilePersonalSection}
+                  </AppText>
+                </View>
+
+                <View style={styles.parentFieldStack}>
+                  {parentIdentityFields.map(field => (
+                    <View key={field.key} style={styles.parentFieldCard}>
+                      <Ionicons
+                        name={field.icon}
+                        size={18}
+                        color={BabyCityPalette.primary}
+                        style={styles.parentFieldIcon}
+                      />
+                      <View style={styles.parentFieldTextWrap}>
+                        <AppText variant="caption" weight="700" style={styles.parentFieldLabel}>
+                          {field.label}
+                        </AppText>
+                        <AppText variant="body" weight="700" style={styles.parentFieldValue}>
+                          {field.value}
+                        </AppText>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+
+                <View style={styles.parentTextAreaCard}>
+                  <AppText variant="caption" weight="700" style={styles.parentFieldLabel}>
+                    {strings.parentFamilyNote}
+                  </AppText>
+                  <AppText variant="body" style={styles.parentTextAreaValue}>
+                    {parentProfile.familyNote || strings.parentProfileNoteEmpty}
+                  </AppText>
+                </View>
+              </AppCard>
+
+              <AppCard role="parent" variant="panel" style={styles.parentEditorialCard}>
+                <View style={styles.parentSectionHeaderRow}>
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    activeOpacity={0.86}
+                    onPress={() => router.push('/parent-onboarding?edit=true')}
+                    style={styles.parentInlineAction}
+                  >
+                    <AppText variant="caption" weight="800" style={styles.parentInlineActionText}>
+                      {strings.parentProfileChildrenAction}
+                    </AppText>
+                  </TouchableOpacity>
+                  <View style={styles.parentSectionHeaderGroup}>
+                    <View style={styles.parentSectionIconChip}>
+                      <MaterialIcons name="child-care" size={20} color={BabyCityPalette.primary} />
+                    </View>
+                    <AppText variant="bodyLarge" weight="700">
+                      {strings.parentProfileChildrenSection}
+                    </AppText>
+                  </View>
+                </View>
+
+                <View style={styles.parentChildrenMetaRow}>
+                  <AppChip
+                    label={
+                      parentProfile.childrenCount !== null
+                        ? `${parentProfile.childrenCount} ${strings.parentChildrenCount}`
+                        : strings.notFilled
+                    }
+                    tone="primary"
+                    size="sm"
+                  />
+                </View>
+
+                {parentChildrenItems.length > 0 ? (
+                  <View style={styles.parentChildrenList}>
+                    {parentChildrenItems.map((child, index) => (
+                      <View key={child.key} style={styles.parentChildRow}>
+                        <TouchableOpacity
+                          accessibilityRole="button"
+                          activeOpacity={0.86}
+                          onPress={() => router.push('/parent-onboarding?edit=true')}
+                          style={styles.parentChildEditButton}
+                        >
+                          <MaterialIcons name="edit" size={18} color={BabyCityPalette.textSecondary} />
+                        </TouchableOpacity>
+
+                        <View style={styles.parentChildText}>
+                          <AppText variant="body" weight="700">
+                            {child.label}
+                          </AppText>
+                          <AppText variant="caption" tone="muted">
+                            {child.detail}
+                          </AppText>
+                        </View>
+
+                        <View
+                          style={[
+                            styles.parentChildIconWrap,
+                            index % 2 === 1 && styles.parentChildIconWrapAlt,
+                          ]}
+                        >
+                          <MaterialIcons
+                            name={index % 2 === 1 ? 'face-3' : 'face'}
+                            size={22}
+                            color={index % 2 === 1 ? '#e65592' : BabyCityPalette.primary}
+                          />
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                ) : (
+                  <AppText variant="body" tone="muted">
+                    {strings.notFilled}
+                  </AppText>
+                )}
+              </AppCard>
+
+              <AppCard role="parent" variant="panel" style={styles.parentEditorialCard}>
+                <View style={styles.parentSectionHeader}>
+                  <View style={styles.parentSectionIconChip}>
+                    <MaterialIcons name="pets" size={20} color={BabyCityPalette.primary} />
+                  </View>
+                  <AppText variant="bodyLarge" weight="700">
+                    {strings.parentPets}
+                  </AppText>
+                </View>
+
+                <View style={styles.parentFieldCard}>
+                  <Ionicons
+                    name="paw-outline"
+                    size={18}
+                    color={BabyCityPalette.primary}
+                    style={styles.parentFieldIcon}
+                  />
+                  <View style={styles.parentFieldTextWrap}>
+                    <AppText variant="caption" weight="700" style={styles.parentFieldLabel}>
+                      {strings.parentProfilePetsQuestion}
+                    </AppText>
+                    <AppText variant="body" weight="700" style={styles.parentFieldValue}>
+                      {parentProfile.pets.length > 0
+                        ? parentProfile.pets.join(', ')
+                        : strings.notFilled}
+                    </AppText>
+                  </View>
+                </View>
+              </AppCard>
+
+              <AppCard role="parent" variant="panel" style={styles.parentEditorialCard}>
+                <View style={styles.parentSectionHeaderRow}>
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    activeOpacity={0.86}
+                    onPress={() => router.push('/my-posts')}
+                    style={styles.parentInlineAction}
+                  >
+                    <AppText variant="caption" weight="800" style={styles.parentInlineActionText}>
+                      {strings.parentProfilePostsAction}
+                    </AppText>
+                  </TouchableOpacity>
+                  <View style={styles.parentSectionHeaderGroup}>
+                    <View style={styles.parentSectionIconChip}>
+                      <MaterialIcons name="campaign" size={20} color={BabyCityPalette.primary} />
+                    </View>
+                    <AppText variant="bodyLarge" weight="700">
+                      {strings.parentPostsSection}
+                    </AppText>
+                  </View>
+                </View>
+
+                {parentProfile.posts.length > 0 ? (
+                  <View style={styles.parentPostsWrap}>
+                    {parentProfile.posts.slice(0, 2).map(post => (
+                      <ParentOwnedPostCard
+                        key={post.id}
+                        post={post}
+                        mode="profile"
+                        onPress={() => router.push('/my-posts')}
+                        onEdit={() =>
+                          router.push({ pathname: '/create-post', params: { postId: post.id } })
+                        }
+                      />
+                    ))}
+                  </View>
+                ) : (
+                  <AppText variant="body" tone="muted">
+                    {strings.parentProfilePostsEmpty}
+                  </AppText>
+                )}
+              </AppCard>
+            </>
+          ) : (
+            <ScreenStateCard
+              role="parent"
+              icon="person-outline"
+              title={strings.parentProfileEmpty}
+              body={strings.parentProfileEmptyHint}
+              actionLabel={strings.settingsEditProfile}
+              onActionPress={() => router.push('/parent-onboarding')}
+              size="large"
+              style={styles.emptyProfileCard}
+            />
+          )}
+        </AppScreen>
+      </View>
     </AppShell>
   );
 }
@@ -813,6 +997,19 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     marginBottom: BabysitterDesignTokens.spacing.cardGap,
+  },
+  cardSectionHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 14,
+  },
+  cardSectionIconChip: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   ratingRow: {
     paddingTop: 10,
@@ -832,11 +1029,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   ageGroupRow: {
-    flexDirection: 'row-reverse',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  chipsWrap: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     gap: 10,
@@ -864,18 +1056,266 @@ const styles = StyleSheet.create({
     writingDirection: 'rtl',
     flexShrink: 1,
   },
-  parentNoteText: {
-    width: '100%',
+  parentScreen: {
+    flex: 1,
+    backgroundColor: BabyCityPalette.canvas,
+  },
+  parentBackdropOrbTop: {
+    position: 'absolute',
+    top: -28,
+    left: -30,
+    width: 188,
+    height: 188,
+    borderRadius: 94,
+    backgroundColor: `${BabyCityPalette.primary}12`,
+  },
+  parentBackdropOrbBottom: {
+    position: 'absolute',
+    right: -48,
+    bottom: 180,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: `${BabyCityPalette.primary}10`,
+  },
+  parentScreenContent: {
+    paddingBottom: 168,
+  },
+  parentHeroSection: {
+    alignItems: 'center',
+    marginBottom: 26,
+  },
+  parentAvatarShell: {
+    marginBottom: 18,
+  },
+  parentAvatarFrame: {
+    width: 136,
+    height: 136,
+    borderRadius: 68,
+    backgroundColor: '#ffffff',
+    padding: 8,
+    borderWidth: 1,
+    borderColor: `${BabyCityPalette.primary}12`,
+    shadowColor: BabyCityPalette.primary,
+    shadowOpacity: 0.12,
+    shadowRadius: 22,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 4,
+  },
+  parentAvatarWrap: {
+    flex: 1,
+    borderRadius: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f8edf8',
+  },
+  parentAvatarCircle: {
+    width: 116,
+    height: 116,
+    borderRadius: 58,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  parentPhotoAccessoryButton: {
+    position: 'absolute',
+    left: -2,
+    bottom: 6,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: BabyCityPalette.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2,
+    shadowColor: BabyCityPalette.primary,
+    shadowOpacity: 0.22,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 5,
+  },
+  parentAvatarBadge: {
+    position: 'absolute',
+    top: 8,
+    right: -6,
+    minHeight: 28,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: BabyCityGeometry.radius.pill,
+    backgroundColor: `${BabyCityPalette.primary}0f`,
+    borderWidth: 1,
+    borderColor: `${BabyCityPalette.primary}18`,
+    zIndex: 2,
+  },
+  parentAvatarBadgeText: {
+    color: BabyCityPalette.primary,
+  },
+  parentHeroName: {
+    textAlign: 'center',
+    fontSize: 31,
+    lineHeight: 38,
+  },
+  parentHeroSubtitle: {
+    marginTop: 6,
+    textAlign: 'center',
+    color: BabyCityPalette.textSecondary,
+  },
+  parentHeroErrorText: {
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  parentEditorialCard: {
+    marginBottom: 18,
+    borderRadius: 30,
+    backgroundColor: '#ffffff',
+    shadowColor: BabyCityPalette.shadow,
+    shadowOpacity: 0.06,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 3,
+  },
+  parentSectionHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 18,
+  },
+  parentSectionHeaderRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    marginBottom: 18,
+  },
+  parentSectionHeaderGroup: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 12,
+  },
+  parentSectionIconChip: {
+    width: 40,
+    height: 40,
+    borderRadius: 16,
+    backgroundColor: BabyCityPalette.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  parentInlineAction: {
+    minHeight: 36,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: BabyCityGeometry.radius.pill,
+    backgroundColor: `${BabyCityPalette.primary}0d`,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  parentInlineActionText: {
+    color: BabyCityPalette.primary,
+  },
+  parentFieldStack: {
+    gap: 12,
+  },
+  parentFieldCard: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 12,
+    minHeight: 66,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    borderRadius: 20,
+    backgroundColor: BabyCityPalette.surface,
+    borderWidth: 1,
+    borderColor: `${BabyCityPalette.border}80`,
+  },
+  parentFieldIcon: {
+    marginTop: 2,
+  },
+  parentFieldTextWrap: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  parentFieldLabel: {
+    color: BabyCityPalette.textSecondary,
     textAlign: 'right',
-    color: ParentDesignTokens.text.primary,
-    lineHeight: 24,
+  },
+  parentFieldValue: {
+    marginTop: 4,
+    color: BabyCityPalette.textPrimary,
+    textAlign: 'right',
+    width: '100%',
+  },
+  parentTextAreaCard: {
+    marginTop: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    borderRadius: 22,
+    backgroundColor: BabyCityPalette.surface,
+    borderWidth: 1,
+    borderColor: `${BabyCityPalette.border}80`,
+  },
+  parentTextAreaValue: {
+    marginTop: 8,
+    lineHeight: 23,
+    textAlign: 'right',
+    color: BabyCityPalette.textPrimary,
+  },
+  parentChildrenMetaRow: {
+    flexDirection: 'row-reverse',
+    marginBottom: 14,
+  },
+  parentChildrenList: {
+    gap: 10,
+  },
+  parentChildRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 14,
+    minHeight: 72,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 22,
+    backgroundColor: BabyCityPalette.surface,
+    borderWidth: 1,
+    borderColor: `${BabyCityPalette.border}66`,
+  },
+  parentChildEditButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: `${BabyCityPalette.border}90`,
+  },
+  parentChildText: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  parentChildIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: `${BabyCityPalette.primary}18`,
+  },
+  parentChildIconWrapAlt: {
+    borderColor: '#f6cade',
   },
   parentPostsWrap: {
     width: '100%',
     gap: 12,
   },
-  emptyButton: {
-    marginTop: 20,
+  parentBottomOverlay: {
+    paddingHorizontal: 2,
+    paddingTop: 18,
+    paddingBottom: 4,
+    backgroundColor: 'rgba(244,246,255,0.94)',
+  },
+  parentBottomButton: {
+    marginTop: 0,
   },
   emptyProfileCard: {
     marginTop: 8,

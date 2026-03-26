@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import AppShell from '@/components/navigation/AppShell';
 import BabysitterCard from '@/components/parent/BabysitterCard';
-import ScreenStateCard from '@/components/ui/ScreenStateCard';
-import AppCard from '@/components/ui/AppCard';
-import SectionHeader from '@/components/ui/SectionHeader';
+import AppPrimaryButton from '@/components/ui/AppPrimaryButton';
+import AppText from '@/components/ui/AppText';
+import { Ionicons } from '@expo/vector-icons';
 import { useAppState } from '@/context/AppContext';
 import { findPairChatThread } from '@/lib/requestLookup';
 import { loadRatingAveragesForIds, RatingAverage } from '@/lib/ratings';
-import { ParentDesignTokens, getRoleTheme } from '@/constants/theme';
+import { BabyCityPalette, ParentDesignTokens, getRoleTheme } from '@/constants/theme';
 import { strings } from '@/locales';
 
 export default function ParentFavoritesScreen() {
@@ -28,7 +28,7 @@ export default function ParentFavoritesScreen() {
 
   return (
     <AppShell
-      title={strings.myFavorites}
+      title={strings.savedBabysittersTitle}
       activeTab="favorites"
       backgroundColor={theme.screenBackground}
       enableRootTabSwipe
@@ -40,33 +40,24 @@ export default function ParentFavoritesScreen() {
           styles.list,
           favorites.length === 0 && styles.listEmpty,
         ]}
-        ListHeaderComponent={
-          <AppCard
-            role="parent"
-            variant="hero"
-            backgroundColor={theme.highlightedSurface}
-            borderColor="transparent"
-            style={styles.heroCard}
-          >
-            <SectionHeader
-              title={strings.myFavorites}
-              subtitle={
-                favorites.length > 0
-                  ? strings.browseBabysitters
-                  : strings.favoritesEmpty
-              }
-            />
-          </AppCard>
-        }
+        ListHeaderComponent={<View style={styles.listHeaderSpacer} />}
         ListEmptyComponent={
-          <ScreenStateCard
-            role="parent"
-            icon="heart-outline"
-            title={strings.favoritesEmpty}
-            body={strings.favoritesEmptyHint}
-            actionLabel={strings.browseBabysitters}
-            onActionPress={() => router.replace('/parent')}
-          />
+          <View style={styles.emptyCard}>
+            <View style={styles.emptyIconWrap}>
+              <Ionicons name="heart" size={54} color={`${BabyCityPalette.primary}88`} />
+            </View>
+            <AppText variant="h2" weight="800" align="center" style={styles.emptyTitle}>
+              {strings.favoritesEmpty}
+            </AppText>
+            <AppText variant="body" tone="muted" align="center" style={styles.emptyBody}>
+              {strings.favoritesEmptyHint}
+            </AppText>
+            <AppPrimaryButton
+              label={strings.savedBabysittersEmptyAction}
+              onPress={() => router.replace('/parent')}
+              style={styles.emptyButton}
+            />
+          </View>
         }
         renderItem={({ item }) => (
           (() => {
@@ -78,6 +69,7 @@ export default function ParentFavoritesScreen() {
             return (
               <BabysitterCard
                 babysitter={item}
+                variant="saved"
                 onPress={() => router.push(`/babysitter-profile?id=${item.id}`)}
                 onSendMessage={() => {
                   if (existingThread) {
@@ -110,14 +102,48 @@ export default function ParentFavoritesScreen() {
 const styles = StyleSheet.create({
   list: {
     paddingHorizontal: ParentDesignTokens.spacing.pageHorizontal,
-    paddingTop: ParentDesignTokens.spacing.pageVertical,
-    paddingBottom: 32,
+    paddingTop: 14,
+    paddingBottom: 34,
   },
   listEmpty: {
     flexGrow: 1,
     justifyContent: 'center',
   },
-  heroCard: {
-    marginBottom: ParentDesignTokens.spacing.cardGap,
+  listHeaderSpacer: {
+    height: 4,
+  },
+  emptyCard: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 40,
+    paddingHorizontal: 28,
+    paddingVertical: 34,
+    backgroundColor: '#ffffff',
+    shadowColor: BabyCityPalette.primary,
+    shadowOpacity: 0.08,
+    shadowRadius: 28,
+    shadowOffset: { width: 0, height: 12 },
+    elevation: 4,
+  },
+  emptyIconWrap: {
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: ParentDesignTokens.surfaces.cardMuted,
+    marginBottom: 24,
+  },
+  emptyTitle: {
+    maxWidth: 260,
+  },
+  emptyBody: {
+    marginTop: 10,
+    marginBottom: 26,
+    maxWidth: 280,
+    lineHeight: 24,
+  },
+  emptyButton: {
+    minWidth: 210,
   },
 });

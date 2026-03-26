@@ -5,6 +5,8 @@ export type ParentPost = {
   parentName: string;      // joined from users
   parentCity: string;      // joined from parent_profiles (may be empty)
   parentProfilePhotoUrl?: string;
+  latitude?: number | null;
+  longitude?: number | null;
   area: string;
   date: string | null;    // 'YYYY-MM-DD'
   time: string | null;    // 'HH:mm'

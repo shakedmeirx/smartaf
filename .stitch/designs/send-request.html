@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-container": "#64042d",
+              "surface-container-high": "#d5e3ff",
+              "primary-container": "#b28cff",
+              "on-background": "#242f41",
+              "secondary": "#60586b",
+              "inverse-on-surface": "#929db4",
+              "outline-variant": "#a2adc4",
+              "on-primary-container": "#2e006c",
+              "primary-dim": "#6411d5",
+              "surface-bright": "#f4f6ff",
+              "inverse-surface": "#040e1f",
+              "secondary-fixed": "#e9def5",
+              "surface-variant": "#cdddfe",
+              "surface-tint": "#702ae1",
+              "surface-container-low": "#ecf1ff",
+              "secondary-container": "#e9def5",
+              "primary-fixed": "#b28cff",
+              "outline": "#6c778c",
+              "tertiary-fixed-dim": "#f77c9e",
+              "secondary-fixed-dim": "#dbd0e7",
+              "tertiary": "#9e3657",
+              "tertiary-container": "#ff8eac",
+              "tertiary-fixed": "#ff8eac",
+              "error-dim": "#a70138",
+              "surface-container-highest": "#cdddfe",
+              "on-tertiary-fixed-variant": "#711036",
+              "primary-fixed-dim": "#a67aff",
+              "on-primary": "#f8f0ff",
+              "on-tertiary-fixed": "#380016",
+              "error": "#b41340",
+              "on-surface": "#242f41",
+              "surface": "#f4f6ff",
+              "on-primary-fixed": "#000000",
+              "tertiary-dim": "#8e294c",
+              "surface-dim": "#c3d5f8",
+              "on-secondary-fixed-variant": "#60586b",
+              "on-error": "#ffefef",
+              "on-tertiary": "#ffeff1",
+              "surface-container": "#dee8ff",
+              "inverse-primary": "#a476ff",
+              "on-error-container": "#510017",
+              "on-surface-variant": "#515c70",
+              "on-primary-fixed-variant": "#390083",
+              "background": "#f4f6ff",
+              "primary": "#702ae1",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-container": "#564f61",
+              "on-secondary": "#f8efff",
+              "error-container": "#f74b6d",
+              "secondary-dim": "#534c5f",
+              "on-secondary-fixed": "#433c4e"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+      }
+      .primary-gradient {
+        background: linear-gradient(135deg, #702ae1 0%, #6411d5 100%);
+      }
+      body {
+        background-color: #f4f6ff;
+        font-family: 'Be Vietnam Pro', sans-serif;
+      }
+      h1, h2, h3 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f4f6ff]/80 dark:bg-slate-900/80 backdrop-blur-md">
+<div class="flex flex-row-reverse items-center justify-between px-6 h-16 w-full">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#ecf1ff] transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#7C3AED] text-2xl">arrow_forward</span>
+</button>
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold text-lg tracking-tight text-right text-on-surface">שלח בקשה</h1>
+<div class="w-10"></div> <!-- Spacer for balance -->
+</div>
+</header>
+<main class="pt-20 pb-32 px-6 max-w-md mx-auto">
+<!-- Recipient Summary Card -->
+<section class="mb-8">
+<div class="bg-surface-container-lowest rounded-lg p-5 flex items-center gap-4 shadow-[0_-8px_44px_rgba(36,47,65,0.06)]">
+<div class="relative">
+<img alt="Provider" class="w-16 h-16 rounded-full object-cover border-2 border-surface-container-low" data-alt="Young professional woman smiling warmly outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpUh-TVlQZxFQBgDCmRGFwkwGbUS765pLyxyEn_xPdD-yR7WaeOAoYgSpK1UiJtBI0ZTeCDDljoIMrfJXHJoKT-Blu1sWhij30e85Hhytpt-bm2CPntfV9G4Syjopa-k3Du3MDcFXR-zE_8XBhC6fCvuy6HKhQHwEMFLDLn6G1E-w5ezRUe567BuCSnxuk1tyodc-iKqwVJ10Oef7UqJiLkGdbyDPbVp_4_yo1cHgwmSWyYUd1NFzulqny2RtUDsczjS2gZHNK7Wb5"/>
+<div class="absolute -bottom-1 -right-1 bg-primary text-on-primary text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center">
+<span class="material-symbols-outlined text-[12px] ml-0.5" style="font-variation-settings: 'FILL' 1;">star</span>
+                        4.9
+                    </div>
+</div>
+<div class="flex-1">
+<h2 class="text-on-surface font-bold text-lg leading-tight">נועה לוי</h2>
+<div class="flex items-center text-on-surface-variant text-sm mt-1">
+<span class="material-symbols-outlined text-sm ml-1">location_on</span>
+                        תל אביב
+                    </div>
+</div>
+<div class="text-left">
+<span class="text-primary font-bold text-lg">₪55</span>
+<span class="text-on-surface-variant text-xs block">לשעה</span>
+</div>
+</div>
+</section>
+<!-- Form Area -->
+<div class="space-y-6">
+<!-- Select Child -->
+<div class="space-y-3">
+<label class="block font-bold text-on-surface text-sm pr-1">עבור מי הבקשה?</label>
+<div class="flex gap-4 overflow-x-auto py-2 no-scrollbar">
+<button class="flex flex-col items-center gap-2 min-w-[70px] active:scale-95 duration-200">
+<div class="w-14 h-14 rounded-full border-2 border-primary p-0.5 bg-white ring-4 ring-primary/10">
+<img alt="Child 1" class="w-full h-full rounded-full object-cover" data-alt="Smiling toddler boy with curly hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKEphAJTvHSB5Jg5Cx_okwTN7gRDz6zkn2sabISy-Rpul2t8CETa7u3nGTC8hL2VtuLM1Zw0W8d2viLia6E1os4R2teteFTP2rtvGTAd5zkAeGO09E4BveYBMJvgfNixAkyKnh0rGoUw4Qmck7uw1xCFcC8As0urrd2tuyULVHu-Qql8hMs3wG0oC6fTsqYlncVEL86FZIDPiLzh-aBM0K_NmDpulLS9FbWElnrHUhpYPxYbGCtKaW59SYGdGaLkqJ4dA-POi5DdSp"/>
+</div>
+<span class="text-xs font-medium text-primary">איתי</span>
+</button>
+<button class="flex flex-col items-center gap-2 min-w-[70px] opacity-50 active:scale-95 duration-200">
+<div class="w-14 h-14 rounded-full border-2 border-transparent p-0.5 bg-white">
+<img alt="Child 2" class="w-full h-full rounded-full object-cover" data-alt="Young girl with braided hair smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiFOgJ6hfCtvJpoOWIBM8DS3tcyRz7TlFeESBPr_HvUpTp1gzWboaUPr12Vzk2xfAq7MTtnE64kIwQrNmbGxHWNsAVa7r9A4sSLisq9pDSbRymU68JP1Hs352isyFvGGUTHU1P9hVHuAjt5dwW_HkqGE5MhmtuxYBYhxiYPUeOiH0iYPDFvW-l6w5AuP0JOj2u2yULPoUpUaLNynW43MSsXT4BEiAypZQyAuxsJ9CzZCasYSQYqbI7NAIo2YneLVEiskq37gc_e3uN"/>
+</div>
+<span class="text-xs font-medium">מאיה</span>
+</button>
+<button class="flex flex-col items-center gap-2 min-w-[70px] active:scale-95 duration-200">
+<div class="w-14 h-14 rounded-full border-2 border-dashed border-outline-variant flex items-center justify-center bg-surface-container">
+<span class="material-symbols-outlined text-outline">add</span>
+</div>
+<span class="text-xs font-medium text-on-surface-variant">הוספה</span>
+</button>
+</div>
+</div>
+<!-- Date & Time -->
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm">
+<label class="block text-xs font-bold text-on-surface-variant mb-2 pr-1">תאריך המפגש</label>
+<div class="flex items-center justify-between">
+<span class="text-on-surface font-medium">יום שלישי, 24 באוקטובר</span>
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm">
+<label class="block text-xs font-bold text-on-surface-variant mb-2 pr-1">שעת התחלה</label>
+<div class="flex items-center justify-between">
+<span class="text-on-surface font-medium">18:00</span>
+<span class="material-symbols-outlined text-primary text-sm">schedule</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-sm">
+<label class="block text-xs font-bold text-on-surface-variant mb-2 pr-1">שעת סיום</label>
+<div class="flex items-center justify-between">
+<span class="text-on-surface font-medium">22:00</span>
+<span class="material-symbols-outlined text-primary text-sm">autostop</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Message Field -->
+<div class="space-y-2">
+<label class="block font-bold text-on-surface text-sm pr-1">הערה אישית (אופציונלי)</label>
+<textarea class="w-full bg-surface-container-high border-none rounded-lg p-4 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all outline-none resize-none" placeholder="כתבו כאן פרטים נוספים שחשוב שנועה תדע..." rows="4"></textarea>
+</div>
+<!-- Cost Summary -->
+<div class="bg-secondary-container/30 rounded-lg p-4 flex justify-between items-center">
+<div>
+<h4 class="text-on-surface font-bold text-sm">סה"כ משוער</h4>
+<p class="text-on-surface-variant text-xs">לפי 4 שעות עבודה</p>
+</div>
+<div class="text-left">
+<span class="text-on-surface font-extrabold text-xl">₪220</span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="mt-10 space-y-4">
+<button class="w-full py-4 rounded-full primary-gradient text-on-primary font-bold text-lg shadow-lg active:scale-95 transition-transform">
+                שלח בקשה
+            </button>
+<button class="w-full py-2 text-on-surface-variant font-medium text-sm hover:text-on-surface transition-colors">
+                ביטול
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex flex-row-reverse justify-around items-center px-4 pb-6 pt-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-t-[2rem] shadow-[0_-8px_44px_rgba(36,47,65,0.06)]">
+<a class="flex flex-col items-center justify-center text-[#242f41]/60 dark:text-slate-400 px-5 py-2 hover:opacity-80 transition-opacity active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-['Be_Vietnam_Pro'] text-[12px] font-medium">חיפוש</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#242f41]/60 dark:text-slate-400 px-5 py-2 hover:opacity-80 transition-opacity active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-['Be_Vietnam_Pro'] text-[12px] font-medium">הודעות</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#7C3AED] dark:text-[#a78bfa] bg-[#e9def5] dark:bg-[#7C3AED]/20 rounded-full px-5 py-2 active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-['Be_Vietnam_Pro'] text-[12px] font-medium">בקשות</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#242f41]/60 dark:text-slate-400 px-5 py-2 hover:opacity-80 transition-opacity active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Be_Vietnam_Pro'] text-[12px] font-medium">פרופיל</span>
+</a>
+</nav>
+</body></html>

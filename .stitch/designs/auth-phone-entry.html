@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-on-surface": "#929db4",
+              "on-background": "#242f41",
+              "inverse-surface": "#040e1f",
+              "surface-container-high": "#d5e3ff",
+              "error-dim": "#a70138",
+              "inverse-primary": "#a476ff",
+              "surface-container-lowest": "#ffffff",
+              "outline-variant": "#a2adc4",
+              "error": "#b41340",
+              "secondary-dim": "#534c5f",
+              "on-primary": "#f8f0ff",
+              "on-secondary-fixed": "#433c4e",
+              "tertiary-fixed": "#ff8eac",
+              "on-secondary-fixed-variant": "#60586b",
+              "primary": "#702ae1",
+              "surface": "#f4f6ff",
+              "surface-dim": "#c3d5f8",
+              "on-primary-container": "#2e006c",
+              "on-tertiary-fixed": "#380016",
+              "on-primary-fixed": "#000000",
+              "surface-bright": "#f4f6ff",
+              "on-tertiary": "#ffeff1",
+              "surface-container-highest": "#cdddfe",
+              "secondary-fixed-dim": "#dbd0e7",
+              "primary-container": "#b28cff",
+              "on-primary-fixed-variant": "#390083",
+              "primary-fixed": "#b28cff",
+              "on-tertiary-container": "#64042d",
+              "on-error": "#ffefef",
+              "on-error-container": "#510017",
+              "surface-container": "#dee8ff",
+              "on-secondary": "#f8efff",
+              "on-secondary-container": "#564f61",
+              "surface-container-low": "#ecf1ff",
+              "on-tertiary-fixed-variant": "#711036",
+              "tertiary-container": "#ff8eac",
+              "on-surface-variant": "#515c70",
+              "tertiary-dim": "#8e294c",
+              "secondary-container": "#e9def5",
+              "primary-fixed-dim": "#a67aff",
+              "on-surface": "#242f41",
+              "secondary": "#60586b",
+              "primary-dim": "#6411d5",
+              "surface-variant": "#cdddfe",
+              "surface-tint": "#702ae1",
+              "tertiary-fixed-dim": "#f77c9e",
+              "background": "#f4f6ff",
+              "tertiary": "#9e3657",
+              "error-container": "#f74b6d",
+              "secondary-fixed": "#e9def5",
+              "outline": "#6c778c"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .signature-gradient {
+            background: linear-gradient(135deg, #702ae1 0%, #6411d5 100%);
+        }
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #f4f6ff;
+        }
+        h1, h2, .brand-text {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col items-center">
+<!-- Top Navigation Anchor (Minimal for Transactional) -->
+<header class="fixed top-0 w-full z-50 bg-[#f4f6ff]/80 backdrop-blur-md flex flex-row-reverse justify-between items-center px-6 h-16">
+<div class="brand-text text-2xl font-black text-on-surface tracking-tight">Smartaf</div>
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-on-surface" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</header>
+<main class="flex-grow w-full max-w-md px-6 pt-32 pb-12 flex flex-col">
+<!-- Editorial Header Section -->
+<div class="mb-10 text-right">
+<h1 class="text-3xl font-extrabold text-on-surface tracking-tight leading-tight mb-4">
+                הכנס את מספר הטלפון שלך
+            </h1>
+<p class="text-on-surface-variant text-lg leading-relaxed font-medium">
+                נשלח אליך קוד אימות כדי שתוכל להתחבר בצורה מאובטחת.
+            </p>
+</div>
+<!-- Central Input Area (Surface Container) -->
+<div class="bg-surface-container-low rounded-xl p-8 space-y-8 relative overflow-hidden">
+<!-- Decorative Visual Element (Subtle Glassmorphism) -->
+<div class="absolute -top-12 -left-12 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="space-y-4">
+<label class="block text-sm font-semibold text-on-surface-variant pr-1">מספר טלפון</label>
+<div class="flex gap-3 items-center">
+<!-- Country Code Field (Recessed Look) -->
+<div class="w-24 h-14 bg-surface-container-high rounded-lg flex items-center justify-center gap-2 px-3 border-2 border-transparent focus-within:border-primary focus-within:bg-surface-container-lowest transition-all duration-300">
+<span class="text-on-surface font-bold text-lg" dir="ltr">+972</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Phone Input Field (Recessed Look) -->
+<div class="flex-grow h-14 bg-surface-container-high rounded-lg flex items-center px-4 border-2 border-transparent focus-within:border-primary focus-within:bg-surface-container-lowest transition-all duration-300">
+<input class="w-full bg-transparent border-none focus:ring-0 text-xl font-bold text-on-surface placeholder:text-outline-variant/50 text-right tracking-widest" dir="ltr" placeholder="50-000-0000" type="tel"/>
+</div>
+</div>
+</div>
+<!-- Primary Action -->
+<button class="w-full signature-gradient h-16 rounded-lg text-on-primary text-xl font-bold shadow-lg shadow-primary/20 hover:opacity-90 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3">
+                שלח קוד
+                <span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</div>
+<!-- Decorative Footer Element (Trust Badge) -->
+<div class="mt-auto pt-12 flex flex-col items-center">
+<div class="flex items-center gap-2 mb-2 text-outline-variant/60">
+<span class="material-symbols-outlined text-sm" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="text-xs font-semibold tracking-wider">SECURE ENCRYPTION</span>
+</div>
+<!-- Contextual Illustration/Shape (Asymmetrical Design) -->
+<div class="relative w-full h-24 mt-4 opacity-40">
+<div class="absolute right-0 bottom-0 w-32 h-32 bg-secondary-container rounded-full -mr-16 -mb-16"></div>
+<div class="absolute left-8 top-4 w-12 h-12 bg-primary-container rounded-lg rotate-12"></div>
+<div class="absolute left-20 bottom-2 w-16 h-16 border-4 border-surface-container-highest rounded-full"></div>
+</div>
+</div>
+</main>
+<!-- Visual Identity Background Layers -->
+<div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-surface-container rounded-full blur-[120px] opacity-50"></div>
+<div class="absolute bottom-[-5%] right-[-5%] w-[30%] h-[30%] bg-secondary-container rounded-full blur-[100px] opacity-30"></div>
+</div>
+</body></html>

@@ -13,6 +13,9 @@ export default function HintText({ text }: Props) {
 const styles = StyleSheet.create({
   hint: {
     marginTop: 0,
-    marginBottom: 12,
+    marginBottom: 14,
+    paddingHorizontal: 4,
+    fontSize: 13,
+    lineHeight: 20,
   },
 });

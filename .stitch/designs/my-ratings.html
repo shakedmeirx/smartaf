@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary": "#ffeff1",
+              "surface-dim": "#c3d5f8",
+              "on-tertiary-fixed-variant": "#711036",
+              "surface-tint": "#702ae1",
+              "surface-container": "#dee8ff",
+              "on-error-container": "#510017",
+              "on-error": "#ffefef",
+              "tertiary-dim": "#8e294c",
+              "primary-dim": "#6411d5",
+              "error-container": "#f74b6d",
+              "surface-container-low": "#ecf1ff",
+              "secondary-fixed-dim": "#dbd0e7",
+              "surface": "#f4f6ff",
+              "error-dim": "#a70138",
+              "on-primary-fixed": "#000000",
+              "outline": "#6c778c",
+              "tertiary-fixed-dim": "#f77c9e",
+              "primary": "#702ae1",
+              "surface-container-lowest": "#ffffff",
+              "outline-variant": "#a2adc4",
+              "on-secondary-fixed-variant": "#60586b",
+              "secondary-fixed": "#e9def5",
+              "inverse-on-surface": "#929db4",
+              "on-primary-fixed-variant": "#390083",
+              "surface-variant": "#cdddfe",
+              "tertiary-container": "#ff8eac",
+              "inverse-primary": "#a476ff",
+              "surface-bright": "#f4f6ff",
+              "secondary-dim": "#534c5f",
+              "on-surface-variant": "#515c70",
+              "tertiary": "#9e3657",
+              "on-background": "#242f41",
+              "surface-container-high": "#d5e3ff",
+              "on-surface": "#242f41",
+              "on-secondary": "#f8efff",
+              "on-secondary-container": "#564f61",
+              "secondary": "#60586b",
+              "primary-container": "#b28cff",
+              "on-secondary-fixed": "#433c4e",
+              "tertiary-fixed": "#ff8eac",
+              "secondary-container": "#e9def5",
+              "primary-fixed-dim": "#a67aff",
+              "primary-fixed": "#b28cff",
+              "on-tertiary-fixed": "#380016",
+              "error": "#b41340",
+              "background": "#f4f6ff",
+              "on-primary": "#f8f0ff",
+              "inverse-surface": "#040e1f",
+              "on-tertiary-container": "#64042d",
+              "on-primary-container": "#2e006c",
+              "surface-container-highest": "#cdddfe"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #f4f6ff;
+            color: #242f41;
+        }
+        h1, h2, h3 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/80 backdrop-blur-xl shadow-sm">
+<div class="flex flex-row-reverse justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4 flex-row-reverse">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100/50 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-violet-700">arrow_forward</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight text-on-surface">הדירוגים שלי</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high">
+<img alt="User avatar" data-alt="Professional user profile picture woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqaoQrMSvFQ06P6I7IbNxQiuDD9ylqVNe1tsT_IUcElPKXFZhZCNyg2ijRZd_HKxAGksXnhsSWtFx5zmKBxSN5Ss9eLh1qppuOALbVp3eW7s31wvhq2NLA9zv1SW_C7gl1bvo0HRrQ7PXgFGKhitOY1Fju4B1KlvohJIRG1rLV4ESd-xZKd-wgvQrlNMl5sE201PUmanNBC3vc4qxx8Czams9dTZw7FgE7e0aNu6vw95QVMXi0xC9G9WzGttnjaP12p633albJiqlm"/>
+</div>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-2xl mx-auto space-y-8">
+<!-- Summary Section -->
+<section class="bg-surface-container-lowest rounded-lg p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+<div class="flex flex-col items-center text-center relative z-10">
+<div class="text-5xl font-extrabold text-on-surface tracking-tighter mb-2">4.9</div>
+<div class="flex gap-1 mb-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+<p class="text-on-surface-variant font-medium">מבוסס על 28 חוות דעת</p>
+<div class="w-full mt-6 space-y-2">
+<div class="flex items-center gap-4 flex-row-reverse">
+<span class="text-xs font-bold text-on-surface w-4">5</span>
+<div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[85%]"></div>
+</div>
+</div>
+<div class="flex items-center gap-4 flex-row-reverse">
+<span class="text-xs font-bold text-on-surface w-4">4</span>
+<div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[12%]"></div>
+</div>
+</div>
+<div class="flex items-center gap-4 flex-row-reverse">
+<span class="text-xs font-bold text-on-surface w-4">3</span>
+<div class="flex-1 h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[3%]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Filtering -->
+<section class="flex flex-row-reverse gap-3 overflow-x-auto pb-2 no-scrollbar">
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-primary text-on-primary font-semibold text-sm shadow-md transition-all active:scale-95">הכל</button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-surface-container-lowest text-on-surface-variant font-medium text-sm hover:bg-white transition-all active:scale-95">הכי חדשים</button>
+<button class="whitespace-nowrap px-6 py-2.5 rounded-full bg-surface-container-lowest text-on-surface-variant font-medium text-sm hover:bg-white transition-all active:scale-95">הכי גבוהים</button>
+</section>
+<!-- Review List -->
+<section class="space-y-6">
+<!-- Review Card 1 -->
+<article class="bg-surface-container-lowest rounded-lg p-6 relative transition-transform hover:translate-y-[-2px] duration-300">
+<div class="flex flex-row-reverse gap-4 mb-4">
+<div class="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/10">
+<img alt="Michal Cohen" data-alt="Smiling portrait of Michal Cohen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX-afHcPohSAZIBEm0MWgnos978f5U_RoxXCvZh8s5cRPrHg5MmAR0G-pSP85YZOp_DXRi9JX1K2QK1yE5BUAKWyJa2JjGIZ2DZ7bwX-3iEo-26mjsYQvBdgbswBojphZiDmgMpNDcbU3IpCZXPniZ5EJHfh2RkoQ6zwNC5TMUGxXBw2cjjzQkoSExpS4eogPkvm1k67qm76xGtLo8M3aPzQKz-UxFtxrUXKIEeMS2Y20gOxdL-zb4JPRNkhwBiuDWvLrq6ystf6yB"/>
+</div>
+<div class="flex-1 text-right">
+<h3 class="font-bold text-on-surface text-lg">מיכל כהן</h3>
+<p class="text-xs text-outline font-medium">15 באוקטובר 2023</p>
+<div class="flex flex-row-reverse gap-0.5 mt-1">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant leading-relaxed text-right">
+                    מטפלת מדהימה, סבלנית מאוד עם הילדים. ממליצה בחום! הילדים תמיד מחכים שהיא תגיע והיא מעבירה להם פעילויות יצירתיות ומעשירות.
+                </p>
+</article>
+<!-- Review Card 2 -->
+<article class="bg-surface-container-lowest rounded-lg p-6 relative transition-transform hover:translate-y-[-2px] duration-300">
+<div class="flex flex-row-reverse gap-4 mb-4">
+<div class="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/10">
+<img alt="Yossi Levy" data-alt="Portrait of a smiling young father" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUEXcwr9WB3CHBLv9E6FgG-HYmWwqp8X2sArAn4mCtTVPiLwZ5k9A1sq0rfkhB_7s36HsrIa83_Ca1CNsnlpLaeV91_a8705X85Xw27A3D6BY8aw-nlXj-YKaOvsu5KCkp8JJbTXYDYx4edn2d_oraMK1nIt2lov6NCEUvlUiUy1WzQfWUpKE41RBpA_ns1ry3zzYQ734c8ZJVTJ7vzTrASe0VtpL0c3ll2vK8wV4KWjA0sibDNpseT8g3J0txrAwfZ7ZX2IqjmNqp"/>
+</div>
+<div class="flex-1 text-right">
+<h3 class="font-bold text-on-surface text-lg">יוסי לוי</h3>
+<p class="text-xs text-outline font-medium">2 בנובמבר 2023</p>
+<div class="flex flex-row-reverse gap-0.5 mt-1">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant text-lg">star</span>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant leading-relaxed text-right">
+                    שירות מצוין, מאוד אחראית ומדייקת. היה לנו ראש שקט כשהיינו מחוץ לבית. בהחלט נזמין שוב.
+                </p>
+</article>
+<!-- Review Card 3 -->
+<article class="bg-surface-container-lowest rounded-lg p-6 relative transition-transform hover:translate-y-[-2px] duration-300">
+<div class="flex flex-row-reverse gap-4 mb-4">
+<div class="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/10">
+<img alt="Dana Ron" data-alt="Portrait of a young professional woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCim48kJdT8NVZcTTxtEYuNZilacCgfvHDrpx6fmeLEJJzY4sthg1glncmo41BrXO4kawyRUVaNS8XNZ22UdtrVYAxgdvTZJNho_OeRuxkJy7RI00LPwMpTddlpNPi8q0b7xkzqm1CV0AaC3Ozycs3MJySznRZufl9TpkcsJq9UGGJ-kJ5j0OGMRrc6lOZnnQwkx5mUHP1fghRbLVY6G92jq8Zq9XZBtM5NUOST8eP-F8i1V5oMvFnNTgSawdOFemoMtwSA6YM6MdH"/>
+</div>
+<div class="flex-1 text-right">
+<h3 class="font-bold text-on-surface text-lg">דנה רון</h3>
+<p class="text-xs text-outline font-medium">10 בנובמבר 2023</p>
+<div class="flex flex-row-reverse gap-0.5 mt-1">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant leading-relaxed text-right">
+                    מקצוענית אמיתית. רואים שיש לה המון ניסיון והיא מתחברת לילדים בשניות. תודה רבה!
+                </p>
+</article>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full rounded-t-[2.5rem] z-50 bg-white/90 backdrop-blur-2xl shadow-[0_-8px_30px_rgb(0,0,0,0.06)] border-t border-slate-200/15">
+<div class="flex flex-row-reverse justify-around items-center w-full px-4 pb-6 pt-3">
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-violet-500 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">search</span>
+<span class="text-xs font-medium font-['Be_Vietnam_Pro']">חיפוש</span>
+</a>
+<a class="flex flex-col items-center justify-center text-violet-700 bg-violet-50 rounded-2xl px-5 py-2 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-medium font-['Be_Vietnam_Pro']">דירוגים</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-violet-500 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">chat_bubble</span>
+<span class="text-xs font-medium font-['Be_Vietnam_Pro']">הודעות</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 px-5 py-2 hover:text-violet-500 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="text-xs font-medium font-['Be_Vietnam_Pro']">פרופיל</span>
+</a>
+</div>
+</nav>
+</body></html>

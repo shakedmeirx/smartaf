@@ -1,34 +1,61 @@
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { strings } from '@/locales';
+import { useAuth } from '@/context/AuthContext';
 import {
-  BabyCityGeometry,
   BabyCityPalette,
   BabyCityShadows,
 } from '@/constants/theme';
 import AppText from '@/components/ui/AppText';
+import SmartafWordmark from '@/components/ui/SmartafWordmark';
 
 const HERO_IMAGE_URL =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDa77M3mrrq1ChzWfc4doLm_96u74LHCnT1KoZTaZJwt2j4viX9ljK87gigVmv2qFeyJu28bJ2pZp4phbGSiGG7oKN6_nhAf7gYy15nXZBeHqDtaiiB0ZIHS4RJP6jDZUz22crMR5bIdu_33X4cxWFekZE3yQniOTr9zk3gduoBaSeNkerU5gJ7PRD-45cf4-ZRztsC5-ymy1BcvSzO2yWIhnLNS2NicDgdMgMWSIqlXBfbhl68vKZX5-BaI9Jxi1hlQwAMYMVVNUFp';
-
-const SOCIAL_PROOF_AVATARS = [
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuCFWRFrYQlCYvwwuvkMm4cJXQSaL51bK4nMDy2Mzc8eI1cRtCMtacTKicSD3OjH0UEZAX_sSjCQZopC15rmi7OfpV_63OVU7sZlORwDYyIG2UkO05kJzlVswerDXXQHwa2dEgGCmxTYtKPlSCWLfxdvvb6VDd63wS0N_pMAcWhtDLpo5qh34yv9POGufReSz2wiyqe-FcS_umdN8oG-ykIpmdmmUJNOq51r8bq--ELfZgPGJjyUr4xA7W-UxJB0l2Qnv3IFeivRXHeP',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBg3omT9gk1KeJQWBkLyUOPAkP_727811xj79lBDcE4batU4M5EQ1GFdDqbJKknWPEZbWSQ0HSWHacPKeLoCxy3HKemiRGzYWfQ4lSDkafzBnAQrIPtAn7LxSVntaZ6O31BaAUQwpbDEAREroKZLyhPcE-dPoQofSpqds7yU_ooSEdv9M0vW9eLtGhdRMEFk5XkSi9SRgtOWENdulgYs94ZFiCXIxn48jeolxlQC6Y8l-8_Y5e3L8WGaibBaEH0VpmChBygl2Hr_wcX',
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAAer5Nml7VFmRJpAoc1NAtneSlOl-iJH8VRWyTOAOQOAP-KPiICTvaZGSCLJ9d7CyNGKoXXSPsfw7TR8dVEE07qg5xZrpt5z3zaXJl33N9V4vDZFNLoMcmWz7Nfv-nVvBnCmdP9RT5HH6DxBOPBKcP7nWtE_Fh_PGtFrFcVErGut6yS5CrQhoZdUbEBxGqUk2LdLPJTrH9MiiC9EhudWlMqC25rwY1eAyJ-l1_ruQqZMvqDqLEs5bywOg2-7SHJC29K6o-0Y9AbNGP',
-] as const;
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDDjLoJaZF8Rnq81jFHFA1sWD-nn88luWiYrtBrmLNrsJHPRZ9cS8nKIK52Zy5JyIKSu_v6bjcgJvpVpCsY8uaD21P7mbN9Hhkvj-TnqNNjdJD2PMF2GKTNLDx0st2M42Zv8YkQvCEedyc6SieiHkOzfSBfmHQYhqvVv5aZ0r4OZ7X2PO37tujBOW8pIXG44mQH9EgAs0EgbwqIVPEBt_Fe-d_1mKsWRxKqYM2goPePqbu1Ns7zdWrqVjNe24ZYbrwJeas4cJBZZt_R';
 
 export default function WelcomeScreen() {
+  const { signInWithApple, signInWithGoogle } = useAuth();
+  const [socialLoading, setSocialLoading] = useState<'google' | 'apple' | null>(null);
+  const [socialError, setSocialError] = useState('');
   const footerLinks = [
-    strings.authWelcomeTerms,
-    strings.authWelcomePrivacy,
-    strings.authWelcomeContact,
+    {
+      label: strings.authWelcomeTerms,
+      onPress: () => router.push('/legal-terms?origin=welcome'),
+    },
+    {
+      label: strings.authWelcomePrivacy,
+      onPress: () => router.push('/legal-privacy?origin=welcome'),
+    },
+    {
+      label: strings.authWelcomeContact,
+      onPress: () => router.push('/legal-contact?origin=welcome'),
+    },
   ];
 
   function handleContinue() {
     router.push('/auth');
+  }
+
+  async function handleSocialSignIn(provider: 'google' | 'apple') {
+    if (socialLoading) return;
+
+    setSocialError('');
+    setSocialLoading(provider);
+
+    try {
+      if (provider === 'google') {
+        await signInWithGoogle();
+      } else {
+        await signInWithApple();
+      }
+    } catch {
+      setSocialError(strings.authErrorGeneric);
+    } finally {
+      setSocialLoading(null);
+    }
   }
 
   return (
@@ -44,17 +71,7 @@ export default function WelcomeScreen() {
       >
         <View style={styles.topBar}>
           <View style={styles.brandRow}>
-            <AppText variant="bodyLarge" weight="800" style={styles.brandName}>
-              {strings.authBrandName}
-            </AppText>
-            <LinearGradient
-              colors={[BabyCityPalette.primary, '#6411d5']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.brandMark}
-            >
-              <MaterialIcons name="child-care" size={20} color="#ffffff" />
-            </LinearGradient>
+            <SmartafWordmark size="sm" textColor={BabyCityPalette.textPrimary} />
           </View>
 
           <TouchableOpacity activeOpacity={0.8} style={styles.languageButton}>
@@ -64,123 +81,116 @@ export default function WelcomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Hero image */}
-        <View style={styles.heroImageWrap}>
+        <View style={styles.heroBanner}>
           <Image
             source={{ uri: HERO_IMAGE_URL }}
             style={styles.heroImage}
             resizeMode="cover"
           />
-          {/* Floating badge */}
-          <View style={styles.heroBadge}>
-            <LinearGradient
-              colors={[BabyCityPalette.primary, '#6411d5']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.heroBadgeIcon}
-            >
-              <MaterialIcons name="favorite" size={20} color="#ffffff" />
-            </LinearGradient>
-            <View style={styles.heroBadgeText}>
-              <AppText variant="body" weight="700" style={styles.heroBadgeTitle}>
-                {strings.authWelcomeHeroBadgeTitle}
-              </AppText>
-              <AppText variant="caption" tone="muted" style={styles.heroBadgeSubtitle}>
-                {strings.authWelcomeHeroBadgeSubtitle}
-              </AppText>
-            </View>
-          </View>
+          <LinearGradient
+            colors={['rgba(248,250,255,0)', 'rgba(248,250,255,0.2)', '#f8faff']}
+            locations={[0, 0.52, 1]}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            style={styles.heroOverlay}
+          />
         </View>
 
-        <View style={styles.heroSection}>
-          <View style={styles.heroGlowTop} />
-          <View style={styles.heroGlowBottom} />
-
-          <AppText variant="h1" weight="800" style={styles.heroLead}>
-            {strings.authWelcomeHeadlineLead}
-          </AppText>
-          <AppText variant="h1" weight="800" style={styles.heroAccent}>
-            {strings.authWelcomeHeadlineAccent}
-          </AppText>
-          <AppText variant="bodyLarge" weight="500" style={styles.heroBody}>
-            {strings.authWelcomeBody}
-          </AppText>
-        </View>
-
-        <View style={styles.actionCard}>
-          <TouchableOpacity
-            activeOpacity={0.88}
-            onPress={handleContinue}
-            style={styles.primaryButtonShadow}
-          >
-            <LinearGradient
-              colors={[BabyCityPalette.primary, '#6411d5']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.primaryButton}
-            >
-              <AppText variant="bodyLarge" weight="700" style={styles.primaryButtonText}>
-                {strings.authWelcomePrimaryAction}
-              </AppText>
-              <MaterialIcons name="arrow-back" size={20} color="#ffffff" />
-            </LinearGradient>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            activeOpacity={0.88}
-            onPress={handleContinue}
-            style={styles.secondaryButton}
-          >
-            <AppText variant="bodyLarge" weight="700" style={styles.secondaryButtonText}>
-              {strings.authWelcomeSecondaryAction}
+        <View style={styles.contentStage}>
+          <View style={styles.heroSection}>
+            <AppText variant="h1" weight="800" align="center" style={styles.heroLead}>
+              {strings.authWelcomeHeadlineLead}
             </AppText>
-          </TouchableOpacity>
-
-          <View style={styles.dividerRow}>
-            <View style={styles.dividerLine} />
-            <AppText variant="caption" tone="muted" style={styles.dividerText}>
-              {strings.authWelcomeDivider}
+            <AppText variant="h1" weight="800" align="center" style={styles.heroAccent}>
+              {strings.authWelcomeHeadlineAccent}
             </AppText>
-            <View style={styles.dividerLine} />
+            <AppText variant="bodyLarge" weight="500" align="center" style={styles.heroBody}>
+              {strings.authWelcomeBody}
+            </AppText>
           </View>
 
-          <View style={styles.socialGrid}>
-            <TouchableOpacity activeOpacity={0.88} style={styles.socialGoogleButton}>
-              <Ionicons name="logo-google" size={18} color={BabyCityPalette.textPrimary} />
-              <AppText variant="body" weight="600" style={styles.socialGoogleText}>
-                {'Google'}
+          <View style={styles.actionCard}>
+            <TouchableOpacity
+              activeOpacity={0.88}
+              onPress={handleContinue}
+              style={styles.primaryButtonShadow}
+            >
+              <LinearGradient
+                colors={['#7c3aed', '#6d28d9']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.primaryButton}
+              >
+                <AppText variant="bodyLarge" weight="800" style={styles.primaryButtonText}>
+                  {strings.authWelcomePrimaryAction}
+                </AppText>
+                <MaterialIcons name="arrow-back" size={20} color="#ffffff" />
+              </LinearGradient>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.88}
+              onPress={handleContinue}
+              style={styles.secondaryButton}
+            >
+              <AppText variant="bodyLarge" weight="700" style={styles.secondaryButtonText}>
+                {strings.authWelcomeSecondaryAction}
               </AppText>
             </TouchableOpacity>
 
-            <TouchableOpacity activeOpacity={0.88} style={styles.socialAppleButton}>
-              <Ionicons name="logo-apple" size={18} color="#ffffff" />
-              <AppText variant="body" weight="600" style={styles.socialAppleText}>
-                {'Apple'}
+            <View style={styles.dividerRow}>
+              <View style={styles.dividerLine} />
+              <AppText variant="caption" tone="muted" style={styles.dividerText}>
+                {strings.authWelcomeDivider}
               </AppText>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.socialProof}>
-          <View style={styles.avatarCluster}>
-            {SOCIAL_PROOF_AVATARS.map((uri, index) => (
-              <Image
-                key={uri}
-                source={{ uri }}
-                style={[styles.avatar, { marginLeft: index === 0 ? 0 : -12 }]}
-                resizeMode="cover"
-              />
-            ))}
-            <View style={[styles.avatar, styles.avatarBadge]}>
-              <AppText variant="caption" weight="700" style={styles.avatarBadgeText}>
-                {'+15K'}
-              </AppText>
+              <View style={styles.dividerLine} />
             </View>
+
+            <View style={styles.socialGrid}>
+              <TouchableOpacity
+                activeOpacity={0.88}
+                style={styles.socialGoogleButton}
+                onPress={() => void handleSocialSignIn('google')}
+                disabled={socialLoading !== null}
+              >
+                {socialLoading === 'google' ? (
+                  <ActivityIndicator color={BabyCityPalette.textPrimary} />
+                ) : (
+                  <>
+                    <Ionicons name="logo-google" size={18} color={BabyCityPalette.textPrimary} />
+                    <AppText variant="body" weight="600" style={styles.socialGoogleText}>
+                      {'Google'}
+                    </AppText>
+                  </>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.88}
+                style={styles.socialAppleButton}
+                onPress={() => void handleSocialSignIn('apple')}
+                disabled={socialLoading !== null}
+              >
+                {socialLoading === 'apple' ? (
+                  <ActivityIndicator color="#ffffff" />
+                ) : (
+                  <>
+                    <Ionicons name="logo-apple" size={18} color="#ffffff" />
+                    <AppText variant="body" weight="600" style={styles.socialAppleText}>
+                      {'Apple'}
+                    </AppText>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            {socialError ? (
+              <AppText variant="body" tone="error" align="center" style={styles.socialErrorText}>
+                {socialError}
+              </AppText>
+            ) : null}
           </View>
 
-          <AppText variant="caption" weight="500" align="center" style={styles.socialProofText}>
-            {strings.authWelcomeSocialProof}
-          </AppText>
         </View>
 
         <View style={styles.featureRow}>
@@ -198,7 +208,7 @@ export default function WelcomeScreen() {
             </View>
           </View>
 
-          <View style={styles.featureCard}>
+          <View style={[styles.featureCard, styles.featureCardAlt]}>
             <View style={[styles.featureCardIcon, styles.featureCardIconAlt]}>
               <MaterialIcons name="near-me" size={24} color={BabyCityPalette.onSecondaryContainer} />
             </View>
@@ -215,10 +225,10 @@ export default function WelcomeScreen() {
 
         <View style={styles.footer}>
           <View style={styles.footerLinks}>
-            {footerLinks.map((label) => (
-              <TouchableOpacity key={label} activeOpacity={0.8}>
+            {footerLinks.map((link) => (
+              <TouchableOpacity key={link.label} activeOpacity={0.8} onPress={link.onPress}>
                 <AppText variant="caption" tone="muted" style={styles.footerLinkText}>
-                  {label}
+                  {link.label}
                 </AppText>
               </TouchableOpacity>
             ))}
@@ -236,153 +246,101 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: BabyCityPalette.surface,
+    backgroundColor: '#f8faff',
   },
   backgroundLayer: {
     ...StyleSheet.absoluteFillObject,
   },
   backgroundBlobTop: {
     position: 'absolute',
-    top: -60,
-    left: -60,
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: 'rgba(178, 140, 255, 0.18)',
+    top: 156,
+    left: -82,
+    width: 228,
+    height: 228,
+    borderRadius: 114,
+    backgroundColor: 'rgba(178, 140, 255, 0.09)',
   },
   backgroundBlobBottom: {
     position: 'absolute',
-    bottom: -40,
-    right: -30,
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: 'rgba(233, 222, 245, 0.42)',
+    bottom: 150,
+    right: -68,
+    width: 214,
+    height: 214,
+    borderRadius: 107,
+    backgroundColor: 'rgba(233, 222, 245, 0.18)',
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 12,
+    paddingTop: 10,
     paddingBottom: 32,
   },
   topBar: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 28,
+    marginBottom: 2,
   },
   brandRow: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: 10,
-  },
-  brandName: {
-    color: BabyCityPalette.textPrimary,
-    fontSize: 26,
-    letterSpacing: -0.6,
-  },
-  brandMark: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...BabyCityShadows.soft,
   },
   languageButton: {
-    paddingHorizontal: 6,
+    paddingHorizontal: 4,
     paddingVertical: 6,
   },
   languageText: {
     color: BabyCityPalette.primary,
   },
-  heroImageWrap: {
+  heroBanner: {
     position: 'relative',
-    borderRadius: 32,
+    height: 332,
+    marginHorizontal: -24,
     overflow: 'hidden',
-    aspectRatio: 4 / 3,
-    marginBottom: 20,
-    ...BabyCityShadows.elevated,
   },
   heroImage: {
     width: '100%',
     height: '100%',
   },
-  heroBadge: {
-    position: 'absolute',
-    bottom: 14,
-    right: 14,
-    left: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.88)',
-    borderRadius: 18,
-    flexDirection: 'row-reverse',
+  heroOverlay: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  contentStage: {
+    marginTop: -58,
     alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  heroBadgeIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  heroBadgeText: {
-    flex: 1,
-    alignItems: 'flex-end',
-  },
-  heroBadgeTitle: {
-    color: BabyCityPalette.textPrimary,
-  },
-  heroBadgeSubtitle: {
-    textAlign: 'right',
+    gap: 18,
   },
   heroSection: {
-    position: 'relative',
-    alignItems: 'flex-end',
-    marginBottom: 36,
-    paddingTop: 12,
-  },
-  heroGlowTop: {
-    position: 'absolute',
-    top: -26,
-    right: -18,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: 'rgba(178, 140, 255, 0.2)',
-  },
-  heroGlowBottom: {
-    position: 'absolute',
-    bottom: -34,
-    left: 0,
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: 'rgba(233, 222, 245, 0.34)',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 10,
   },
   heroLead: {
-    textAlign: 'right',
-    color: BabyCityPalette.textPrimary,
+    color: '#1e293b',
+    fontSize: 31,
+    lineHeight: 37,
   },
   heroAccent: {
-    textAlign: 'right',
-    color: BabyCityPalette.primary,
-    marginTop: 4,
+    color: '#7c3aed',
+    fontSize: 31,
+    lineHeight: 37,
+    marginTop: 1,
   },
   heroBody: {
-    textAlign: 'right',
     color: BabyCityPalette.textSecondary,
-    marginTop: 12,
-    maxWidth: 290,
-    lineHeight: 28,
+    marginTop: 14,
+    maxWidth: 292,
+    lineHeight: 25,
   },
   actionCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 26,
-    padding: 24,
-    gap: 16,
-    ...BabyCityShadows.editorial,
+    width: '100%',
+    backgroundColor: 'rgba(255,255,255,0.84)',
+    borderRadius: 28,
+    paddingHorizontal: 20,
+    paddingVertical: 22,
+    gap: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.7)',
+    ...BabyCityShadows.elevated,
   },
   primaryButtonShadow: {
     shadowColor: BabyCityPalette.primary,
@@ -392,9 +350,9 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   primaryButton: {
-    minHeight: 56,
-    borderRadius: 16,
-    flexDirection: 'row',
+    minHeight: 54,
+    borderRadius: 999,
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
@@ -403,17 +361,17 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
   secondaryButton: {
-    minHeight: 56,
-    borderRadius: 16,
-    backgroundColor: BabyCityPalette.secondaryContainer,
+    minHeight: 54,
+    borderRadius: 999,
+    backgroundColor: '#f1f5ff',
     alignItems: 'center',
     justifyContent: 'center',
   },
   secondaryButtonText: {
-    color: BabyCityPalette.onSecondaryContainer,
+    color: '#1e293b',
   },
   dividerRow: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     gap: 12,
   },
@@ -424,19 +382,20 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     color: BabyCityPalette.textSecondary,
+    letterSpacing: 0.4,
   },
   socialGrid: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     gap: 12,
   },
   socialGoogleButton: {
     flex: 1,
-    minHeight: 56,
-    borderRadius: 16,
+    minHeight: 54,
+    borderRadius: 999,
     borderWidth: 1,
     borderColor: 'rgba(162, 173, 196, 0.18)',
-    backgroundColor: BabyCityPalette.surfaceLow,
-    flexDirection: 'row',
+    backgroundColor: BabyCityPalette.surfaceLowest,
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
@@ -446,10 +405,10 @@ const styles = StyleSheet.create({
   },
   socialAppleButton: {
     flex: 1,
-    minHeight: 56,
-    borderRadius: 16,
-    backgroundColor: BabyCityPalette.textPrimary,
-    flexDirection: 'row',
+    minHeight: 54,
+    borderRadius: 999,
+    backgroundColor: '#000000',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
@@ -457,86 +416,67 @@ const styles = StyleSheet.create({
   socialAppleText: {
     color: '#ffffff',
   },
-  socialProof: {
-    alignItems: 'center',
-    marginTop: 36,
-    gap: 14,
-  },
-  avatarCluster: {
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 4,
-    borderColor: BabyCityPalette.surface,
-    backgroundColor: BabyCityPalette.surfaceContainer,
-  },
-  avatarBadge: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: BabyCityPalette.primaryContainer,
-  },
-  avatarBadgeText: {
-    color: '#2e006c',
-  },
-  socialProofText: {
-    maxWidth: 280,
-    color: BabyCityPalette.textSecondary,
-    lineHeight: 20,
+  socialErrorText: {
+    marginTop: 2,
   },
   featureRow: {
-    gap: 10,
-    marginTop: 32,
+    flexDirection: 'row-reverse',
+    gap: 12,
+    marginTop: 48,
   },
   featureCard: {
-    backgroundColor: BabyCityPalette.surfaceLowest,
-    borderRadius: 20,
-    padding: 16,
-    flexDirection: 'row-reverse',
+    flex: 1,
+    backgroundColor: 'rgba(238,231,255,0.42)',
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
+    gap: 10,
+    minHeight: 160,
     alignItems: 'center',
-    gap: 14,
-    ...BabyCityShadows.soft,
+  },
+  featureCardAlt: {
+    backgroundColor: 'rgba(255,255,255,0.52)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.5)',
   },
   featureCardIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    backgroundColor: BabyCityPalette.surfaceLow,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: BabyCityPalette.surfaceLowest,
     alignItems: 'center',
     justifyContent: 'center',
   },
   featureCardIconAlt: {
-    backgroundColor: BabyCityPalette.secondaryContainer,
+    backgroundColor: BabyCityPalette.surfaceLowest,
   },
   featureCardText: {
-    flex: 1,
-    alignItems: 'flex-end',
+    alignItems: 'center',
     gap: 3,
   },
   featureTitle: {
     color: BabyCityPalette.textPrimary,
-    textAlign: 'right',
+    textAlign: 'center',
   },
   featureBody: {
     lineHeight: 20,
-    textAlign: 'right',
+    textAlign: 'center',
   },
   footer: {
-    marginTop: 36,
+    marginTop: 26,
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
+    paddingBottom: 2,
   },
   footerLinks: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: BabyCityGeometry.spacing.lg,
+    gap: 22,
   },
   footerLinkText: {
-    color: BabyCityPalette.textSecondary,
+    color: BabyCityPalette.primary,
+    textDecorationLine: 'underline',
   },
   footerCopy: {
     color: BabyCityPalette.textSecondary,

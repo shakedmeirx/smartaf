@@ -45,6 +45,19 @@ function formatPostTime(value: string | null) {
   return hours && minutes ? `${hours}:${minutes}` : value;
 }
 
+function formatCreatedAt(value: string) {
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed.toLocaleDateString('he-IL', {
+    day: 'numeric',
+    month: 'short',
+  });
+}
+
 function softWrapLongTokens(value: string) {
   return value.replace(/\S{18,}/g, token => token.replace(/(.{12})/g, '$1\u200B'));
 }
@@ -57,6 +70,7 @@ export default function ParentOwnedPostCard({
   onToggleActive,
   onDelete,
 }: Props) {
+  const createdAtLabel = formatCreatedAt(post.createdAt);
   const metaChips = [
     post.area
       ? {
@@ -90,34 +104,48 @@ export default function ParentOwnedPostCard({
           icon: 'people-outline' as const,
         }
       : null,
-  ].filter(Boolean) as Array<{
+  ].filter(Boolean) as {
     key: string;
     label: string;
     tone: 'muted' | 'primary';
     icon: keyof typeof Ionicons.glyphMap;
-  }>;
+  }[];
 
   return (
     <TouchableOpacity activeOpacity={onPress ? 0.94 : 1} onPress={onPress} disabled={!onPress}>
-      <AppCard role="parent" variant={mode === 'management' ? 'list' : 'panel'} style={styles.card}>
+      <AppCard
+        role="parent"
+        variant="panel"
+        backgroundColor={mode === 'management' ? ParentDesignTokens.surfaces.cardMuted : '#ffffff'}
+        borderColor={mode === 'management' ? 'rgba(205,221,254,0.55)' : 'rgba(224,232,246,0.85)'}
+        style={[styles.card, mode === 'management' && styles.managementCard]}
+      >
+        {mode === 'management' ? <View style={styles.managementAccentBar} /> : null}
+
         <View style={styles.header}>
-          <View style={styles.headerMain}>
+          <View style={styles.headerCopy}>
+            {createdAtLabel ? (
+              <AppText variant="caption" tone="muted" style={styles.createdAt}>
+                {createdAtLabel}
+              </AppText>
+            ) : null}
             <AppText numberOfLines={3} variant="h3" weight="800" style={styles.title}>
               {softWrapLongTokens(post.note || strings.familyFeedNoteEmpty)}
             </AppText>
-            <View style={styles.headerBadges}>
-              <StatusBadge
-                label={post.isActive ? strings.myPostsActive : strings.myPostsInactive}
-                status={post.isActive ? 'active' : 'draft'}
-              />
-            </View>
           </View>
 
-          {mode === 'management' && onDelete ? (
-            <TouchableOpacity onPress={onDelete} style={styles.iconAction} activeOpacity={0.8}>
-              <Ionicons name="trash-outline" size={18} color={BabyCityPalette.error} />
-            </TouchableOpacity>
-          ) : null}
+          <View style={styles.headerActions}>
+            <StatusBadge
+              label={post.isActive ? strings.myPostsActive : strings.myPostsInactive}
+              status={post.isActive ? 'active' : 'draft'}
+              style={styles.statusBadge}
+            />
+            {mode === 'management' && onDelete ? (
+              <TouchableOpacity onPress={onDelete} style={styles.iconAction} activeOpacity={0.8}>
+                <Ionicons name="trash-outline" size={18} color={BabyCityPalette.error} />
+              </TouchableOpacity>
+            ) : null}
+          </View>
         </View>
 
         {metaChips.length > 0 ? (
@@ -179,21 +207,46 @@ export default function ParentOwnedPostCard({
 const styles = StyleSheet.create({
   card: {
     width: '100%',
+    overflow: 'hidden',
+  },
+  managementCard: {
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   header: {
     flexDirection: 'row-reverse',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     gap: 12,
+    marginBottom: 4,
   },
-  headerMain: {
+  managementAccentBar: {
+    position: 'absolute',
+    right: 0,
+    top: 18,
+    bottom: 18,
+    width: 5,
+    borderRadius: 999,
+    backgroundColor: BabyCityPalette.primary,
+  },
+  headerCopy: {
     flex: 1,
     alignItems: 'flex-end',
+  },
+  createdAt: {
+    marginBottom: 6,
   },
   title: {
     width: '100%',
     lineHeight: 25,
     color: ParentDesignTokens.text.primary,
+  },
+  headerActions: {
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+  statusBadge: {
+    alignSelf: 'flex-end',
   },
   headerBadges: {
     flexDirection: 'row-reverse',
@@ -202,10 +255,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   iconAction: {
-    width: 42,
-    height: 42,
+    width: 40,
+    height: 40,
     borderRadius: BabyCityGeometry.radius.control,
-    backgroundColor: BabyCityPalette.errorSoft,
+    backgroundColor: '#fff5f7',
     borderWidth: 1,
     borderColor: '#f3bfd0',
     alignItems: 'center',
@@ -215,13 +268,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     gap: 8,
-    marginTop: 14,
+    marginTop: 12,
   },
   ageRow: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
     gap: 8,
-    marginTop: 10,
+    marginTop: 12,
   },
   emptyMeta: {
     marginTop: 12,
@@ -231,14 +284,18 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 10,
-    marginTop: 16,
-    paddingTop: 14,
+    marginTop: 18,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(205,221,254,0.5)',
   },
   actionButton: {
     flex: 1,
     minHeight: 46,
-    borderRadius: BabyCityGeometry.radius.control,
+    borderRadius: 18,
     paddingHorizontal: 18,
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    borderColor: 'rgba(205,221,254,0.75)',
   },
   singleActionButton: {
     flex: 0,

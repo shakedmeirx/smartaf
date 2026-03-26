@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import AppCard from '@/components/ui/AppCard';
 import AppText from '@/components/ui/AppText';
-import SectionHeader from '@/components/ui/SectionHeader';
 import {
   BabyCityGeometry,
   ParentDesignTokens,
@@ -29,7 +28,10 @@ export default function ProfileDetailsCard({
 }: Props) {
   return (
     <AppCard variant="default" style={styles.card}>
-      <SectionHeader title={title} subtitle={subtitle} />
+      <View style={styles.cardHeader}>
+        <AppText variant="bodyLarge" weight="700" style={styles.cardTitle}>{title}</AppText>
+        {subtitle ? <AppText variant="caption" tone="muted" style={styles.cardSubtitle}>{subtitle}</AppText> : null}
+      </View>
 
       {rows.length ? (
         <View style={styles.rowsWrap}>
@@ -89,5 +91,18 @@ const styles = StyleSheet.create({
   },
   childrenWrap: {
     marginTop: BabyCityGeometry.spacing.xs,
+  },
+  cardHeader: {
+    alignItems: 'flex-end',
+    marginBottom: BabyCityGeometry.spacing.sm,
+  },
+  cardTitle: {
+    textAlign: 'right',
+    writingDirection: 'rtl',
+    color: ParentDesignTokens.text.primary,
+  },
+  cardSubtitle: {
+    textAlign: 'right',
+    writingDirection: 'rtl',
   },
 });

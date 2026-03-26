@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be_Vietnam_Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-fixed-variant": "#390083",
+              "inverse-primary": "#a476ff",
+              "surface": "#f8f9ff",
+              "on-surface-variant": "#515c70",
+              "on-tertiary-container": "#64042d",
+              "error-dim": "#a70138",
+              "outline-variant": "#e2e8f0",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#929db4",
+              "on-primary-container": "#2e006c",
+              "surface-container-lowest": "#ffffff",
+              "on-background": "#1a2133",
+              "secondary": "#60586b",
+              "tertiary-container": "#ff8eac",
+              "background": "#f8f9ff",
+              "surface-container-high": "#eef2ff",
+              "primary-dim": "#6411d5",
+              "secondary-dim": "#534c5f",
+              "surface-bright": "#ffffff",
+              "surface-tint": "#702ae1",
+              "on-tertiary-fixed": "#380016",
+              "secondary-container": "#f3e8ff",
+              "primary": "#7c3aed",
+              "on-secondary": "#ffffff",
+              "surface-container-highest": "#e2e8f0",
+              "surface-container-low": "#f1f5f9",
+              "primary-fixed-dim": "#a67aff",
+              "surface-container": "#f8fafc",
+              "on-error": "#ffffff",
+              "tertiary-dim": "#8e294c",
+              "on-secondary-container": "#564f61",
+              "on-tertiary": "#ffffff",
+              "error-container": "#f74b6d",
+              "primary-fixed": "#b28cff",
+              "on-secondary-fixed-variant": "#60586b",
+              "on-error-container": "#510017",
+              "tertiary-fixed": "#ff8eac",
+              "outline": "#cbd5e1",
+              "error": "#b41340",
+              "secondary-fixed": "#e9def5",
+              "inverse-surface": "#0f172a",
+              "tertiary": "#9e3657",
+              "on-surface": "#1a2133",
+              "on-tertiary-fixed-variant": "#711036",
+              "on-primary-fixed": "#000000",
+              "primary-container": "#b28cff",
+              "tertiary-fixed-dim": "#f77c9e",
+              "secondary-fixed-dim": "#dbd0e7",
+              "on-secondary-fixed": "#433c4e",
+              "surface-variant": "#f1f5f9",
+              "surface-dim": "#e2e8f0"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans", "system-ui"],
+              "body": ["Be Vietnam Pro", "system-ui"],
+              "label": ["Be Vietnam Pro", "system-ui"]
+            },
+            borderRadius: {"DEFAULT": "1.25rem", "lg": "2.25rem", "xl": "3.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+      }
+      .signature-gradient {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+      }
+      body {
+        font-family: 'Be Vietnam Pro', sans-serif;
+        background-color: #f8f9ff;
+        color: #1a2133;
+        min-height: 100dvh;
+        -webkit-font-smoothing: antialiased;
+      }
+      h1, h2, h3 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        letter-spacing: -0.02em;
+      }
+      .benefit-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .benefit-card:active {
+        transform: scale(0.98);
+      }
+      .soft-shadow {
+        box-shadow: 0 10px 30px -10px rgba(124, 58, 237, 0.12);
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Navigation -->
+<header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-surface-container-highest/30">
+<div class="flex flex-row items-center justify-between px-6 py-4 max-w-2xl mx-auto">
+<div class="text-2xl font-extrabold tracking-tight text-primary">
+                Smartaf
+            </div>
+<button class="flex items-center justify-center w-10 h-10 rounded-full bg-surface-container text-on-surface-variant active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[24px]">help_outline</span>
+</button>
+</div>
+</header>
+<main class="pt-24 pb-48 px-6 max-w-2xl mx-auto">
+<!-- Hero Section -->
+<section class="mb-14">
+<div class="flex flex-col gap-4 text-center">
+<div class="flex items-center justify-center gap-3">
+<span class="h-px w-6 bg-primary/20"></span>
+<span class="text-primary font-bold tracking-[0.2em] text-[11px] uppercase">Smartaf Community</span>
+<span class="h-px w-6 bg-primary/20"></span>
+</div>
+<h1 class="text-[36px] font-extrabold text-on-surface leading-[1.1] tracking-tight">
+                    הצטרפי לנבחרת <br/>
+<span class="text-primary">הבייביסיטריות שלנו</span>
+</h1>
+<p class="text-on-surface-variant text-[15px] leading-relaxed px-6 opacity-80 font-medium">
+                    מקום שבו אהבה לילדים פוגשת מקצועיות וביטחון. בואי להעניק חוויות משמעותיות למשפחות בקהילה.
+                </p>
+</div>
+<!-- Illustration Container -->
+<div class="mt-10 relative">
+<div class="absolute -inset-4 bg-primary/5 blur-3xl rounded-[3rem] -z-10"></div>
+<div class="relative aspect-[4/3] w-full rounded-[2.5rem] overflow-hidden bg-white p-2 soft-shadow border border-white">
+<img alt="Nurturing care" class="w-full h-full object-cover rounded-[2rem]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFLrrxcowQ-gdCTSHn5sIkMhnEgW1CrRGQXCkLdGWKfayWjIYuSf3Kmlu8DwogFiEA9oWn6YylohpvxXsM-6yNddcR7lNZ24EXa0SbPa0AJPkE5WW4pZLix4XXFfBdK2aq4nZqNrbKYbGTel0n3dF2-nTvkAVXXiZPq28lmN_VVM3uy9_nm4HC7Cau0_RUxIiX_owiC6O6PlTwf4gdYIlFXMNcBKCJKlyj0PurfgevpJ5zHWV0TgDaoJwAJZgAgF5GH-8ySv_flvUK"/>
+</div>
+</div>
+</section>
+<!-- Benefits Section -->
+<section class="space-y-4 mb-14">
+<!-- Benefit 1 -->
+<div class="benefit-card bg-white p-5 rounded-[1.75rem] soft-shadow border border-white/50 flex flex-row items-center gap-5">
+<div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<div class="flex-1">
+<h3 class="text-[17px] font-bold text-on-surface mb-0.5">שכר הוגן וגמיש</h3>
+<p class="text-on-surface-variant text-[13px] leading-relaxed opacity-70">את קובעת את התעריף השעתי שלך ומקבלת תשלום ישיר.</p>
+</div>
+</div>
+<!-- Benefit 2 -->
+<div class="benefit-card bg-white p-5 rounded-[1.75rem] soft-shadow border border-white/50 flex flex-row items-center gap-5">
+<div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div class="flex-1">
+<h3 class="text-[17px] font-bold text-on-surface mb-0.5">ביטחון מלא</h3>
+<p class="text-on-surface-variant text-[13px] leading-relaxed opacity-70">אימות זהות מלא לכל המשפחות בקהילה שלנו.</p>
+</div>
+</div>
+<!-- Benefit 3 -->
+<div class="benefit-card bg-white p-5 rounded-[1.75rem] soft-shadow border border-white/50 flex flex-row items-center gap-5">
+<div class="w-14 h-14 shrink-0 rounded-full border-[3px] border-primary/10 overflow-hidden">
+<img alt="Community Member" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZfN8MlrYSX68UBBvZmP0UFV0_6uLhopXkXaLQgBWopv4rP5AdnmbKuWnAmM0ABqv1GGhiBwZ5H6JW_JpTWEFVkfM-flAMC3IqjshCs0sOvIOtkUv0gCDvkJSNZC5c1iOcQRmAXsXw54AFVFPcd0Pkb0NM4UM4ZiNf_b-VA3v34Sal7vq8Zc-W7o49qjLWpGm985AhtRArs76exR0P58_r_-UVFV_38zTLtoRrAiLlCAyFtLTkodf5N8ohpcE2DBw9-YsNpRx8O92c"/>
+</div>
+<div class="flex-1">
+<h3 class="text-[17px] font-bold text-on-surface mb-0.5">קהילה תומכת</h3>
+<p class="text-on-surface-variant text-[13px] leading-relaxed opacity-70">ליווי מקצועי, הדרכות וגישה למשפחות מובילות.</p>
+</div>
+</div>
+</section>
+<!-- Social Proof -->
+<div class="flex flex-col items-center gap-4 mb-8">
+<div class="flex items-center -space-x-2 space-x-reverse">
+<div class="w-10 h-10 rounded-full border-2 border-white bg-primary/10 ring-4 ring-primary/5 z-30 overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-primary">person</span>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-white bg-primary/20 z-20 overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-primary">person</span>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-white bg-primary/30 z-10 overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-primary">person</span>
+</div>
+</div>
+<span class="text-[13px] font-bold text-on-surface-variant tracking-wide">+2,400 מטפלות כבר חלק מהקהילה</span>
+</div>
+<!-- Sticky Bottom CTA -->
+<div class="fixed bottom-0 left-0 w-full px-6 pb-10 pt-8 z-40 bg-gradient-to-t from-surface via-surface to-transparent">
+<div class="max-w-2xl mx-auto space-y-5">
+<button class="signature-gradient text-on-primary py-5 rounded-[1.25rem] font-bold text-[17px] shadow-xl shadow-primary/25 active:scale-[0.98] transition-all w-full flex items-center justify-center gap-3 group">
+<span class="material-symbols-outlined transition-transform group-hover:translate-x-1 font-bold">arrow_forward</span>
+<span>בואי נתחיל לבנות את הפרופיל</span>
+</button>
+<p class="text-center text-[11px] text-on-surface-variant/50 font-medium px-4">
+                    בלחיצה על הכפתור את מסכימה ל<a class="underline hover:text-primary transition-colors" href="#">תנאי השימוש</a> ומדיניות הפרטיות
+                </p>
+</div>
+</div>
+</main>
+</body></html>

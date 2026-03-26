@@ -1,9 +1,8 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TextInput } from 'react-native';
 import { BabyCityPalette } from '@/constants/theme';
 import { strings } from '@/locales';
 import { OnboardingData } from '@/types/onboarding';
 import AppText from '@/components/ui/AppText';
-import LabeledInput from './LabeledInput';
 import SectionLabel from './SectionLabel';
 import TagSelector from './TagSelector';
 
@@ -19,6 +18,7 @@ const PERSONALITY_OPTIONS = [
 ];
 
 const BIO_MAX = 250;
+const MIN_BIO_LENGTH = 30;
 
 type Props = {
   data: OnboardingData;
@@ -27,49 +27,116 @@ type Props = {
 };
 
 export default function Step2About({ data, onChange, errors = {} }: Props) {
-  const charsLeft = BIO_MAX - data.bio.length;
-  const isNearLimit = charsLeft <= 30;
+  const charsUsed = data.bio.length;
+  const isNearLimit = BIO_MAX - charsUsed <= 30;
 
   return (
-    <View>
-      <LabeledInput
-        label={strings.shortBio}
-        value={data.bio}
-        onChange={v => onChange({ bio: v })}
-        placeholder={strings.bioPlaceholder}
-        multiline
-        maxLength={BIO_MAX}
-        errorText={errors.bio}
-      />
-      {/* Character counter shown below the bio input */}
-      <AppText style={[styles.charCount, isNearLimit && styles.charCountWarning]}>
-        {charsLeft}
-      </AppText>
+    <View style={styles.container}>
+      <View style={styles.accentBubble} />
 
-      <SectionLabel text={strings.personalityTagsLabel} />
-      <TagSelector
-        options={PERSONALITY_OPTIONS}
-        selected={data.personalityTags}
-        onChange={v => onChange({ personalityTags: v })}
-        tone="peach"
-      />
+      <View style={styles.fieldBlock}>
+        <AppText variant="bodyLarge" weight="800" style={styles.fieldTitle}>
+          {strings.shortBio}
+        </AppText>
+
+        <TextInput
+          value={data.bio}
+          onChangeText={v => onChange({ bio: v })}
+          placeholder={strings.bioPlaceholder}
+          multiline
+          maxLength={BIO_MAX}
+          style={[styles.textArea, !!errors.bio && styles.textAreaError]}
+          placeholderTextColor={BabyCityPalette.outline}
+          textAlign="right"
+          textAlignVertical="top"
+        />
+
+        <View style={styles.counterRow}>
+          <AppText variant="caption" tone="muted" style={styles.counterText}>
+            {strings.bioMinHint(MIN_BIO_LENGTH)}
+          </AppText>
+          <AppText
+            variant="caption"
+            tone={isNearLimit ? 'error' : 'muted'}
+            style={styles.counterText}
+          >
+            {`${charsUsed} / ${BIO_MAX}`}
+          </AppText>
+        </View>
+
+        {errors.bio ? (
+          <AppText variant="caption" tone="error" style={styles.errorText}>
+            {errors.bio}
+          </AppText>
+        ) : null}
+      </View>
+
+      <View style={styles.tagsBlock}>
+        <SectionLabel text={strings.personalityTagsLabel} />
+        <TagSelector
+          options={PERSONALITY_OPTIONS}
+          selected={data.personalityTags}
+          onChange={v => onChange({ personalityTags: v })}
+          tone="peach"
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  charCount: {
-    alignSelf: 'flex-end',
-    color: BabyCityPalette.textSecondary,
-    marginTop: -8,
-    marginBottom: 18,
-    backgroundColor: BabyCityPalette.surfaceMuted,
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+  container: {
+    position: 'relative',
   },
-  charCountWarning: {
-    color: BabyCityPalette.error,
+  accentBubble: {
+    position: 'absolute',
+    top: -18,
+    left: -18,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: BabyCityPalette.secondaryContainer,
+    opacity: 0.35,
+  },
+  fieldBlock: {
+    position: 'relative',
+  },
+  fieldTitle: {
+    marginBottom: 12,
+    textAlign: 'right',
+    color: BabyCityPalette.textPrimary,
+  },
+  textArea: {
+    minHeight: 160,
+    borderRadius: 24,
+    backgroundColor: BabyCityPalette.inputRecessedBg,
+    color: BabyCityPalette.textPrimary,
+    paddingHorizontal: 20,
+    paddingVertical: 18,
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  textAreaError: {
+    borderWidth: 1.5,
+    borderColor: BabyCityPalette.error,
     backgroundColor: BabyCityPalette.errorSoft,
+  },
+  counterRow: {
+    marginTop: 10,
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 2,
+  },
+  counterText: {
+    lineHeight: 18,
+  },
+  errorText: {
+    marginTop: 8,
+    paddingHorizontal: 2,
+    textAlign: 'right',
+  },
+  tagsBlock: {
+    marginTop: 18,
   },
 });

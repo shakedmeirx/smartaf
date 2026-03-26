@@ -1,10 +1,8 @@
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import {
   BabyCityGeometry,
-  BabyCityPalette,
 } from '@/constants/theme';
 import AppText from '@/components/ui/AppText';
-import InfoChip from '@/components/ui/InfoChip';
 
 type Tone = 'green' | 'blue' | 'peach' | 'lavender' | 'amber';
 
@@ -18,12 +16,37 @@ type Props = {
   tone?: Tone;
 };
 
-const TONES: Record<Tone, 'success' | 'accent' | 'muted' | 'primary' | 'warning'> = {
-  green: 'success',
-  blue: 'accent',
-  peach: 'primary',
-  lavender: 'primary',
-  amber: 'warning',
+const TONES: Record<Tone, { activeBg: string; activeText: string; idleBg: string; idleText: string }> = {
+  green: {
+    activeBg: '#e9def5',
+    activeText: '#564f61',
+    idleBg: '#dee8ff',
+    idleText: '#515c70',
+  },
+  blue: {
+    activeBg: '#e9def5',
+    activeText: '#564f61',
+    idleBg: '#dee8ff',
+    idleText: '#515c70',
+  },
+  peach: {
+    activeBg: '#ffebf1',
+    activeText: '#8e294c',
+    idleBg: '#dee8ff',
+    idleText: '#515c70',
+  },
+  lavender: {
+    activeBg: '#e9def5',
+    activeText: '#564f61',
+    idleBg: '#dee8ff',
+    idleText: '#515c70',
+  },
+  amber: {
+    activeBg: '#fff3e0',
+    activeText: '#bb7a15',
+    idleBg: '#dee8ff',
+    idleText: '#515c70',
+  },
 };
 
 export default function TagSelector({
@@ -55,14 +78,30 @@ export default function TagSelector({
         {options.map(option => {
           const isSelected = selected.includes(option);
           return (
-            <InfoChip
+            <TouchableOpacity
               key={option}
-              label={option}
-              tone={palette}
-              variant="filter"
-              selected={isSelected}
               onPress={() => toggle(option)}
-            />
+              activeOpacity={0.86}
+              style={[
+                styles.chip,
+                {
+                  backgroundColor: isSelected ? palette.activeBg : palette.idleBg,
+                },
+              ]}
+            >
+              <AppText
+                variant="body"
+                weight={isSelected ? '700' : '600'}
+                style={[
+                  styles.chipLabel,
+                  {
+                    color: isSelected ? palette.activeText : palette.idleText,
+                  },
+                ]}
+              >
+                {option}
+              </AppText>
+            </TouchableOpacity>
           );
         })}
       </View>
@@ -82,9 +121,21 @@ const styles = StyleSheet.create({
   wrap: {
     flexDirection: 'row-reverse',
     flexWrap: 'wrap',
-    gap: BabyCityGeometry.spacing.sm,
+    gap: 10,
+  },
+  chip: {
+    minHeight: 38,
+    borderRadius: BabyCityGeometry.radius.chip,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chipLabel: {
+    textAlign: 'right',
   },
   errorText: {
     marginTop: BabyCityGeometry.spacing.sm,
+    paddingHorizontal: 4,
   },
 });

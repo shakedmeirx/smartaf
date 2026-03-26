@@ -17,15 +17,11 @@ Notifications.setNotificationHandler({
 });
 
 /**
- * Requests push permission, obtains the Expo push token, and saves it to
- * the push_tokens table for the currently authenticated user.
- * Safe to call multiple times — uses upsert so it stays idempotent.
+ * Normalized notification permission state for app-level UI flows.
  */
-export async function registerPushToken(): Promise<void> {
-  // Physical device required — simulators can't receive push notifications
-  if (!Device.isDevice) return;
+export type PushPermissionState = 'granted' | 'denied' | 'blocked';
 
-  // Android: create the default notification channel
+async function ensureAndroidNotificationChannel() {
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('default', {
       name: 'BabysitConnect',
@@ -34,16 +30,55 @@ export async function registerPushToken(): Promise<void> {
       lightColor: '#7C6FE0',
     });
   }
+}
 
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
-
-  if (existingStatus !== 'granted') {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
+function normalizePermissionState(
+  status: Notifications.NotificationPermissionsStatus
+): PushPermissionState {
+  if (
+    status.granted ||
+    status.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL
+  ) {
+    return 'granted';
   }
 
-  if (finalStatus !== 'granted') return;
+  return status.canAskAgain === false ? 'blocked' : 'denied';
+}
+
+/**
+ * Requests notification permission and returns the resulting state.
+ * Safe to call multiple times.
+ */
+export async function ensurePushPermission(): Promise<PushPermissionState> {
+  await ensureAndroidNotificationChannel();
+
+  const existingPermissions = await Notifications.getPermissionsAsync();
+  const existingState = normalizePermissionState(existingPermissions);
+
+  if (existingState === 'granted' || existingPermissions.canAskAgain === false) {
+    return existingState;
+  }
+
+  const requestedPermissions = await Notifications.requestPermissionsAsync();
+  return normalizePermissionState(requestedPermissions);
+}
+
+/**
+ * Requests push permission, obtains the Expo push token, and saves it to
+ * the push_tokens table for the currently authenticated user.
+ * Safe to call multiple times — uses upsert so it stays idempotent.
+ */
+export async function registerPushToken(): Promise<PushPermissionState> {
+  const permissionState = await ensurePushPermission();
+
+  if (permissionState !== 'granted') {
+    return permissionState;
+  }
+
+  // Physical device required — simulators can't receive push notifications
+  if (!Device.isDevice) {
+    return 'granted';
+  }
 
   // Expo SDK 51+ requires a projectId. Read it from app.json extra.eas.projectId
   // (or eas.json via easConfig). Without this the call throws and no token is saved.
@@ -57,14 +92,16 @@ export async function registerPushToken(): Promise<void> {
       'Add "extra": { "eas": { "projectId": "YOUR_EAS_PROJECT_ID" } } to app.json\n' +
       'Get your project ID from https://expo.dev or by running: eas init'
     );
-    return;
+    return 'granted';
   }
 
   const tokenData = await Notifications.getExpoPushTokenAsync({ projectId });
   const token = tokenData.data;
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) {
+    return 'granted';
+  }
 
   await supabase
     .from('push_tokens')
@@ -77,6 +114,8 @@ export async function registerPushToken(): Promise<void> {
       },
       { onConflict: 'user_id,token' }
     );
+
+  return 'granted';
 }
 
 /**

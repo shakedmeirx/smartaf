@@ -58,6 +58,7 @@ describe('parent onboarding validation', () => {
       profilePhotoPath: 'user/profile.jpg',
       profilePhotoUrl: 'https://example.com/photo.jpg',
       childrenCount: '2',
+      childNames: ['נועה', 'יואב'],
       childBirthDates: ['2022-01-01', '2019-05-12'],
       pets: ['כלב'],
       hourlyBudget: '',

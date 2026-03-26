@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-dim": "#6411d5",
+              "inverse-surface": "#040e1f",
+              "surface-bright": "#f4f6ff",
+              "inverse-on-surface": "#929db4",
+              "secondary": "#60586b",
+              "outline-variant": "#a2adc4",
+              "on-primary-container": "#2e006c",
+              "on-tertiary-container": "#64042d",
+              "primary-container": "#b28cff",
+              "on-background": "#242f41",
+              "surface-container-high": "#d5e3ff",
+              "error-dim": "#a70138",
+              "tertiary": "#9e3657",
+              "tertiary-fixed": "#ff8eac",
+              "tertiary-container": "#ff8eac",
+              "outline": "#6c778c",
+              "primary-fixed": "#b28cff",
+              "secondary-fixed-dim": "#dbd0e7",
+              "tertiary-fixed-dim": "#f77c9e",
+              "surface-variant": "#cdddfe",
+              "surface-tint": "#702ae1",
+              "secondary-fixed": "#e9def5",
+              "secondary-container": "#e9def5",
+              "surface-container-low": "#ecf1ff",
+              "on-error": "#ffefef",
+              "surface-dim": "#c3d5f8",
+              "on-secondary-fixed-variant": "#60586b",
+              "surface-container": "#dee8ff",
+              "inverse-primary": "#a476ff",
+              "on-tertiary": "#ffeff1",
+              "tertiary-dim": "#8e294c",
+              "error": "#b41340",
+              "on-primary-fixed": "#000000",
+              "surface": "#f4f6ff",
+              "on-surface": "#242f41",
+              "on-primary": "#f8f0ff",
+              "primary-fixed-dim": "#a67aff",
+              "surface-container-highest": "#cdddfe",
+              "on-tertiary-fixed-variant": "#711036",
+              "on-tertiary-fixed": "#380016",
+              "secondary-dim": "#534c5f",
+              "on-secondary-fixed": "#433c4e",
+              "on-secondary-container": "#564f61",
+              "on-secondary": "#f8efff",
+              "surface-container-lowest": "#ffffff",
+              "error-container": "#f74b6d",
+              "primary": "#702ae1",
+              "on-error-container": "#510017",
+              "on-primary-fixed-variant": "#390083",
+              "background": "#f4f6ff",
+              "on-surface-variant": "#515c70"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Be Vietnam Pro"],
+              "label": ["Be Vietnam Pro"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .signature-gradient {
+            background: linear-gradient(135deg, #702ae1 0%, #6411d5 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm dark:shadow-none">
+<div class="flex flex-row-reverse justify-between items-center w-full px-6 py-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile circular avatar photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtrdJPpreXgXV4mPcqH4LGwcH4IpYlmKoHstQ2U7eQVI-i5b1LDHHhT0HvIi_v2U0qHAPYMq7OhitAlnr09a989Er0c8XDbYXWBBhiCNKtj7_RbrsV5BQ--7ShLo8SZLZma7XPOCGjaOmxqNxq-KFDriHPZTHpRgEZCU0QJ4NpCr4ev9d1W0CIfdzuEyK-w93KuoBI2p-cfwm5gBNj_mY4ZUDqwabNotPwrgTwJEJTnHmo8WvEpphEhZl41TSjygiakPjFZTdxq8nC"/>
+</div>
+<button class="text-violet-600 dark:text-violet-400 active:scale-95 duration-200 p-2 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-right text-2xl font-black text-violet-700 dark:text-violet-400 tracking-tighter">Smartaf</h1>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-6 pt-24 pb-32">
+<div class="max-w-md w-full text-center">
+<!-- Branded Illustration Area -->
+<div class="relative mb-12">
+<!-- Abstract Atmospheric Depth Background -->
+<div class="absolute inset-0 scale-110 blur-3xl opacity-20 signature-gradient rounded-full"></div>
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-64 h-64 bg-surface-container-low rounded-full flex items-center justify-center relative overflow-hidden">
+<!-- Illustration Elements -->
+<div class="absolute top-10 right-10 w-20 h-20 bg-primary-container/30 rounded-full blur-xl"></div>
+<div class="absolute bottom-10 left-10 w-24 h-24 bg-tertiary-container/20 rounded-full blur-xl"></div>
+<div class="relative z-20 flex flex-col items-center">
+<span class="material-symbols-outlined text-8xl text-primary/40 mb-2" data-icon="search_off">search_off</span>
+<div class="flex -space-x-4 space-x-reverse">
+<div class="w-12 h-12 rounded-full border-4 border-surface-container-lowest bg-surface-variant flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-xl" data-icon="person_search">person_search</span>
+</div>
+<div class="w-12 h-12 rounded-full border-4 border-surface-container-lowest bg-primary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-on-primary-container text-xl" data-icon="location_off">location_off</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Asymmetrical Decorative Chip -->
+<div class="absolute -bottom-4 -right-2 bg-surface-container-lowest px-6 py-3 rounded-full shadow-sm flex items-center gap-3 border border-outline-variant/10">
+<span class="material-symbols-outlined text-tertiary" data-icon="explore">explore</span>
+<span class="text-label-md font-semibold text-on-surface-variant">חיפוש רחב</span>
+</div>
+</div>
+</div>
+<!-- Content Area -->
+<div class="space-y-6">
+<h2 class="font-headline text-3xl font-extrabold text-on-surface tracking-tight leading-tight">
+                    עדיין לא מצאנו מטפלות באזור
+                </h2>
+<p class="font-body text-lg text-on-surface-variant leading-relaxed px-4">
+                    כרגע אין מטפלות זמינות שתואמות את סינוני החיפוש שלך במיקום זה. נסי להרחיב את רדיוס החיפוש או לשנות את התאריכים המבוקשים.
+                </p>
+<div class="pt-8">
+<button class="signature-gradient text-on-primary font-headline font-bold text-lg px-10 py-5 rounded-md shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-3 mx-auto">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+                        שינוי חיפוש
+                    </button>
+<button class="mt-4 w-full text-primary font-bold py-3 hover:bg-primary/5 rounded-full transition-colors">
+                        חזרה למפה
+                    </button>
+</div>
+</div>
+<!-- Suggested Tip Card -->
+<div class="mt-16 bg-surface-container-low p-6 rounded-lg text-right relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-1 bg-primary h-full"></div>
+<div class="flex items-start gap-4">
+<div class="bg-surface-container-lowest p-3 rounded-full text-primary">
+<span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-1">טיפ לחיפוש מוצלח</h4>
+<p class="text-sm text-on-surface-variant">הסירי חלק מהמסננים כמו "דוברת שפות" או "בעלת רכב" כדי לראות תוצאות נוספות בסביבתך.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-[2rem] bg-white dark:bg-slate-950 shadow-[0_-4px_20px_rgba(36,47,65,0.06)]">
+<div class="flex flex-row-reverse justify-around items-center w-full px-4 pb-6 pt-3">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-violet-500 transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold text-right">דף הבית</span>
+</a>
+<!-- Messages -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-violet-500 transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold text-right">הודעות</span>
+</a>
+<!-- Shifts/Search (Active State Logic: Empty Discovery maps to Shifts/Search context) -->
+<a class="flex flex-col items-center justify-center bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 rounded-[1.5rem] px-5 py-2 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="event_upcoming" style="font-variation-settings: 'FILL' 1;">event_upcoming</span>
+<span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold text-right">משמרות</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-violet-500 transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-['Be_Vietnam_Pro'] text-[11px] font-semibold text-right">פרופיל</span>
+</a>
+</div>
+</nav>
+</body></html>

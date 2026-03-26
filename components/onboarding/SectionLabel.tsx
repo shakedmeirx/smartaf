@@ -15,7 +15,10 @@ export default function SectionLabel({ text }: Props) {
 
 const styles = StyleSheet.create({
   label: {
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: 12,
+    marginBottom: 6,
+    paddingHorizontal: 4,
+    fontSize: 13,
+    lineHeight: 18,
   },
 });

@@ -35,7 +35,7 @@ export type CityPickerFieldHandle = {
 };
 
 type Props = {
-  label: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -123,19 +123,21 @@ const CityPickerField = forwardRef<CityPickerFieldHandle, Props>(function CityPi
 
   return (
     <View style={styles.container}>
-      <AppText
-        variant="body"
-        weight="700"
-        tone={isFocused ? 'accent' : 'muted'}
-        style={styles.label}
-      >
-        {label}
-      </AppText>
+      {label ? (
+        <AppText
+          variant="body"
+          weight="700"
+          tone={isFocused ? 'accent' : 'muted'}
+          style={styles.label}
+        >
+          {label}
+        </AppText>
+      ) : null}
 
       <Pressable
         style={[
           styles.field,
-          isFocused && { borderColor: theme.filterAccent, backgroundColor: BabyCityPalette.surfaceMuted },
+          isFocused && { borderColor: theme.filterAccent, backgroundColor: BabyCityPalette.surfaceLowest },
           !!errorText && styles.fieldError,
         ]}
         onPress={() => {
@@ -152,7 +154,6 @@ const CityPickerField = forwardRef<CityPickerFieldHandle, Props>(function CityPi
             {value || placeholder}
           </AppText>
         </View>
-        <Ionicons name="chevron-down-outline" size={20} color={BabyCityPalette.textSecondary} />
       </Pressable>
 
       {helperText ? (
@@ -294,16 +295,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   field: {
-    minHeight: BabyCityGeometry.controlHeights.input,
+    minHeight: 64,
     borderWidth: 1,
-    borderColor: BabyCityPalette.border,
-    borderRadius: BabyCityGeometry.radius.control,
-    paddingHorizontal: 16,
-    backgroundColor: BabyCityPalette.surface,
+    borderColor: 'transparent',
+    borderRadius: 24,
+    paddingHorizontal: 18,
+    backgroundColor: BabyCityPalette.surfaceContainer,
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 10,
+    justifyContent: 'flex-start',
+    gap: 12,
   },
   fieldError: {
     borderColor: BabyCityPalette.error,
@@ -329,7 +330,7 @@ const styles = StyleSheet.create({
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(16, 33, 25, 0.22)',
+    backgroundColor: 'rgba(16, 33, 25, 0.18)',
     justifyContent: 'center',
     paddingHorizontal: 18,
   },

@@ -80,17 +80,17 @@ export default function ToggleRow({ label, value, onChange, hint, tone = 'green'
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 1,
-    borderRadius: ParentDesignTokens.radius.card,
+    borderWidth: 0,
+    borderRadius: 24,
     marginBottom: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 2,
+    paddingHorizontal: 18,
+    paddingVertical: 4,
   },
   row: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
+    paddingVertical: 12,
     gap: 14,
   },
   label: {
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 32,
     borderRadius: BabyCityGeometry.radius.chip,
-    backgroundColor: BabyCityPalette.border,
+    backgroundColor: '#c9d6ed',
     justifyContent: 'center',
     paddingHorizontal: 3,
   },

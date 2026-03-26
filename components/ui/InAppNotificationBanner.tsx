@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import {
   Animated,
-  Platform,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -10,11 +9,12 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppText from '@/components/ui/AppText';
+import AvatarCircle from '@/components/ui/AvatarCircle';
 import { useAppState } from '@/context/AppContext';
 import { BabyCityGeometry, BabyCityPalette } from '@/constants/theme';
 import { strings } from '@/locales';
 
-const BANNER_HEIGHT = 72;
+const BANNER_HEIGHT = 92;
 const AUTO_DISMISS_MS = 4500;
 
 export default function InAppNotificationBanner() {
@@ -28,6 +28,7 @@ export default function InAppNotificationBanner() {
     ? chatThreads.find(t => t.conversationId === inAppNotification.conversationId)
     : null;
   const senderName = thread?.counterpartName ?? strings.inAppNewMessage;
+  const senderPhotoUrl = thread?.counterpartPhotoUrl;
 
   useEffect(() => {
     if (!inAppNotification) {
@@ -56,7 +57,7 @@ export default function InAppNotificationBanner() {
     return () => {
       if (dismissTimer.current) clearTimeout(dismissTimer.current);
     };
-  }, [inAppNotification]);
+  }, [inAppNotification, clearInAppNotification, translateY]);
 
   function handlePress() {
     if (!inAppNotification) return;
@@ -71,38 +72,49 @@ export default function InAppNotificationBanner() {
       style={[
         styles.container,
         {
-          top: insets.top + (Platform.OS === 'android' ? 8 : 4),
+          top: insets.top + 10,
           transform: [{ translateY }],
         },
       ]}
       pointerEvents={inAppNotification ? 'box-none' : 'none'}
     >
+      <View style={styles.glow} />
       <TouchableOpacity
         style={styles.banner}
         onPress={handlePress}
         activeOpacity={0.92}
       >
-        <View style={styles.iconWrap}>
-          <Ionicons name="chatbubble-ellipses" size={22} color={BabyCityPalette.primary} />
+        <View style={styles.actionWrap}>
+          <Ionicons name="chevron-back" size={18} color={BabyCityPalette.primary} />
         </View>
+
         <View style={styles.textWrap}>
-          <AppText variant="body" weight="800" style={styles.sender} numberOfLines={1}>
-            {senderName}
-          </AppText>
+          <View style={styles.titleRow}>
+            <View style={styles.nowChip}>
+              <AppText variant="caption" weight="700" style={styles.nowChipText}>
+                {strings.inAppNotificationNow}
+              </AppText>
+            </View>
+            <AppText variant="bodyLarge" weight="800" style={styles.sender} numberOfLines={1}>
+              {senderName}
+            </AppText>
+          </View>
           <AppText variant="caption" tone="muted" style={styles.preview} numberOfLines={1}>
             {inAppNotification?.previewText ?? ''}
           </AppText>
         </View>
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={e => {
-            e.stopPropagation();
-            clearInAppNotification();
-          }}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Ionicons name="close" size={16} color={BabyCityPalette.textTertiary} />
-        </TouchableOpacity>
+
+        <View style={styles.avatarWrap}>
+          <AvatarCircle
+            name={senderName}
+            photoUrl={senderPhotoUrl}
+            size={56}
+            tone="accent"
+          />
+          <View style={styles.avatarStatusBadge}>
+            <View style={styles.avatarStatusDot} />
+          </View>
+        </View>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -111,31 +123,44 @@ export default function InAppNotificationBanner() {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    left: 16,
-    right: 16,
+    left: 18,
+    right: 18,
     zIndex: 9999,
+  },
+  glow: {
+    position: 'absolute',
+    top: 8,
+    left: 18,
+    right: 18,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: `${BabyCityPalette.primary}12`,
+    shadowColor: BabyCityPalette.primary,
+    shadowOpacity: 0.18,
+    shadowRadius: 26,
+    shadowOffset: { width: 0, height: 10 },
   },
   banner: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
-    gap: 12,
-    backgroundColor: BabyCityPalette.surface,
-    borderRadius: BabyCityGeometry.radius.hero,
+    gap: 14,
+    backgroundColor: 'rgba(255,255,255,0.98)',
+    borderRadius: 26,
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: BabyCityPalette.borderSoft,
+    borderColor: `${BabyCityPalette.borderSoft}aa`,
     shadowColor: BabyCityPalette.shadow,
-    shadowOpacity: 0.14,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 10,
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 12,
   },
-  iconWrap: {
-    width: 42,
-    height: 42,
-    borderRadius: BabyCityGeometry.radius.control,
-    backgroundColor: BabyCityPalette.primarySoft,
+  actionWrap: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: BabyCityPalette.surfaceLow,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -143,15 +168,53 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-end',
   },
+  titleRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 8,
+    width: '100%',
+  },
+  nowChip: {
+    backgroundColor: BabyCityPalette.surfaceContainer,
+    borderRadius: BabyCityGeometry.radius.pill,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  nowChipText: {
+    color: BabyCityPalette.outline,
+    fontSize: 10,
+    lineHeight: 12,
+  },
   sender: {
     color: BabyCityPalette.textPrimary,
     textAlign: 'right',
+    flexShrink: 1,
   },
   preview: {
     textAlign: 'right',
-    marginTop: 2,
+    marginTop: 4,
+    maxWidth: '96%',
   },
-  closeButton: {
-    padding: 4,
+  avatarWrap: {
+    position: 'relative',
+  },
+  avatarStatusBadge: {
+    position: 'absolute',
+    bottom: -2,
+    left: -2,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: BabyCityPalette.primary,
+    borderWidth: 3,
+    borderColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarStatusDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#ffffff',
   },
 });

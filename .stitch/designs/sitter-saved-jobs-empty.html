@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary": "#f8f0ff",
+                        "tertiary-fixed-dim": "#f77c9e",
+                        "on-tertiary-fixed-variant": "#711036",
+                        "on-background": "#242f41",
+                        "on-primary-fixed-variant": "#390083",
+                        "primary-fixed": "#b28cff",
+                        "on-primary-container": "#2e006c",
+                        "surface-tint": "#702ae1",
+                        "secondary-fixed": "#e9def5",
+                        "secondary-container": "#e9def5",
+                        "primary-container": "#b28cff",
+                        "on-tertiary-container": "#64042d",
+                        "on-secondary": "#f8efff",
+                        "outline": "#6c778c",
+                        "surface-container-low": "#ecf1ff",
+                        "error-container": "#f74b6d",
+                        "on-surface-variant": "#515c70",
+                        "error-dim": "#a70138",
+                        "secondary-fixed-dim": "#dbd0e7",
+                        "primary-fixed-dim": "#a67aff",
+                        "primary-dim": "#6411d5",
+                        "primary": "#702ae1",
+                        "surface-variant": "#cdddfe",
+                        "error": "#b41340",
+                        "secondary": "#60586b",
+                        "on-error": "#ffefef",
+                        "on-secondary-fixed-variant": "#60586b",
+                        "surface-container-highest": "#cdddfe",
+                        "tertiary-fixed": "#ff8eac",
+                        "on-primary-fixed": "#000000",
+                        "outline-variant": "#a2adc4",
+                        "on-error-container": "#510017",
+                        "surface-dim": "#c3d5f8",
+                        "on-secondary-fixed": "#433c4e",
+                        "on-tertiary": "#ffeff1",
+                        "inverse-primary": "#a476ff",
+                        "background": "#f4f6ff",
+                        "tertiary": "#9e3657",
+                        "surface-container-high": "#d5e3ff",
+                        "on-tertiary-fixed": "#380016",
+                        "surface-container": "#dee8ff",
+                        "on-surface": "#242f41",
+                        "surface-bright": "#f4f6ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f4f6ff",
+                        "tertiary-container": "#ff8eac",
+                        "inverse-on-surface": "#929db4",
+                        "tertiary-dim": "#8e294c",
+                        "secondary-dim": "#534c5f",
+                        "on-secondary-container": "#564f61",
+                        "inverse-surface": "#040e1f"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Be Vietnam Pro"],
+                        "label": ["Be Vietnam Pro"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f4f6ff;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            backdrop-filter: blur(20px);
+        }
+        .gradient-btn {
+            background: linear-gradient(135deg, #702ae1 0%, #6411d5 100%);
+        }
+        .ambient-shadow {
+            box-shadow: 0 44px 44px -20px rgba(36, 47, 65, 0.06);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f4f6ff]/80 dark:bg-slate-900/80 backdrop-blur-md">
+<div class="flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="hover:bg-[#ecf1ff] dark:hover:bg-slate-800 transition-colors active:scale-95 duration-200 p-2 rounded-full">
+<span class="material-symbols-outlined text-[#7C3AED] dark:text-[#a78bfa]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-xl text-[#242f41] dark:text-slate-100">עבודות שמורות</h1>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-6 pt-24 pb-32">
+<div class="max-w-md w-full">
+<!-- Empty State Card -->
+<div class="bg-surface-container-lowest rounded-lg p-10 flex flex-col items-center text-center ambient-shadow relative overflow-hidden">
+<!-- Atmospheric Background Elements -->
+<div class="absolute -top-12 -right-12 w-40 h-40 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-8 -left-8 w-32 h-32 bg-secondary-container/30 rounded-full blur-2xl"></div>
+<!-- Illustrative Icon Container -->
+<div class="relative mb-10">
+<div class="w-24 h-24 bg-surface-container-low rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-5xl" data-icon="bookmark" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</div>
+<!-- Overlapping Decorative Chip -->
+<div class="absolute -bottom-2 -right-2 w-10 h-10 bg-tertiary-container rounded-full flex items-center justify-center border-4 border-surface-container-lowest">
+<span class="material-symbols-outlined text-white text-xl" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</div>
+<!-- Text Content -->
+<h2 class="font-headline font-extrabold text-2xl text-on-surface mb-4 leading-tight">
+                    עדיין לא שמרת עבודות
+                </h2>
+<p class="font-body text-on-surface-variant text-lg mb-10 leading-relaxed px-2">
+                    כאן יופיעו כל העבודות שסימנת כמעניינות. חזרי לפיד העבודות כדי למצוא את ההזדמנות הבאה שלך.
+                </p>
+<!-- CTA Button -->
+<button class="gradient-btn text-on-primary font-headline font-semibold py-4 px-10 rounded-full w-full shadow-lg shadow-primary/20 hover:opacity-90 active:scale-95 transition-all duration-300">
+                    גילוי עבודות חדשות
+                </button>
+</div>
+<!-- Contextual Tip (Editorial Element) -->
+<div class="mt-8 px-6 text-center">
+<div class="inline-flex items-center gap-2 text-on-surface-variant/70 text-sm">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
+<span>טיפ: שמירת עבודות עוזרת לנו להכיר את ההעדפות שלך</span>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl shadow-[0_-4px_20px_rgba(36,47,65,0.06)] rounded-t-[2rem]">
+<!-- Search -->
+<a class="flex flex-col items-center justify-center text-[#a2adc4] dark:text-slate-500 hover:opacity-80 active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="search">search</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">חיפוש</span>
+</a>
+<!-- Saved (Active) -->
+<a class="flex flex-col items-center justify-center text-[#7C3AED] dark:text-[#a78bfa] font-bold bg-[#e9def5] dark:bg-purple-900/30 rounded-2xl px-4 py-1 active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="bookmark" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs">שמורות</span>
+</a>
+<!-- Messages -->
+<a class="flex flex-col items-center justify-center text-[#a2adc4] dark:text-slate-500 hover:opacity-80 active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">הודעות</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-[#a2adc4] dark:text-slate-500 hover:opacity-80 active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-['Be_Vietnam_Pro'] text-xs font-medium">פרופיל</span>
+</a>
+</nav>
+</body></html>

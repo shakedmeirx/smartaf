@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#7C3AED",
+              "on-primary": "#ffffff",
+              "secondary": "#E9DEF5",
+              "on-secondary": "#7C3AED",
+              "surface": "#F8FAFC",
+              "on-surface": "#1E293B",
+              "surface-variant": "#F1F5F9",
+              "on-surface-variant": "#64748B",
+              "outline": "#E2E8F0",
+              "background": "#F8FAFC"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans", "sans-serif"],
+              "body": ["Plus Jakarta Sans", "sans-serif"],
+            },
+            borderRadius: {
+              "DEFAULT": "1.5rem",
+              "lg": "2rem",
+              "xl": "3rem",
+              "full": "9999px"
+            },
+            boxShadow: {
+              "premium": "0 10px 30px -10px rgba(124, 58, 237, 0.08)",
+              "card": "0 4px 20px -2px rgba(0, 0, 0, 0.03)"
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8FAFC;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline/50">
+<div class="flex flex-row-reverse justify-between items-center px-6 h-16 w-full max-w-5xl mx-auto">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-on-surface cursor-pointer p-2 hover:bg-secondary/50 rounded-full transition-colors">menu</span>
+</div>
+<h1 class="font-bold tracking-tight text-xl text-on-surface">שמורים</h1>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-xl mx-auto">
+<section class="space-y-6">
+<!-- Saved Babysitter Card 1 -->
+<div class="bg-white rounded-xl p-6 shadow-card hover:shadow-premium transition-all duration-300 border border-outline/30 relative">
+<div class="flex flex-row-reverse items-start gap-4">
+<div class="relative shrink-0">
+<img alt="Portrait of Michal" class="w-20 h-20 rounded-full object-cover border-4 border-secondary/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4GoUehs6pYZ2WCkapmmrY3_xZJKTdEm91UE5S9I1ouS48TLGSeDbNQBbnuVvA_soDLQVTy-69xEy_cWKea3U4WG7H8pAaguEjq-ShC_t-Szlkrop3AgG6Xm7y7j0fKuUwYFHXxfWo07VXujKQ_F3swP-kKWV5Fb3Rmyst5tU7TSxYvuuyWTLMwrvqngEkKqWl4hWmWObsv8Hissb8Z6fFyuXmvlPexp09WDMde3kLA7uxcyhaR54UFNNlQRLuTjd_GAhdHanFZNDT"/>
+<div class="absolute bottom-0 right-0 bg-green-500 w-4 h-4 rounded-full border-2 border-white"></div>
+</div>
+<div class="flex-1 text-right">
+<div class="flex flex-row-reverse justify-between items-start">
+<button class="text-primary bg-secondary/40 p-2 rounded-full hover:bg-secondary/60 transition-colors">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</button>
+<h3 class="text-lg font-bold text-on-surface">מיכל לוי</h3>
+</div>
+<div class="flex items-center justify-end gap-1 text-on-surface-variant text-sm mt-1">
+<span>תל אביב</span>
+<span class="material-symbols-outlined text-sm">location_on</span>
+</div>
+<div class="mt-2 flex items-center justify-end gap-1">
+<span class="text-xs font-medium text-on-surface-variant">(42 חוות דעת)</span>
+<span class="text-sm font-bold text-amber-500">5.0</span>
+<span class="material-symbols-outlined text-sm text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</div>
+<div class="mt-4 flex flex-wrap justify-end gap-2">
+<span class="bg-secondary/40 text-primary px-3 py-1 rounded-full text-xs font-semibold">תינוקות</span>
+<span class="bg-secondary/40 text-primary px-3 py-1 rounded-full text-xs font-semibold">עזרה בשיעורי בית</span>
+</div>
+<div class="mt-6 flex items-center justify-between">
+<div class="text-right">
+<span class="text-xl font-extrabold text-primary">₪65</span>
+<span class="text-xs text-on-surface-variant">/ לשעה</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-secondary/40 text-primary px-5 py-2.5 rounded-full font-bold text-sm hover:bg-secondary/60 transition-colors">הודעה</button>
+<button class="bg-primary text-on-primary px-5 py-2.5 rounded-full font-bold text-sm hover:opacity-90 shadow-lg shadow-primary/20 transition-all">פרופיל</button>
+</div>
+</div>
+</div>
+<!-- Saved Babysitter Card 2 -->
+<div class="bg-white rounded-xl p-6 shadow-card hover:shadow-premium transition-all duration-300 border border-outline/30 relative">
+<div class="flex flex-row-reverse items-start gap-4">
+<div class="relative shrink-0">
+<img alt="Portrait of Dana" class="w-20 h-20 rounded-full object-cover border-4 border-secondary/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzC9DGEWfj1abnqq6K-QmfSXh53dCEDopA2yuA7gaZGg0Q2ZQZ-9T9DWWjbDex7M_eiEsDbTw1KKPVOQ6SKohthejsEHddthW7I3Z4C76gp8sqyAwjAxbQnUJpBje03xC2wZdeLmYAmdWxAwb6BS5rJLAWud8c1liu0DQybnY1sH4fKSwsfJRJOsz8C8-4hDZtDNY21Kd9enRyfCiA-pleWmw16TWfg28EG0DayTOHH_Zj2jvdvLvziyK-3lQTLmJ_dMOiW9zCpHIo"/>
+<div class="absolute bottom-0 right-0 bg-green-500 w-4 h-4 rounded-full border-2 border-white"></div>
+</div>
+<div class="flex-1 text-right">
+<div class="flex flex-row-reverse justify-between items-start">
+<button class="text-primary bg-secondary/40 p-2 rounded-full hover:bg-secondary/60 transition-colors">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</button>
+<h3 class="text-lg font-bold text-on-surface">דנה כהן</h3>
+</div>
+<div class="flex items-center justify-end gap-1 text-on-surface-variant text-sm mt-1">
+<span>רמת גן</span>
+<span class="material-symbols-outlined text-sm">location_on</span>
+</div>
+<div class="mt-2 flex items-center justify-end gap-1">
+<span class="text-xs font-medium text-on-surface-variant">(28 חוות דעת)</span>
+<span class="text-sm font-bold text-amber-500">4.9</span>
+<span class="material-symbols-outlined text-sm text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</div>
+<div class="mt-4 flex flex-wrap justify-end gap-2">
+<span class="bg-secondary/40 text-primary px-3 py-1 rounded-full text-xs font-semibold">פעוטות</span>
+<span class="bg-secondary/40 text-primary px-3 py-1 rounded-full text-xs font-semibold">ניסיון רפואי</span>
+</div>
+<div class="mt-6 flex items-center justify-between">
+<div class="text-right">
+<span class="text-xl font-extrabold text-primary">₪70</span>
+<span class="text-xs text-on-surface-variant">/ לשעה</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-secondary/40 text-primary px-5 py-2.5 rounded-full font-bold text-sm hover:bg-secondary/60 transition-colors">הודעה</button>
+<button class="bg-primary text-on-primary px-5 py-2.5 rounded-full font-bold text-sm hover:opacity-90 shadow-lg shadow-primary/20 transition-all">פרופיל</button>
+</div>
+</div>
+</div>
+<!-- Warm Integrated Empty State -->
+<div class="mt-12 flex flex-col items-center justify-center text-center p-12 bg-white rounded-[2.5rem] border border-outline/20 shadow-premium">
+<div class="w-32 h-32 bg-secondary/30 rounded-full flex items-center justify-center mb-8 relative">
+<span class="material-symbols-outlined text-6xl text-primary/40" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<div class="absolute inset-0 animate-ping bg-primary/10 rounded-full opacity-30"></div>
+</div>
+<h2 class="text-2xl font-extrabold text-on-surface mb-3">עדיין לא שמרת אף מטפלת</h2>
+<p class="text-on-surface-variant max-w-[280px] leading-relaxed mb-10 text-base">
+                    המטפלות שתאהבו יופיעו כאן כדי שתוכלו למצוא אותן בקלות ובמהירות.
+                </p>
+<button class="bg-primary text-on-primary px-10 py-4 rounded-full font-bold shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-3">
+<span class="material-symbols-outlined text-xl">search</span>
+<span>חזרה לחיפוש</span>
+</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-white/95 backdrop-blur-md border-t border-outline/50 rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+<div class="flex flex-row-reverse justify-around items-center w-full px-4 pb-8 pt-4 max-w-xl mx-auto">
+<!-- Search -->
+<div class="flex flex-col items-center justify-center text-on-surface-variant transition-all hover:text-primary active:scale-90">
+<span class="material-symbols-outlined text-2xl mb-1">search</span>
+<span class="text-[10px] font-bold">חיפוש</span>
+</div>
+<!-- Saved (Active) -->
+<div class="flex flex-col items-center justify-center">
+<div class="bg-secondary/60 text-primary px-6 py-2 rounded-full mb-1 flex items-center justify-center transition-all active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</div>
+<span class="text-[10px] font-extrabold text-primary">שמורים</span>
+</div>
+<!-- Messages -->
+<div class="flex flex-col items-center justify-center text-on-surface-variant transition-all hover:text-primary active:scale-90">
+<span class="material-symbols-outlined text-2xl mb-1">chat_bubble</span>
+<span class="text-[10px] font-bold">הודעות</span>
+</div>
+<!-- Profile -->
+<div class="flex flex-col items-center justify-center text-on-surface-variant transition-all hover:text-primary active:scale-90">
+<span class="material-symbols-outlined text-2xl mb-1">person</span>
+<span class="text-[10px] font-bold">פרופיל</span>
+</div>
+</div>
+</nav>
+</body></html>

@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { strings } from '@/locales';
@@ -17,19 +18,17 @@ import { UserRole } from '@/types/user';
 import AppShell from '@/components/navigation/AppShell';
 import AppCard from '@/components/ui/AppCard';
 import AppScreen from '@/components/ui/AppScreen';
+import AvatarCircle from '@/components/ui/AvatarCircle';
 import LabeledInput from '@/components/onboarding/LabeledInput';
-import SectionLabel from '@/components/onboarding/SectionLabel';
 import TagSelector from '@/components/onboarding/TagSelector';
 import AppButton from '@/components/ui/AppButton';
 import AppText from '@/components/ui/AppText';
 import DateTimePicker from '@/components/ui/DateTimePicker';
-import SectionHeader from '@/components/ui/SectionHeader';
 import { recordPositiveEvent } from '@/lib/reviewPrompt';
 import { findPendingPairRequest, requestToDraft } from '@/lib/requestLookup';
 import { BabyCityChipTones, BabyCityGeometry, BabyCityPalette, getRoleTheme } from '@/constants/theme';
 
 const NUM_CHILDREN_OPTIONS = ['1', '2', '3', '4+'];
-const AGE_RANGE_OPTIONS = ['תינוקות (0–1)', 'פעוטות (1–3)', 'גן (3–6)', 'גיל בית ספר (6+)'];
 
 export default function SendRequestScreen() {
   const { id, name, targetRole } = useLocalSearchParams<{
@@ -39,9 +38,11 @@ export default function SendRequestScreen() {
   }>();
   const {
     addRequest,
+    babysitters,
     conversations,
     currentUserId,
     currentBabysitterProfileId,
+    posts,
     sentRequests,
     refreshParentData,
     refreshBabysitterData,
@@ -52,6 +53,8 @@ export default function SendRequestScreen() {
   const isParent = roleName === 'parent';
   const roleTheme = getRoleTheme(roleName);
   const shellBackground = roleTheme.screenBackground;
+  const normalizedTargetRole: UserRole = targetRole === 'parent' ? 'parent' : 'babysitter';
+  const useStitchParentRequestLayout = isParent && normalizedTargetRole === 'babysitter';
 
   const [data, setData] = useState<RequestDraft>({ ...initialRequestDraft, requestType: 'quick_message' });
   const [expanded, setExpanded] = useState(false); // parent-only: full childcare fields
@@ -62,6 +65,30 @@ export default function SendRequestScreen() {
   const [blockedReason, setBlockedReason] = useState<'conversation-exists' | null>(null);
 
   const areaRef = useRef<TextInput>(null);
+  const selectedBabysitter = useMemo(
+    () => (
+      normalizedTargetRole === 'babysitter' && typeof id === 'string'
+        ? babysitters.find(item => item.id === id) ?? null
+        : null
+    ),
+    [babysitters, id, normalizedTargetRole]
+  );
+  const selectedParentPost = useMemo(
+    () => (
+      normalizedTargetRole === 'parent' && typeof id === 'string'
+        ? posts.find(post => post.parentId === id) ?? null
+        : null
+    ),
+    [id, normalizedTargetRole, posts]
+  );
+  const recipientName =
+    selectedBabysitter?.name ??
+    selectedParentPost?.parentName ??
+    (typeof name === 'string' && name.trim() !== '' ? name : strings.notFilled);
+  const recipientCity = selectedBabysitter?.city ?? selectedParentPost?.parentCity ?? '';
+  const recipientPhotoUrl = selectedBabysitter?.profilePhotoUrl ?? selectedParentPost?.parentProfilePhotoUrl;
+  const recipientHourlyRate = selectedBabysitter?.hourlyRate ?? null;
+  const recipientHasVerification = Boolean(selectedBabysitter?.isVerified);
 
   const pairParentId = isParent ? currentUserId : (typeof id === 'string' ? id : '');
   const pairBabysitterId = isParent
@@ -114,6 +141,7 @@ export default function SendRequestScreen() {
       : isParent
         ? `${expanded ? strings.fullRequestTitle : strings.sendMessageTo}${name ? ` ${name}` : ''}`
         : strings.introContactTitle;
+  const formHeaderTitle = isEditingRequest ? strings.requestEditTitle : strings.sendRequestTitle;
 
   useEffect(() => {
     if (!pendingRequestByCurrentSender) {
@@ -199,8 +227,6 @@ export default function SendRequestScreen() {
 
   async function handleSubmit() {
     if (!validate()) return;
-
-    const normalizedTargetRole: UserRole = targetRole === 'parent' ? 'parent' : 'babysitter';
 
     setSubmitting(true);
     const result = await addRequest(data, id, normalizedTargetRole);
@@ -406,142 +432,371 @@ export default function SendRequestScreen() {
 
   return (
     <AppShell
-      title={shellTitle}
+      title={useStitchParentRequestLayout ? formHeaderTitle : shellTitle}
       subtitle={null}
-      activeTab="home"
+      activeTab="chats"
       backgroundColor={shellBackground}
       showBackButton
       onBack={handleBack}
+      hideHeaderMenuButton={useStitchParentRequestLayout}
+      backButtonVariant={useStitchParentRequestLayout ? 'icon' : 'pill'}
+      swapHeaderEdgeControls={useStitchParentRequestLayout}
+      bottomOverlay={
+        useStitchParentRequestLayout ? (
+          <LinearGradient
+            colors={['rgba(244,246,255,0)', 'rgba(244,246,255,0.92)', '#f4f6ff']}
+            locations={[0, 0.3, 1]}
+            style={styles.bottomOverlay}
+          >
+            <AppButton
+              label={isEditingRequest ? strings.requestEditSubmit : strings.requestSubmit}
+              size="lg"
+              loading={submitting}
+              onPress={handleSubmit}
+              disabled={submitting}
+              style={styles.bottomPrimaryButton}
+            />
+            <TouchableOpacity
+              accessibilityRole="button"
+              activeOpacity={0.8}
+              onPress={handleBack}
+              style={styles.cancelAction}
+            >
+              <AppText variant="body" weight="600" style={styles.cancelActionText}>
+                {strings.cancel}
+              </AppText>
+            </TouchableOpacity>
+          </LinearGradient>
+        ) : undefined
+      }
     >
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={useStitchParentRequestLayout ? 88 : 0}
       >
-        <AppScreen
-          scrollable
-          backgroundColor={shellBackground}
-          style={styles.flex}
-          contentContainerStyle={styles.content}
-          scrollProps={{ keyboardShouldPersistTaps: 'handled' }}
-        >
-          <AppCard
-            role={roleName}
-            variant="hero"
-            backgroundColor={roleTheme.highlightedSurface}
-            borderColor="transparent"
-            style={styles.heroCard}
+        <View style={styles.flex}>
+          {useStitchParentRequestLayout ? <View style={styles.backdropOrbTop} /> : null}
+          {useStitchParentRequestLayout ? <View style={styles.backdropOrbBottom} /> : null}
+
+          <AppScreen
+            scrollable
+            backgroundColor={shellBackground}
+            style={styles.flex}
+            contentContainerStyle={[
+              styles.content,
+              useStitchParentRequestLayout && styles.stitchContent,
+            ]}
+            scrollProps={{
+              keyboardShouldPersistTaps: 'handled',
+              showsVerticalScrollIndicator: false,
+            }}
           >
-            <SectionHeader
-              title={isParent ? strings.quickMessageLabel : strings.introNoteLabel}
-              subtitle={isParent ? strings.quickMessagePlaceholder : strings.introNotePlaceholder}
-            />
-          </AppCard>
+            {useStitchParentRequestLayout ? (
+              <>
+                <AppCard style={styles.recipientCard}>
+                  <View style={styles.recipientRow}>
+                    <View style={styles.recipientAvatarWrap}>
+                      <AvatarCircle
+                        name={recipientName || strings.appName}
+                        photoUrl={recipientPhotoUrl}
+                        size={64}
+                        tone="muted"
+                      />
+                      {recipientHasVerification ? (
+                        <View style={styles.recipientBadge}>
+                          <Ionicons name="checkmark-circle" size={12} color="#ffffff" />
+                          <AppText variant="caption" weight="700" style={styles.recipientBadgeText}>
+                            {strings.verifiedBadge}
+                          </AppText>
+                        </View>
+                      ) : null}
+                    </View>
 
-          {/* Note / message field — always shown */}
-          <AppCard role={roleName} variant="panel" style={styles.formSectionCard}>
-            <AppText variant="bodyLarge" weight="800" style={[styles.formTitle, { color: roleTheme.title }]}>
-              {isParent ? strings.quickMessageLabel : strings.introNoteLabel}
-            </AppText>
-            <LabeledInput
-              label={isParent ? strings.quickMessageLabel + ' *' : strings.introNoteLabel + ' *'}
-              value={data.note}
-              onChange={v => update({ note: v })}
-              placeholder={isParent ? strings.quickMessagePlaceholder : strings.introNotePlaceholder}
-              multiline
-              errorText={fieldErrors.note}
-            />
-          </AppCard>
+                    <View style={styles.recipientDetails}>
+                      <AppText variant="bodyLarge" weight="800" style={styles.recipientName}>
+                        {recipientName || strings.notFilled}
+                      </AppText>
+                      {recipientCity ? (
+                        <View style={styles.recipientMetaRow}>
+                          <Ionicons name="location-outline" size={15} color={BabyCityPalette.textSecondary} />
+                          <AppText variant="caption" tone="muted" style={styles.recipientMetaText}>
+                            {recipientCity}
+                          </AppText>
+                        </View>
+                      ) : null}
+                    </View>
 
-          {/* Expand button (parent only, when collapsed) */}
-          {isParent && !expanded && (
-            <TouchableOpacity
-              style={[styles.expandButtonCard, { backgroundColor: roleTheme.highlightedSurface }]}
-              onPress={handleExpand}
-            >
-              <AppText variant="body" weight="700" style={[styles.expandButtonText, { color: roleTheme.title }]}>
-                {strings.expandToFullRequest}
-              </AppText>
-              <View style={[styles.expandIconCircle, { backgroundColor: BabyCityPalette.primarySoft }]}>
-                <Ionicons name="add-circle-outline" size={18} color={BabyCityPalette.primary} />
-              </View>
-            </TouchableOpacity>
-          )}
+                    {recipientHourlyRate != null ? (
+                      <View style={styles.rateBlock}>
+                        <AppText variant="h3" weight="800" style={styles.rateValue}>
+                          ₪{recipientHourlyRate}
+                        </AppText>
+                        <AppText variant="caption" tone="muted" style={styles.rateLabel}>
+                          {strings.perHourSuffix}
+                        </AppText>
+                      </View>
+                    ) : null}
+                  </View>
+                </AppCard>
 
-          {/* Full childcare fields (parent only, when expanded) */}
-          {isParent && expanded && (
-            <AppCard
-              role={roleName}
-              variant="panel"
-              backgroundColor={roleTheme.highlightedSurface}
-              borderColor="transparent"
-              style={styles.expandedSection}
-            >
-              <TouchableOpacity style={styles.collapseButton} onPress={handleCollapse}>
-                <AppText variant="caption" style={[styles.collapseButtonText, { color: roleTheme.subtitle }]}>
-                  {strings.collapseRequest}
-                </AppText>
-                <Ionicons name="remove-circle-outline" size={16} color={roleTheme.subtitle} />
-              </TouchableOpacity>
+                {isQuick ? (
+                  <AppCard style={styles.detailsToggleCard}>
+                    <TouchableOpacity
+                      activeOpacity={0.86}
+                      onPress={handleExpand}
+                      style={styles.detailsToggleButton}
+                    >
+                      <View style={styles.detailsToggleIcon}>
+                        <Ionicons name="add" size={20} color={BabyCityPalette.primary} />
+                      </View>
+                      <View style={styles.detailsToggleCopy}>
+                        <AppText variant="bodyLarge" weight="700" style={styles.detailsToggleLabel}>
+                          {strings.expandToFullRequest}
+                        </AppText>
+                        <AppText variant="caption" tone="muted" style={styles.detailsToggleHint}>
+                          {`${strings.requestDate} • ${strings.requestTime} • ${strings.requestNumChildren} • ${strings.requestArea}`}
+                        </AppText>
+                      </View>
+                    </TouchableOpacity>
+                  </AppCard>
+                ) : null}
 
-              <DateTimePicker
-                mode="date"
-                label={strings.requestDate + ' *'}
-                value={data.date}
-                onChange={v => update({ date: v })}
-                errorText={fieldErrors.date}
-              />
+                {!isQuick ? (
+                  <AppCard style={styles.stitchSectionCard}>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={handleCollapse}
+                      style={styles.inlineCollapseAction}
+                    >
+                      <Ionicons name="remove-circle-outline" size={16} color={BabyCityPalette.textSecondary} />
+                      <AppText variant="caption" weight="700" tone="muted" style={styles.inlineCollapseText}>
+                        {strings.collapseRequest}
+                      </AppText>
+                    </TouchableOpacity>
 
-              <DateTimePicker
-                mode="time"
-                label={strings.requestTime + ' *'}
-                value={data.time}
-                onChange={v => update({ time: v })}
-                errorText={fieldErrors.time}
-              />
+                    <View style={styles.sectionHeaderRow}>
+                      <Ionicons name="calendar-outline" size={18} color={BabyCityPalette.primary} />
+                      <AppText variant="bodyLarge" weight="700" style={styles.sectionHeaderText}>
+                        {strings.requestScheduleTitle}
+                      </AppText>
+                    </View>
 
-              <SectionLabel text={strings.requestNumChildren + ' *'} />
-              <TagSelector
-                options={NUM_CHILDREN_OPTIONS}
-                selected={data.numChildren ? [data.numChildren] : []}
-                onChange={v => update({ numChildren: v[0] ?? '' })}
-                singleSelect
-                errorText={fieldErrors.numChildren}
-              />
+                    <DateTimePicker
+                      mode="date"
+                      label={strings.requestDate + ' *'}
+                      value={data.date}
+                      onChange={v => update({ date: v })}
+                      errorText={fieldErrors.date}
+                    />
 
-              <SectionLabel text={strings.requestChildAgeRange + ' *'} />
-              <TagSelector
-                options={AGE_RANGE_OPTIONS}
-                selected={data.childAgeRange}
-                onChange={v => update({ childAgeRange: v })}
-                errorText={fieldErrors.childAgeRange}
-              />
+                    <DateTimePicker
+                      mode="time"
+                      label={strings.requestTime + ' *'}
+                      value={data.time}
+                      onChange={v => update({ time: v })}
+                      errorText={fieldErrors.time}
+                    />
+                  </AppCard>
+                ) : null}
 
-              <LabeledInput
-                ref={areaRef}
-                label={strings.requestArea + ' *'}
-                value={data.area}
-                onChange={v => update({ area: v })}
-                placeholder={strings.requestAreaPlaceholder}
-                returnKeyType="done"
-                errorText={fieldErrors.area}
-              />
-            </AppCard>
-          )}
+                {!isQuick ? (
+                  <AppCard style={styles.stitchSectionCard}>
+                    <View style={styles.sectionHeaderRow}>
+                      <Ionicons name="people-outline" size={18} color={BabyCityPalette.primary} />
+                      <AppText variant="bodyLarge" weight="700" style={styles.sectionHeaderText}>
+                        {strings.requestForWhom}
+                      </AppText>
+                    </View>
 
-          {error !== '' && (
-            <AppText variant="body" tone="error" style={[styles.errorText, { color: BabyCityPalette.error }]}>
-              {error}
-            </AppText>
-          )}
+                    <View style={styles.selectorBlock}>
+                      <AppText variant="body" weight="700" tone="muted" style={styles.selectorLabel}>
+                        {strings.requestNumChildren + ' *'}
+                      </AppText>
+                      <TagSelector
+                        options={NUM_CHILDREN_OPTIONS}
+                        selected={data.numChildren ? [data.numChildren] : []}
+                        onChange={v => update({ numChildren: v[0] ?? '' })}
+                        singleSelect
+                        errorText={fieldErrors.numChildren}
+                      />
+                    </View>
 
-          <AppButton
-            label={isEditingRequest ? strings.requestEditSubmit : strings.requestSubmit}
-            size="lg"
-            loading={submitting}
-            onPress={handleSubmit}
-            style={styles.primaryButton}
-          />
-        </AppScreen>
+                    <View style={styles.selectorBlock}>
+                      <AppText variant="body" weight="700" tone="muted" style={styles.selectorLabel}>
+                        {strings.requestChildAgeRange + ' *'}
+                      </AppText>
+                      <TagSelector
+                        options={[
+                          strings.ageRangeOptionInfants,
+                          strings.ageRangeOptionToddlers,
+                          strings.ageRangeOptionPreschool,
+                          strings.ageRangeOptionSchool,
+                        ]}
+                        selected={data.childAgeRange}
+                        onChange={v => update({ childAgeRange: v })}
+                        errorText={fieldErrors.childAgeRange}
+                      />
+                    </View>
+
+                    <LabeledInput
+                      ref={areaRef}
+                      label={strings.requestArea + ' *'}
+                      value={data.area}
+                      onChange={v => update({ area: v })}
+                      placeholder={strings.requestAreaPlaceholder}
+                      returnKeyType="done"
+                      errorText={fieldErrors.area}
+                    />
+                  </AppCard>
+                ) : null}
+
+                <AppCard style={styles.stitchSectionCard}>
+                  <View style={styles.sectionHeaderRow}>
+                    <Ionicons name="create-outline" size={18} color={BabyCityPalette.primary} />
+                    <AppText variant="bodyLarge" weight="700" style={styles.sectionHeaderText}>
+                      {isParent ? strings.quickMessageLabel : strings.introNoteLabel}
+                    </AppText>
+                  </View>
+
+                  <LabeledInput
+                    label={isParent ? `${strings.quickMessageLabel} *` : `${strings.introNoteLabel} *`}
+                    value={data.note}
+                    onChange={v => update({ note: v })}
+                    placeholder={isQuick ? strings.quickMessagePlaceholder : strings.requestNotePlaceholder}
+                    multiline
+                    errorText={fieldErrors.note}
+                  />
+                </AppCard>
+
+                {error !== '' ? (
+                  <AppText variant="body" tone="error" style={[styles.errorText, { color: BabyCityPalette.error }]}>
+                    {error}
+                  </AppText>
+                ) : null}
+
+                <View style={styles.stitchBottomSpacer} />
+              </>
+            ) : (
+              <>
+                <View style={styles.heroSection}>
+                  <AppText variant="h1" weight="800" style={[styles.heroTitle, { color: roleTheme.title }]}>
+                    {isParent ? strings.quickMessageLabel : strings.introNoteLabel}
+                  </AppText>
+                  <AppText variant="body" style={styles.heroSubtitle}>
+                    {isParent ? strings.quickMessagePlaceholder : strings.introNotePlaceholder}
+                  </AppText>
+                </View>
+
+                <AppCard role={roleName} variant="panel" style={styles.formSectionCard}>
+                  <AppText variant="bodyLarge" weight="800" style={[styles.formTitle, { color: roleTheme.title }]}>
+                    {isParent ? strings.quickMessageLabel : strings.introNoteLabel}
+                  </AppText>
+                  <LabeledInput
+                    label={isParent ? strings.quickMessageLabel + ' *' : strings.introNoteLabel + ' *'}
+                    value={data.note}
+                    onChange={v => update({ note: v })}
+                    placeholder={isParent ? strings.quickMessagePlaceholder : strings.introNotePlaceholder}
+                    multiline
+                    errorText={fieldErrors.note}
+                  />
+                </AppCard>
+
+                {isParent && !expanded && (
+                  <TouchableOpacity
+                    style={[styles.expandButtonCard, { backgroundColor: roleTheme.highlightedSurface }]}
+                    onPress={handleExpand}
+                  >
+                    <AppText variant="body" weight="700" style={[styles.expandButtonText, { color: roleTheme.title }]}>
+                      {strings.expandToFullRequest}
+                    </AppText>
+                    <View style={[styles.expandIconCircle, { backgroundColor: BabyCityPalette.primarySoft }]}>
+                      <Ionicons name="add-circle-outline" size={18} color={BabyCityPalette.primary} />
+                    </View>
+                  </TouchableOpacity>
+                )}
+
+                {isParent && expanded && (
+                  <AppCard
+                    role={roleName}
+                    variant="panel"
+                    backgroundColor={roleTheme.highlightedSurface}
+                    borderColor="transparent"
+                    style={styles.expandedSection}
+                  >
+                    <TouchableOpacity style={styles.collapseButton} onPress={handleCollapse}>
+                      <AppText variant="caption" style={[styles.collapseButtonText, { color: roleTheme.subtitle }]}>
+                        {strings.collapseRequest}
+                      </AppText>
+                      <Ionicons name="remove-circle-outline" size={16} color={roleTheme.subtitle} />
+                    </TouchableOpacity>
+
+                    <DateTimePicker
+                      mode="date"
+                      label={strings.requestDate + ' *'}
+                      value={data.date}
+                      onChange={v => update({ date: v })}
+                      errorText={fieldErrors.date}
+                    />
+
+                    <DateTimePicker
+                      mode="time"
+                      label={strings.requestTime + ' *'}
+                      value={data.time}
+                      onChange={v => update({ time: v })}
+                      errorText={fieldErrors.time}
+                    />
+
+                    <AppText variant="body" weight="700" tone="muted" style={styles.selectorLabel}>
+                      {strings.requestNumChildren + ' *'}
+                    </AppText>
+                    <TagSelector
+                      options={NUM_CHILDREN_OPTIONS}
+                      selected={data.numChildren ? [data.numChildren] : []}
+                      onChange={v => update({ numChildren: v[0] ?? '' })}
+                      singleSelect
+                      errorText={fieldErrors.numChildren}
+                    />
+
+                    <AppText variant="body" weight="700" tone="muted" style={styles.selectorLabel}>
+                      {strings.requestChildAgeRange + ' *'}
+                    </AppText>
+                    <TagSelector
+                      options={[strings.ageRangeOptionInfants, strings.ageRangeOptionToddlers, strings.ageRangeOptionPreschool, strings.ageRangeOptionSchool]}
+                      selected={data.childAgeRange}
+                      onChange={v => update({ childAgeRange: v })}
+                      errorText={fieldErrors.childAgeRange}
+                    />
+
+                    <LabeledInput
+                      ref={areaRef}
+                      label={strings.requestArea + ' *'}
+                      value={data.area}
+                      onChange={v => update({ area: v })}
+                      placeholder={strings.requestAreaPlaceholder}
+                      returnKeyType="done"
+                      errorText={fieldErrors.area}
+                    />
+                  </AppCard>
+                )}
+
+                {error !== '' && (
+                  <AppText variant="body" tone="error" style={[styles.errorText, { color: BabyCityPalette.error }]}>
+                    {error}
+                  </AppText>
+                )}
+
+                <AppButton
+                  label={isEditingRequest ? strings.requestEditSubmit : strings.requestSubmit}
+                  size="lg"
+                  loading={submitting}
+                  onPress={handleSubmit}
+                  style={styles.primaryButton}
+                />
+              </>
+            )}
+          </AppScreen>
+        </View>
       </KeyboardAvoidingView>
     </AppShell>
   );
@@ -590,6 +845,23 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
+  bottomOverlay: {
+    paddingTop: 24,
+    paddingBottom: 6,
+    paddingHorizontal: 6,
+  },
+  bottomPrimaryButton: {
+    width: '100%',
+  },
+  cancelAction: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 12,
+    paddingBottom: 8,
+  },
+  cancelActionText: {
+    color: BabyCityPalette.textSecondary,
+  },
   centeredState: {
     flex: 1,
     alignItems: 'center',
@@ -614,14 +886,187 @@ const styles = StyleSheet.create({
   content: {
     paddingBottom: 48,
   },
+  stitchContent: {
+    paddingTop: 18,
+    paddingBottom: 180,
+  },
+  backdropOrbTop: {
+    position: 'absolute',
+    top: 6,
+    right: -44,
+    width: 196,
+    height: 196,
+    borderRadius: 98,
+    backgroundColor: 'rgba(112,42,225,0.06)',
+  },
+  backdropOrbBottom: {
+    position: 'absolute',
+    bottom: 38,
+    left: -36,
+    width: 156,
+    height: 156,
+    borderRadius: 78,
+    backgroundColor: 'rgba(233,222,245,0.48)',
+  },
+  recipientCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 30,
+    paddingHorizontal: 18,
+    paddingVertical: 18,
+    marginBottom: 16,
+    shadowColor: BabyCityPalette.shadow,
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 4,
+  },
+  recipientRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 14,
+  },
+  recipientAvatarWrap: {
+    position: 'relative',
+  },
+  recipientBadge: {
+    position: 'absolute',
+    bottom: -6,
+    left: -6,
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: BabyCityGeometry.radius.pill,
+    backgroundColor: BabyCityPalette.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderWidth: 3,
+    borderColor: '#ffffff',
+  },
+  recipientBadgeText: {
+    color: '#ffffff',
+    fontSize: 10,
+    lineHeight: 12,
+  },
+  recipientDetails: {
+    flex: 1,
+    alignItems: 'flex-end',
+    gap: 4,
+  },
+  recipientName: {
+    color: BabyCityPalette.textPrimary,
+    textAlign: 'right',
+  },
+  recipientMetaRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 4,
+  },
+  recipientMetaText: {
+    textAlign: 'right',
+  },
+  rateBlock: {
+    alignItems: 'flex-start',
+    minWidth: 70,
+  },
+  rateValue: {
+    color: BabyCityPalette.primary,
+    textAlign: 'left',
+  },
+  rateLabel: {
+    textAlign: 'left',
+  },
+  detailsToggleCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 28,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    marginBottom: 16,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 14,
+  },
+  sectionHeaderText: {
+    color: BabyCityPalette.textPrimary,
+    textAlign: 'right',
+  },
+  detailsToggleButton: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 12,
+  },
+  detailsToggleIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: BabyCityPalette.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  detailsToggleCopy: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  detailsToggleLabel: {
+    color: BabyCityPalette.textPrimary,
+    textAlign: 'right',
+  },
+  detailsToggleHint: {
+    textAlign: 'right',
+    marginTop: 2,
+  },
+  inlineCollapseAction: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    gap: 6,
+    marginBottom: 14,
+  },
+  inlineCollapseText: {
+    textAlign: 'right',
+  },
+  stitchSectionCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 28,
+    paddingHorizontal: 18,
+    paddingTop: 18,
+    paddingBottom: 8,
+    marginBottom: 16,
+    shadowColor: BabyCityPalette.shadow,
+    shadowOpacity: 0.04,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 2,
+  },
+  selectorBlock: {
+    marginBottom: 4,
+  },
+  selectorLabel: {
+    marginBottom: 10,
+    textAlign: 'right',
+  },
+  stitchBottomSpacer: {
+    height: 24,
+  },
   formTitle: {
     marginBottom: 14,
   },
-  heroCard: {
-    borderRadius: BabyCityGeometry.radius.hero,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    marginBottom: 16,
+  heroSection: {
+    paddingHorizontal: 4,
+    marginBottom: 20,
+    gap: 6,
+  },
+  heroTitle: {
+    fontSize: 28,
+    lineHeight: 36,
+    textAlign: 'right',
+  },
+  heroSubtitle: {
+    textAlign: 'right',
+    lineHeight: 22,
+    color: BabyCityPalette.textSecondary,
   },
   formSectionCard: {
     borderRadius: BabyCityGeometry.radius.hero,
@@ -648,7 +1093,6 @@ const styles = StyleSheet.create({
   },
   expandButtonText: {
   },
-
   expandedSection: {
     marginTop: 12,
     borderRadius: BabyCityGeometry.radius.hero,
@@ -663,20 +1107,17 @@ const styles = StyleSheet.create({
   },
   collapseButtonText: {
   },
-
   errorText: {
     textAlign: 'right',
     marginBottom: 12,
     marginTop: 4,
   },
-
   primaryButton: {
     marginTop: 16,
   },
   secondaryButton: {
     marginTop: 10,
   },
-
   successContent: {
     paddingBottom: 48,
   },

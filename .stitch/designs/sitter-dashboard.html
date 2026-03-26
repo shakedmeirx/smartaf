@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>לוח בקרה - Smartaf Work</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=IBM+Plex+Sans+Hebrew:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#7C3AED",
+              "primary-light": "#F5F3FF",
+              "secondary": "#6366F1",
+              "surface": "#FFFFFF",
+              "background": "#F8FAFC",
+              "on-surface": "#0F172A",
+              "on-surface-variant": "#64748B",
+              "outline": "#E2E8F0"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans", "IBM Plex Sans Hebrew"],
+              "body": ["IBM Plex Sans Hebrew", "sans-serif"]
+            },
+            boxShadow: {
+              'premium': '0 10px 30px -5px rgba(124, 58, 237, 0.08), 0 4px 6px -2px rgba(124, 58, 237, 0.02)',
+              'card': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+            },
+            borderRadius: {
+              "xl": "1.25rem",
+              "2xl": "1.5rem",
+              "3xl": "2rem"
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'IBM Plex Sans Hebrew', sans-serif;
+        background-color: #F8FAFC;
+      }
+      h1, h2, h3 {
+        font-family: 'IBM Plex Sans Hebrew', sans-serif;
+        letter-spacing: -0.01em;
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+    </style>
+</head>
+<body class="text-on-surface antialiased pb-28">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 glass border-b border-outline/50">
+<div class="flex flex-row-reverse justify-between items-center px-6 h-16 max-w-5xl mx-auto">
+<div class="flex items-center gap-3">
+<span class="font-['Plus_Jakarta_Sans'] font-extrabold tracking-tight text-xl text-primary">Smartaf Work</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<button class="material-symbols-outlined text-on-surface-variant p-2 rounded-full hover:bg-primary-light transition-all active:scale-95" data-icon="notifications">notifications</button>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+</div>
+<div class="w-9 h-9 rounded-full overflow-hidden border-2 border-primary/20 ring-4 ring-primary-light">
+<img alt="Babysitter Profile Picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCsTmMGBBjklgSKTx4cxlMteiD35-WG-p1RD37cKSy1MC-y1E5upfiN4oIZrqDlP2WIbgn90KdnqsjKK8MpOGciQvuIVcJP2WmHH7SjRxs0TF2gGZIvn2aqmYwWBAqFsvabFQ4TVSct7FpYCOTa81vYbU2iX-Etc5XZx6pIlfa--rLsW0kmUX8KFZfy2-82kW43nATMsih2XdlvCGxDGW6En5bd3BtyOxNd2APVPp40CHbUS81GUbYgx8kK96DEMzDsV8hsum9NXv2"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-5xl mx-auto">
+<!-- Hero Section -->
+<section class="mb-8">
+<h1 class="text-3xl font-bold text-on-surface mb-1">לוח בקרה</h1>
+<p class="text-on-surface-variant font-medium">בוקר טוב, מאיה! הנה סיכום העבודה שלך.</p>
+</section>
+<!-- Stats Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+<!-- Stat Card 1 -->
+<div class="bg-white p-6 rounded-2xl shadow-card border border-outline/30 flex flex-col justify-between group hover:shadow-premium transition-shadow duration-300">
+<div class="flex justify-between items-center mb-6">
+<div class="w-12 h-12 bg-primary-light rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="payments">payments</span>
+</div>
+<span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">+12% מהחודש שעבר</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface-variant mb-1">הכנסה החודש</p>
+<p class="text-3xl font-bold text-on-surface">₪4,250</p>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-white p-6 rounded-2xl shadow-card border border-outline/30 flex flex-col justify-between group hover:shadow-premium transition-shadow duration-300">
+<div class="flex justify-between items-center mb-6">
+<div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-2xl" data-icon="schedule">schedule</span>
+</div>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface-variant mb-1">סה"כ שעות</p>
+<p class="text-3xl font-bold text-on-surface">42.5 שעות</p>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-primary p-6 rounded-2xl shadow-premium flex flex-col justify-between text-white relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+<div class="flex justify-between items-center relative z-10 mb-6">
+<div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-2xl" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+<div class="relative z-10">
+<p class="text-sm font-medium opacity-80 mb-1">משמרות שהושלמו</p>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-bold">14</p>
+<span class="text-[11px] opacity-70">החודש הנוכחי</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Shifts -->
+<section class="mb-10">
+<div class="flex justify-between items-center mb-6 px-1">
+<h2 class="text-xl font-bold text-on-surface">משמרות אחרונות</h2>
+<button class="text-primary font-bold text-sm hover:text-primary/80 transition-colors flex items-center gap-1">
+                    הצג הכל
+                    <span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+</button>
+</div>
+<div class="bg-white rounded-2xl shadow-card border border-outline/30 overflow-hidden">
+<!-- Shift Item 1 -->
+<div class="p-5 flex items-center justify-between hover:bg-slate-50 transition-colors border-b border-outline/30 cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="child_care">child_care</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">משפחת כהן</h3>
+<p class="text-xs text-on-surface-variant font-medium mt-0.5">18 במאי • 18:00 - 22:30</p>
+</div>
+</div>
+<div class="text-left flex items-center gap-4">
+<div class="flex flex-col items-end">
+<span class="font-bold text-on-surface">₪360</span>
+<span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100">שולם</span>
+</div>
+<span class="material-symbols-outlined text-outline text-xl" data-icon="chevron_left">chevron_left</span>
+</div>
+</div>
+<!-- Shift Item 2 -->
+<div class="p-5 flex items-center justify-between hover:bg-slate-50 transition-colors border-b border-outline/30 cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="child_care">child_care</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">משפחת לוי</h3>
+<p class="text-xs text-on-surface-variant font-medium mt-0.5">16 במאי • 16:00 - 20:00</p>
+</div>
+</div>
+<div class="text-left flex items-center gap-4">
+<div class="flex flex-col items-end">
+<span class="font-bold text-on-surface">₪320</span>
+<span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-600 border border-amber-100">ממתין</span>
+</div>
+<span class="material-symbols-outlined text-outline text-xl" data-icon="chevron_left">chevron_left</span>
+</div>
+</div>
+<!-- Shift Item 3 -->
+<div class="p-5 flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="child_care">child_care</span>
+</div>
+<div>
+<h3 class="font-bold text-on-surface">משפחת גולן</h3>
+<p class="text-xs text-on-surface-variant font-medium mt-0.5">14 במאי • 19:30 - 23:30</p>
+</div>
+</div>
+<div class="text-left flex items-center gap-4">
+<div class="flex flex-col items-end">
+<span class="font-bold text-on-surface">₪320</span>
+<span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100">שולם</span>
+</div>
+<span class="material-symbols-outlined text-outline text-xl" data-icon="chevron_left">chevron_left</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Performance Insights -->
+<section class="bg-indigo-50 border border-indigo-100 p-8 rounded-3xl relative overflow-hidden mb-12">
+<div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+<svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="40" id="grid" patternunits="userSpaceOnUse" width="40">
+<path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" stroke-width="1"></path>
+</pattern>
+</defs>
+<rect fill="url(#grid)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<div class="flex flex-col md:flex-row items-center gap-10 relative z-10">
+<div class="flex-1 text-right">
+<h2 class="text-xl font-bold text-indigo-950 mb-3">תובנות ביצועים</h2>
+<p class="text-indigo-900/70 mb-8 leading-relaxed font-medium">השבוע העלית את ממוצע השעות שלך ב-4 שעות לעומת השבוע שעבר. שמירה על הקצב הזה תביא אותך ליעד ההכנסה החודשי שלך תוך 5 ימים בלבד!</p>
+<button class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">הצגת פירוט מלא</button>
+</div>
+<div class="w-full md:w-1/3 h-32 bg-white/60 backdrop-blur-sm rounded-2xl p-5 flex items-end justify-between gap-2 border border-white/50 shadow-sm">
+<div class="w-full bg-indigo-200 h-1/4 rounded-t-lg"></div>
+<div class="w-full bg-indigo-300 h-2/4 rounded-t-lg"></div>
+<div class="w-full bg-indigo-400 h-3/4 rounded-t-lg"></div>
+<div class="w-full bg-indigo-500 h-1/2 rounded-t-lg"></div>
+<div class="w-full bg-indigo-600 h-full rounded-t-lg"></div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 glass border-t border-outline/50">
+<div class="flex flex-row-reverse justify-around items-center h-20 px-4 max-w-5xl mx-auto pb-safe">
+<!-- Profile -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant group px-2 py-1">
+<span class="material-symbols-outlined text-2xl group-hover:text-primary transition-colors" data-icon="account_circle">account_circle</span>
+<span class="text-[10px] font-bold mt-1">פרופיל</span>
+</button>
+<!-- Chat -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant group px-2 py-1">
+<span class="material-symbols-outlined text-2xl group-hover:text-primary transition-colors" data-icon="chat_bubble">chat_bubble</span>
+<span class="text-[10px] font-bold mt-1">צ'אט</span>
+</button>
+<!-- Dashboard (Active) -->
+<button class="flex flex-col items-center justify-center text-primary relative px-4 py-1">
+<div class="absolute -top-1 w-1 h-1 bg-primary rounded-full"></div>
+<span class="material-symbols-outlined text-2xl" data-icon="dashboard" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-bold mt-1">דשבורד</span>
+</button>
+<!-- Requests -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant group px-2 py-1">
+<span class="material-symbols-outlined text-2xl group-hover:text-primary transition-colors" data-icon="assignment_ind">assignment_ind</span>
+<span class="text-[10px] font-bold mt-1">בקשות</span>
+</button>
+<!-- Search -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant group px-2 py-1">
+<span class="material-symbols-outlined text-2xl group-hover:text-primary transition-colors" data-icon="work">work</span>
+<span class="text-[10px] font-bold mt-1">חיפוש</span>
+</button>
+</div>
+</nav>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 left-6 w-14 h-14 bg-primary text-white rounded-2xl shadow-premium flex items-center justify-center z-40 active:scale-90 transition-transform hover:bg-primary/90">
+<span class="material-symbols-outlined text-3xl font-bold" data-icon="add">add</span>
+</button>
+</body></html>
