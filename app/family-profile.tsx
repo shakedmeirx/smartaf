@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Image,
-  Linking,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -13,6 +13,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { router, useLocalSearchParams } from 'expo-router';
+import AppCard from '@/components/ui/AppCard';
 import AppChip from '@/components/ui/AppChip';
 import AppPrimaryButton from '@/components/ui/AppPrimaryButton';
 import AppScreen from '@/components/ui/AppScreen';
@@ -44,7 +45,7 @@ const CARD_SHADOW = {
 export default function FamilyProfileScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
   const theme = getRoleTheme('babysitter');
-  const { currentBabysitterProfileId, chatThreads } = useAppState();
+  const { currentBabysitterProfileId, chatThreads, blockUser, isUserExcluded } = useAppState();
   const [family, setFamily] = useState<ParentProfileDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -134,6 +135,7 @@ export default function FamilyProfileScreen() {
     family?.userId && currentBabysitterProfileId
       ? findPairChatThread(chatThreads, family.userId, currentBabysitterProfileId)
       : null;
+  const isBlockedFamily = !!family?.userId && isUserExcluded(family.userId);
 
   function handleBack() {
     if (router.canGoBack()) {
@@ -142,6 +144,41 @@ export default function FamilyProfileScreen() {
     }
 
     router.replace('/babysitter');
+  }
+
+  async function confirmBlockFamily() {
+    if (!family?.userId) return;
+
+    const result = await blockUser(family.userId);
+    if (!result.success) {
+      Alert.alert(strings.blockUserError);
+      return;
+    }
+
+    Alert.alert(strings.blockUserSuccess);
+    router.replace('/babysitter');
+  }
+
+  function handleBlockFamily() {
+    if (!family?.userId) return;
+
+    Alert.alert(
+      strings.blockUserConfirmTitle,
+      strings.blockUserConfirmBody,
+      [
+        {
+          text: strings.myPostsDeleteConfirmCancel,
+          style: 'cancel',
+        },
+        {
+          text: strings.blockUserConfirmAction,
+          style: 'destructive',
+          onPress: () => {
+            void confirmBlockFamily();
+          },
+        },
+      ]
+    );
   }
 
   return (
@@ -355,40 +392,60 @@ export default function FamilyProfileScreen() {
             </Animated.View>
 
             <Animated.View entering={FadeInDown.duration(240).delay(260)} style={styles.ctaWrap}>
-              <AppPrimaryButton
-                label={existingThread ? strings.alreadyChattingCta : strings.sendMessage}
-                onPress={() => {
-                  if (existingThread) {
-                    router.push(
-                      `/chat?requestId=${existingThread.requestId}&name=${encodeURIComponent(
-                        family.fullName || strings.familyFeedAnonymous
-                      )}`
-                    );
-                    return;
-                  }
+              {isBlockedFamily ? (
+                <AppCard role="babysitter" variant="panel" style={styles.blockedCard}>
+                  <AppText variant="h3" weight="800" align="center" style={styles.blockedTitle}>
+                    {strings.userBlockedTitle}
+                  </AppText>
+                  <AppText variant="body" tone="muted" align="center" style={styles.blockedBody}>
+                    {strings.userBlockedBody}
+                  </AppText>
+                </AppCard>
+              ) : (
+                <>
+                  <AppPrimaryButton
+                    label={existingThread ? strings.alreadyChattingCta : strings.sendMessage}
+                    onPress={() => {
+                      if (existingThread) {
+                        router.push(
+                          `/chat?requestId=${existingThread.requestId}&name=${encodeURIComponent(
+                            family.fullName || strings.familyFeedAnonymous
+                          )}`
+                        );
+                        return;
+                      }
 
-                  router.push(
-                    `/send-request?id=${family.userId}&name=${encodeURIComponent(
-                      family.fullName || strings.familyFeedAnonymous
-                    )}&targetRole=parent`
-                  );
-                }}
-              />
-              <TouchableOpacity
-                style={styles.reportLink}
-                onPress={() => {
-                  const subject = encodeURIComponent(strings.reportEmailSubject);
-                  const body = encodeURIComponent(
-                    `Parent user ID: ${family.userId}\nParent profile ID: ${family.id}`
-                  );
-                  Linking.openURL(
-                    `mailto:support@babysitconnect.app?subject=${subject}&body=${body}`
-                  );
-                }}
-                activeOpacity={0.8}
-              >
-                <AppText variant="body" weight="700" align="center" tone="error" style={styles.reportLinkText}>{strings.reportUser}</AppText>
-              </TouchableOpacity>
+                      router.push(
+                        `/send-request?id=${family.userId}&name=${encodeURIComponent(
+                          family.fullName || strings.familyFeedAnonymous
+                        )}&targetRole=parent`
+                      );
+                    }}
+                  />
+                  <View style={styles.actionLinksRow}>
+                    <TouchableOpacity
+                      style={styles.reportLink}
+                      onPress={() => {
+                        router.push(
+                          `/contact?origin=family-profile&action=safety&targetRole=parent&targetUserId=${encodeURIComponent(
+                            family.userId
+                          )}&targetProfileId=${encodeURIComponent(family.id)}`
+                        );
+                      }}
+                      activeOpacity={0.8}
+                    >
+                      <AppText variant="body" weight="700" align="center" tone="error" style={styles.reportLinkText}>{strings.reportUser}</AppText>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.reportLink}
+                      onPress={handleBlockFamily}
+                      activeOpacity={0.8}
+                    >
+                      <AppText variant="body" weight="700" align="center" style={styles.blockLinkText}>{strings.blockUser}</AppText>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
             </Animated.View>
           </>
         ) : (
@@ -610,13 +667,32 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 32,
   },
-  reportLink: {
+  blockedCard: {
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+  },
+  blockedTitle: {
+    color: BabyCityPalette.textPrimary,
+  },
+  blockedBody: {
+    marginTop: 8,
+    lineHeight: 24,
+  },
+  actionLinksRow: {
     alignSelf: 'flex-end',
+    flexDirection: 'row-reverse',
+    gap: 16,
+    marginTop: 14,
+  },
+  reportLink: {
     marginTop: 14,
     paddingHorizontal: 4,
     paddingVertical: 4,
   },
   reportLinkText: {
     // Handled by AppText
+  },
+  blockLinkText: {
+    color: BabyCityPalette.error,
   },
 });

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Constants from 'expo-constants';
 import {
   ActivityIndicator,
-  Linking,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -25,7 +24,6 @@ import {
 import { supabase } from '@/lib/supabase';
 import { getBabysitterPhotoUrl } from '@/lib/babysitterPhotos';
 import { getParentPhotoUrl } from '@/lib/parentPhotos';
-import { buildLegalMailto } from '@/lib/legalDocuments';
 
 type SettingsRowItem = {
   key: string;
@@ -149,33 +147,8 @@ export default function SettingsScreen() {
     }
   }
 
-  async function handleOpenDeleteAccountRequest() {
-    const subject = strings.settingsDeleteAccountRequestSubject;
-    const bodyLines = [
-      strings.settingsDeleteAccountRequestIntro,
-      '',
-      dbUser?.name ? `${strings.settingsDeleteAccountRequestNameLabel}: ${dbUser.name}` : '',
-      dbUser?.phone ? `${strings.settingsDeleteAccountRequestPhoneLabel}: ${dbUser.phone}` : '',
-      dbUser?.email ? `Email: ${dbUser.email}` : '',
-      dbUser?.id ? `${strings.settingsDeleteAccountRequestUserIdLabel}: ${dbUser.id}` : '',
-      '',
-      strings.settingsDeleteAccountRequestDetailsLabel,
-      '',
-    ].filter(Boolean);
-
-    const url = buildLegalMailto(subject, bodyLines);
-
-    try {
-      const supported = await Linking.canOpenURL(url);
-      if (!supported) {
-        router.push('/legal-contact?origin=settings');
-        return;
-      }
-
-      await Linking.openURL(url);
-    } catch {
-      router.push('/legal-contact?origin=settings');
-    }
+  function handleOpenDeleteAccountRequest() {
+    router.push('/account-deletion?origin=settings');
   }
 
   const accountItems: SettingsRowItem[] = [
@@ -283,10 +256,7 @@ export default function SettingsScreen() {
       key: 'feedback',
       label: strings.sendFeedback,
       icon: 'mail-outline',
-      onPress: () => {
-        const subject = encodeURIComponent(strings.feedbackEmailSubject);
-        Linking.openURL(`mailto:support@babysitconnect.app?subject=${subject}`);
-      },
+      onPress: () => router.push('/contact?origin=settings&action=support&topic=feedback'),
     },
     {
       key: 'about',
@@ -298,19 +268,19 @@ export default function SettingsScreen() {
       key: 'privacy',
       label: strings.aboutPrivacy,
       icon: 'shield-checkmark-outline',
-      onPress: () => router.push('/legal-privacy?origin=settings'),
+      onPress: () => router.push('/privacy?origin=settings'),
     },
     {
       key: 'terms',
       label: strings.aboutTerms,
       icon: 'document-text-outline',
-      onPress: () => router.push('/legal-terms?origin=settings'),
+      onPress: () => router.push('/terms?origin=settings'),
     },
     {
       key: 'contact',
       label: strings.aboutContact,
       icon: 'help-buoy-outline',
-      onPress: () => router.push('/legal-contact?origin=settings'),
+      onPress: () => router.push('/contact?origin=settings'),
     },
   ];
 

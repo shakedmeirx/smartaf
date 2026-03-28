@@ -37,7 +37,7 @@ export default function AboutScreen() {
     {
       key: 'verified',
       label: strings.aboutFeatureVerifiedProfiles,
-      icon: 'verified-user',
+      icon: 'badge',
     },
     {
       key: 'booking',
@@ -47,7 +47,7 @@ export default function AboutScreen() {
     {
       key: 'payments',
       label: strings.aboutFeatureSecurePayment,
-      icon: 'payments',
+      icon: 'price-check',
     },
   ];
 
@@ -56,19 +56,19 @@ export default function AboutScreen() {
       key: 'privacy',
       label: strings.aboutPrivacy,
       icon: 'policy',
-      onPress: () => router.push('/legal-privacy?origin=about'),
+      onPress: () => router.push('/privacy?origin=about'),
     },
     {
       key: 'terms',
       label: strings.aboutTerms,
       icon: 'description',
-      onPress: () => router.push('/legal-terms?origin=about'),
+      onPress: () => router.push('/terms?origin=about'),
     },
     {
       key: 'contact',
       label: strings.aboutContact,
       icon: 'support-agent',
-      onPress: () => router.push('/legal-contact?origin=about'),
+      onPress: () => router.push('/contact?origin=about'),
     },
   ];
 

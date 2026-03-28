@@ -36,6 +36,8 @@ export default function BabysitterProfileScreen() {
     sentRequests,
     favoriteBabysitterIds,
     toggleFavorite,
+    blockUser,
+    isUserExcluded,
   } = useAppState();
   const theme = getRoleTheme('parent');
 
@@ -62,6 +64,7 @@ export default function BabysitterProfileScreen() {
       ? findPairChatThread(chatThreads, currentUserId, id)
       : null;
   const isFavorite = !!id && favoriteBabysitterIds.has(id);
+  const isBlockedBabysitter = !!babysitter?.userId && isUserExcluded(babysitter.userId);
 
   const loadProfile = useCallback(async (showLoader = true) => {
     if (!id) return;
@@ -136,6 +139,51 @@ export default function BabysitterProfileScreen() {
   async function handleToggleFavorite() {
     if (!id) return;
     await toggleFavorite(id);
+  }
+
+  async function confirmBlockBabysitter() {
+    if (!babysitter?.userId) return;
+
+    const result = await blockUser(babysitter.userId);
+    if (!result.success) {
+      Alert.alert(strings.blockUserError);
+      return;
+    }
+
+    Alert.alert(strings.blockUserSuccess);
+    router.replace('/parent');
+  }
+
+  function handleBlockBabysitter() {
+    if (!babysitter?.userId) return;
+
+    Alert.alert(
+      strings.blockUserConfirmTitle,
+      strings.blockUserConfirmBody,
+      [
+        {
+          text: strings.myPostsDeleteConfirmCancel,
+          style: 'cancel',
+        },
+        {
+          text: strings.blockUserConfirmAction,
+          style: 'destructive',
+          onPress: () => {
+            void confirmBlockBabysitter();
+          },
+        },
+      ]
+    );
+  }
+
+  function handleReportBabysitter() {
+    if (!babysitter?.userId) return;
+
+    router.push(
+      `/contact?origin=babysitter-profile&action=safety&targetRole=babysitter&targetUserId=${encodeURIComponent(
+        babysitter.userId
+      )}`
+    );
   }
 
   function handleBack() {
@@ -243,16 +291,22 @@ export default function BabysitterProfileScreen() {
           canRate={canRate}
           onRate={() => setRateModalVisible(true)}
           requestActionLabel={existingThread ? strings.alreadyChattingCta : strings.sendMessage}
-          onSendRequest={() => {
-            if (existingThread) {
-              router.push(
-                `/chat?requestId=${existingThread.requestId}&name=${encodeURIComponent(babysitter.name)}`
-              );
-              return;
-            }
+          onSendRequest={
+            isBlockedBabysitter
+              ? undefined
+              : () => {
+                  if (existingThread) {
+                    router.push(
+                      `/chat?requestId=${existingThread.requestId}&name=${encodeURIComponent(babysitter.name)}`
+                    );
+                    return;
+                  }
 
-            router.push(`/send-request?id=${id}&name=${encodeURIComponent(babysitter.name)}&targetRole=babysitter`);
-          }}
+                  router.push(`/send-request?id=${id}&name=${encodeURIComponent(babysitter.name)}&targetRole=babysitter`);
+                }
+          }
+          onReportUser={isBlockedBabysitter ? undefined : handleReportBabysitter}
+          onBlockUser={isBlockedBabysitter ? undefined : handleBlockBabysitter}
           onRefresh={handleRefresh}
           refreshing={refreshing}
         />

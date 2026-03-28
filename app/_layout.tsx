@@ -27,7 +27,7 @@ import { AppProvider } from '@/context/AppContext';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { LanguageProvider } from '@/context/LanguageContext';
 import InAppNotificationBanner from '@/components/ui/InAppNotificationBanner';
-import { registerPushToken } from '@/lib/pushNotifications';
+import { syncPushTokenIfPermitted } from '@/lib/pushNotifications';
 
 export const unstable_settings = {
   anchor: 'index',
@@ -61,7 +61,14 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     const inAuthFlow = (
       segments[0] === 'welcome' ||
       segments[0] === 'auth' ||
-      segments[0] === 'auth-verify'
+      segments[0] === 'auth-verify' ||
+      segments[0] === 'privacy' ||
+      segments[0] === 'terms' ||
+      segments[0] === 'contact' ||
+      segments[0] === 'account-deletion' ||
+      segments[0] === 'legal-privacy' ||
+      segments[0] === 'legal-terms' ||
+      segments[0] === 'legal-contact'
     );
 
     if (!session && !inAuthFlow) {
@@ -99,10 +106,11 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 function AppProviderWithAuth({ children }: { children: React.ReactNode }) {
   const { session, activeRole } = useAuth();
 
-  // Register / refresh push token whenever the user logs in
+  // Refresh an existing push token after login without triggering the
+  // OS permission prompt during app bootstrap.
   useEffect(() => {
     if (session?.user.id) {
-      registerPushToken().catch(() => {});
+      syncPushTokenIfPermitted().catch(() => {});
     }
   }, [session?.user.id]);
 
@@ -176,6 +184,10 @@ export default function RootLayout() {
 	                    <Stack.Screen name="chat"              options={{ headerShown: false }} />
 	                    <Stack.Screen name="about"             options={{ headerShown: false }} />
 	                    <Stack.Screen name="booking-history"   options={{ headerShown: false }} />
+	                    <Stack.Screen name="privacy"           options={{ headerShown: false }} />
+	                    <Stack.Screen name="terms"             options={{ headerShown: false }} />
+	                    <Stack.Screen name="contact"           options={{ headerShown: false }} />
+	                    <Stack.Screen name="account-deletion"  options={{ headerShown: false }} />
 	                    <Stack.Screen name="legal-privacy"     options={{ headerShown: false }} />
 	                    <Stack.Screen name="legal-terms"       options={{ headerShown: false }} />
 	                    <Stack.Screen name="legal-contact"     options={{ headerShown: false }} />

@@ -28,7 +28,7 @@ type BabysitterField =
   | 'availability';
 
 const MIN_BIO_LENGTH = 30;
-const MIN_ADULT_AGE = 16;
+const MIN_ADULT_AGE = 18;
 const MAX_REASONABLE_AGE = 80;
 const MAX_REASONABLE_CHILDREN = 12;
 const MAX_PARENT_DESCRIPTION_LENGTH = 200;

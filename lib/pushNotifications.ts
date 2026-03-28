@@ -63,25 +63,17 @@ export async function ensurePushPermission(): Promise<PushPermissionState> {
   return normalizePermissionState(requestedPermissions);
 }
 
-/**
- * Requests push permission, obtains the Expo push token, and saves it to
- * the push_tokens table for the currently authenticated user.
- * Safe to call multiple times — uses upsert so it stays idempotent.
- */
-export async function registerPushToken(): Promise<PushPermissionState> {
-  const permissionState = await ensurePushPermission();
+async function getExistingPushPermission(): Promise<PushPermissionState> {
+  await ensureAndroidNotificationChannel();
+  const existingPermissions = await Notifications.getPermissionsAsync();
+  return normalizePermissionState(existingPermissions);
+}
 
-  if (permissionState !== 'granted') {
-    return permissionState;
-  }
-
-  // Physical device required — simulators can't receive push notifications
+async function saveCurrentUserPushToken(): Promise<void> {
   if (!Device.isDevice) {
-    return 'granted';
+    return;
   }
 
-  // Expo SDK 51+ requires a projectId. Read it from app.json extra.eas.projectId
-  // (or eas.json via easConfig). Without this the call throws and no token is saved.
   const projectId =
     (Constants.expoConfig?.extra as { eas?: { projectId?: string } } | undefined)?.eas?.projectId ??
     (Constants as unknown as { easConfig?: { projectId?: string } }).easConfig?.projectId;
@@ -92,7 +84,7 @@ export async function registerPushToken(): Promise<PushPermissionState> {
       'Add "extra": { "eas": { "projectId": "YOUR_EAS_PROJECT_ID" } } to app.json\n' +
       'Get your project ID from https://expo.dev or by running: eas init'
     );
-    return 'granted';
+    return;
   }
 
   const tokenData = await Notifications.getExpoPushTokenAsync({ projectId });
@@ -100,7 +92,7 @@ export async function registerPushToken(): Promise<PushPermissionState> {
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    return 'granted';
+    return;
   }
 
   await supabase
@@ -114,7 +106,32 @@ export async function registerPushToken(): Promise<PushPermissionState> {
       },
       { onConflict: 'user_id,token' }
     );
+}
 
+/**
+ * Requests push permission, obtains the Expo push token, and saves it to
+ * the push_tokens table for the currently authenticated user.
+ * Safe to call multiple times — uses upsert so it stays idempotent.
+ */
+export async function registerPushToken(): Promise<PushPermissionState> {
+  const permissionState = await ensurePushPermission();
+
+  if (permissionState !== 'granted') {
+    return permissionState;
+  }
+  await saveCurrentUserPushToken();
+
+  return 'granted';
+}
+
+export async function syncPushTokenIfPermitted(): Promise<PushPermissionState> {
+  const permissionState = await getExistingPushPermission();
+
+  if (permissionState !== 'granted') {
+    return permissionState;
+  }
+
+  await saveCurrentUserPushToken();
   return 'granted';
 }
 

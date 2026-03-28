@@ -331,7 +331,7 @@ const CONTACT_DESCRIPTIONS = {
   he: {
     title: 'צור קשר ובקשות משפטיות',
     subtitle:
-      'כאן אפשר לפתוח פנייה מסודרת לתמיכה, פרטיות, מחיקת חשבון או דיווח בטיחות. הכפתורים למטה יפתחו מייל מוכן לשליחה.',
+      'כאן אפשר לפתוח פנייה מסודרת לתמיכה, פרטיות, מחיקת חשבון או דיווח בטיחות. הפנייה נשמרת במערכת ואינה תלויה באפליקציית המייל שלך.',
     badge: LAST_UPDATED.he,
     supportTitle: 'פנייה כללית לתמיכה',
     supportBody: 'שאלות כלליות, תקלות, בעיות כניסה או עזרה בשימוש באפליקציה.',
@@ -343,8 +343,8 @@ const CONTACT_DESCRIPTIONS = {
     safetyBody: 'דיווח על תוכן פוגעני, התחזות, הטרדה, סיכון לקטינים או שימוש אסור בפלטפורמה.',
     helperTitle: 'מה חשוב לדעת',
     helperBody:
-      'מחיקת חשבון היא לא רק הסתרה או הקפאה. הבקשה שתשלח/י מכאן מיועדת לפתוח תהליך רשמי מול Smartaf, כולל אימות זהות במידת הצורך והסבר אם נדרש לשמור חלק מהמידע לפי חוק או לצורכי אבטחה.',
-    openEmail: 'פתיחת מייל',
+      'מחיקת חשבון היא לא רק הסתרה או הקפאה. הפנייה שתישלח מכאן תפתח תהליך רשמי מול Smartaf, כולל אימות זהות במידת הצורך והסבר אם נדרש לשמור חלק מהמידע לפי חוק או לצורכי אבטחה.',
+    openEmail: 'בחירת פנייה',
     directEmail: 'אימייל ישיר',
     noMailTitle: 'לא נמצא יישום דוא״ל',
     noMailBody: 'אפשר לפנות אלינו ישירות בכתובת support@babysitconnect.app.',
@@ -352,7 +352,7 @@ const CONTACT_DESCRIPTIONS = {
   en: {
     title: 'Contact and legal requests',
     subtitle:
-      'Use this page to open a structured support, privacy, deletion, or safety request. The buttons below open a prefilled email draft.',
+      'Use this page to open a structured support, privacy, deletion, or safety request. Your request is saved in the system and does not depend on your mail app.',
     badge: LAST_UPDATED.en,
     supportTitle: 'General support request',
     supportBody: 'General questions, bugs, sign-in problems, or help using the app.',
@@ -365,7 +365,7 @@ const CONTACT_DESCRIPTIONS = {
     helperTitle: 'Important note',
     helperBody:
       'Account deletion is not the same as hiding or freezing an account. This flow is intended to initiate a formal Smartaf deletion request, including identity verification where needed and an explanation if some data must be retained for legal or security reasons.',
-    openEmail: 'Open email draft',
+    openEmail: 'Choose request',
     directEmail: 'Direct email',
     noMailTitle: 'No mail app found',
     noMailBody: 'You can still contact us directly at support@babysitconnect.app.',
@@ -529,9 +529,4 @@ export function getLegalFallbackRoute(
   }
 
   return hasSession ? '/settings' : '/welcome';
-}
-
-export function buildLegalMailto(subject: string, bodyLines: string[]) {
-  const body = bodyLines.join('\n');
-  return `mailto:${LEGAL_CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

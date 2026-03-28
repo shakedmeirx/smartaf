@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Keyboard,
   Platform,
@@ -60,6 +61,20 @@ function rowToConversation(row: Record<string, unknown>): Conversation {
   };
 }
 
+function errorMatches(
+  error: { message?: string | null; details?: string | null; hint?: string | null; code?: string | null } | null | undefined,
+  expected: string
+) {
+  if (!error) return false;
+
+  const haystack = [error.message, error.details, error.hint, error.code]
+    .filter((value): value is string => typeof value === 'string' && value.trim() !== '')
+    .join(' ')
+    .toLowerCase();
+
+  return haystack.includes(expected.toLowerCase());
+}
+
 type ChatRequestGate = {
   id: string;
   parentId: string;
@@ -88,6 +103,7 @@ export default function ChatScreen() {
     sentRequests,
     setActiveConversationId,
     markConversationRead,
+    isUserExcluded,
   } = useAppState();
   const insets = useSafeAreaInsets();
 
@@ -106,6 +122,8 @@ export default function ChatScreen() {
   const roleTheme = getRoleTheme(role);
   const shellBackground = roleTheme.screenBackground;
   const conversationId = conversation?.id;
+  const isCounterpartBlocked =
+    !!requestGate?.counterpartUserId && isUserExcluded(requestGate.counterpartUserId);
 
   // Register this screen as the "active conversation" so the in-app banner
   // is suppressed for new messages arriving in this exact chat.
@@ -572,6 +590,10 @@ export default function ChatScreen() {
   async function send() {
     const text = draft.trim();
     if (!text || !conversation || conversation.closedAt) return;
+    if (isCounterpartBlocked) {
+      Alert.alert(strings.userBlockedTitle, strings.userBlockedBody);
+      return;
+    }
 
     setDraft('');
 
@@ -599,6 +621,9 @@ export default function ChatScreen() {
     if (error) {
       setMessages(prev => prev.filter(message => message.id !== optimistic.id));
       await Promise.all([reloadRequestGate(), syncConversationState(), refreshRoleData()]);
+      if (errorMatches(error, 'user-blocked')) {
+        Alert.alert(strings.userBlockedTitle, strings.userBlockedBody);
+      }
       return;
     }
 
@@ -652,7 +677,14 @@ export default function ChatScreen() {
   }
 
   const lockedState =
-    requestGate?.status === 'declined'
+    isCounterpartBlocked
+      ? {
+          title: strings.userBlockedTitle,
+          body: strings.userBlockedBody,
+          showRetry: false,
+          showRequestAgain: false,
+        }
+      : requestGate?.status === 'declined'
       ? {
           title: strings.chatDeclinedTitle,
           body: strings.chatDeclinedBody,
@@ -827,7 +859,7 @@ export default function ChatScreen() {
               />
             )}
           />
-        ) : conversation === null ? (
+        ) : conversation === null || isCounterpartBlocked ? (
           <View style={styles.centered}>
             <AppCard
               role={role}

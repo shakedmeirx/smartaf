@@ -12,7 +12,6 @@ import AppButton from '@/components/ui/AppButton';
 import InfoChip from '@/components/ui/InfoChip';
 import {
   Image,
-  Linking,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -30,6 +29,8 @@ type Props = {
   canRate?: boolean;
   onRate?: () => void;
   onSendRequest?: () => void;
+  onReportUser?: () => void;
+  onBlockUser?: () => void;
   requestActionLabel?: string;
   onEditProfile?: () => void;
   refreshing?: boolean;
@@ -92,6 +93,8 @@ export default function BabysitterProfileView({
   canRate = false,
   onRate,
   onSendRequest,
+  onReportUser,
+  onBlockUser,
   requestActionLabel,
   onEditProfile,
   refreshing = false,
@@ -601,19 +604,23 @@ export default function BabysitterProfileView({
           )}
         </View>
 
-        {onSendRequest ? (
-          <TouchableOpacity
-            style={styles.reportLink}
-            onPress={() => {
-              const subject = encodeURIComponent(strings.reportEmailSubject);
-              const body = encodeURIComponent(`Babysitter ID: ${babysitter.userId}`);
-              Linking.openURL(`mailto:support@babysitconnect.app?subject=${subject}&body=${body}`);
-            }}
-          >
-            <AppText variant="caption" tone="muted" style={styles.reportLinkText}>
-              {strings.reportUser}
-            </AppText>
-          </TouchableOpacity>
+        {onReportUser || onBlockUser ? (
+          <View style={styles.actionLinksRow}>
+            {onReportUser ? (
+              <TouchableOpacity style={styles.reportLink} onPress={onReportUser}>
+                <AppText variant="caption" tone="muted" style={styles.reportLinkText}>
+                  {strings.reportUser}
+                </AppText>
+              </TouchableOpacity>
+            ) : null}
+            {onBlockUser ? (
+              <TouchableOpacity style={styles.reportLink} onPress={onBlockUser}>
+                <AppText variant="caption" style={[styles.reportLinkText, styles.blockLinkText]}>
+                  {strings.blockUser}
+                </AppText>
+              </TouchableOpacity>
+            ) : null}
+          </View>
         ) : null}
 
         <View style={styles.bottomPad} />
@@ -1068,13 +1075,21 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   reportLink: {
-    alignSelf: 'flex-end',
-    paddingHorizontal: 20,
+    paddingHorizontal: 4,
     paddingVertical: 10,
-    marginTop: 10,
   },
   reportLinkText: {
     textDecorationLine: 'underline',
+  },
+  blockLinkText: {
+    color: BabyCityPalette.error,
+  },
+  actionLinksRow: {
+    alignSelf: 'flex-end',
+    flexDirection: 'row-reverse',
+    gap: 16,
+    marginTop: 10,
+    paddingHorizontal: 20,
   },
   bottomPad: {
     height: 130,

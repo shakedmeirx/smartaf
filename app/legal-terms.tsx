@@ -26,8 +26,8 @@ export default function LegalTermsScreen() {
       <AppCard style={{ padding: 20, borderRadius: 28 }}>
         <AppText variant="body" tone="muted">
           {language === 'he'
-            ? 'המסמך הזה נועד לתת בסיס ברור ושקוף לשימוש ב-Smartaf, אך אינו מהווה ייעוץ משפטי פרטני. לפני פרסום ציבורי או העלאה לחנויות, מומלץ להשלים גם בדיקה מול עו״ד המכיר את דיני הפרטיות, הצרכנות והתעסוקה הרלוונטיים.'
-            : 'This document is intended to provide a clear baseline for using Smartaf, but it is not individualized legal advice. Before public launch or store submission, you should still have it reviewed by counsel familiar with privacy, consumer, and employment-related law.'}
+            ? 'אם משהו במסמך הזה לא ברור, אפשר לפנות אלינו דרך מסך "צור קשר" באפליקציה וננסה לעזור או להפנות לגורם המתאים.'
+            : 'If anything in this document is unclear, you can contact us through the in-app contact page and we will try to help or direct you to the right point of contact.'}
         </AppText>
       </AppCard>
     </LegalScreenLayout>

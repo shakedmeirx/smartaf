@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "babysit-connect",
+    "name": "Smartaf",
     "slug": "babysit-connect",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -10,12 +10,15 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.shakedmeirx.smartaf",
       "buildNumber": "1",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
+      "package": "com.shakedmeirx.smartaf",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -42,13 +45,13 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "האפליקציה מבקשת גישה לתמונות כדי שתוכלו להעלות תמונת פרופיל ותמונות נוספות."
+          "photosPermission": "Smartaf צריכה גישה לתמונות כדי שתוכלו להעלות תמונת פרופיל ותמונות נוספות. / Smartaf needs photo access so you can upload profile and gallery photos."
         }
       ],
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "האפליקציה משתמשת במיקום שלך כדי למצוא הורים ובייביסיטרים קרובים לפי רדיוס."
+          "locationWhenInUsePermission": "Smartaf משתמשת במיקום שלכם כדי למצוא הורים ובייביסיטרים קרובים. / Smartaf uses your location to find nearby parents and babysitters."
         }
       ],
       [
@@ -67,6 +70,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "releaseChannels": {
+        "production": "production",
+        "preview": "preview"
+      }
     }
   }
 }

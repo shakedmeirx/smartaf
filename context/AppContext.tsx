@@ -328,6 +328,43 @@ function clearLocallyHiddenRequestIds(visibleRequestIds: string[], hiddenIds: Se
   return next;
 }
 
+type UserBlockSets = {
+  blockedUserIds: Set<string>;
+  excludedUserIds: Set<string>;
+};
+
+async function loadUserBlockSets(userId: string): Promise<UserBlockSets> {
+  const blockedUserIds = new Set<string>();
+  const excludedUserIds = new Set<string>();
+
+  const { data, error } = await supabase
+    .from('user_blocks')
+    .select('blocker_user_id, blocked_user_id')
+    .or(`blocker_user_id.eq.${userId},blocked_user_id.eq.${userId}`);
+
+  if (error) {
+    console.error('loadUserBlockSets error:', error.message);
+    return { blockedUserIds, excludedUserIds };
+  }
+
+  for (const row of data ?? []) {
+    const blockerUserId = row.blocker_user_id as string;
+    const blockedUserId = row.blocked_user_id as string;
+
+    if (blockerUserId === userId) {
+      blockedUserIds.add(blockedUserId);
+      excludedUserIds.add(blockedUserId);
+      continue;
+    }
+
+    if (blockedUserId === userId) {
+      excludedUserIds.add(blockerUserId);
+    }
+  }
+
+  return { blockedUserIds, excludedUserIds };
+}
+
 async function mergeParentProfileDetailsIntoPosts(rows: Record<string, unknown>[]) {
   const parentIds = [...new Set(rows.map(row => row.parent_id as string).filter(Boolean))];
 
@@ -369,6 +406,7 @@ type AppState = {
   sentRequests: Request[];
   chatThreads: ChatThread[];
   conversations: Conversation[];
+  blockedUserIds: Set<string>;
 
   // The logged-in user's ID (empty string when not authenticated)
   currentUserId: string;
@@ -381,6 +419,8 @@ type AppState = {
   // Saved posts (babysitter only — set of post IDs)
   savedPostIds: Set<string>;
   toggleSavedPost: (postId: string) => Promise<void>;
+  blockUser: (targetUserId: string) => Promise<{ success: boolean; errorMessage?: string }>;
+  isUserExcluded: (targetUserId: string) => boolean;
 
   // Actions
   updateRequestStatus: (
@@ -427,6 +467,7 @@ function requestSelectForRole(viewerRole: UserRole) {
       *,
       babysitter_profile:babysitter_profiles!babysitter_id (
         profile_photo_path,
+        user_id,
         user:users!user_id ( name )
       )
     `;
@@ -492,6 +533,8 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [favoriteBabysitterIds, setFavoriteBabysitterIds] = useState<Set<string>>(new Set());
   const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set());
+  const [blockedUserIds, setBlockedUserIds] = useState<Set<string>>(new Set());
+  const [excludedUserIds, setExcludedUserIds] = useState<Set<string>>(new Set());
   const pendingHiddenRequestIdsRef = useRef<Set<string>>(new Set());
 
   // ── Unread chat tracking ───────────────────────────────────────────────────
@@ -519,6 +562,8 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
       setFamilies([]);
       setRequests([]);
       setConversations([]);
+      setBlockedUserIds(new Set());
+      setExcludedUserIds(new Set());
       pendingHiddenRequestIdsRef.current = new Set();
       return;
     }
@@ -717,7 +762,7 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
     };
   }, [userId, userRole, babysitterProfileIdState]);
 
-  async function loadBabysitters() {
+  async function loadBabysitters(blockedUsers = excludedUserIds) {
     setBabysittersLoading(true);
     try {
       let query = supabase
@@ -742,7 +787,13 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
       if (userId) query = query.neq('user_id', userId);
 
       const { data, error } = await query;
-      if (data) setBabysitters(data.map(row => rowToBabysitter(row as Record<string, unknown>)));
+      if (data) {
+        setBabysitters(
+          data
+            .map(row => rowToBabysitter(row as Record<string, unknown>))
+            .filter(babysitter => !blockedUsers.has(babysitter.userId))
+        );
+      }
       if (error) console.error('loadBabysitters error:', error.message);
     } finally {
       setBabysittersLoading(false);
@@ -769,7 +820,11 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
   }
 
   async function loadParentData(uid: string) {
-    await loadBabysitters();
+    const nextBlockSets = await loadUserBlockSets(uid);
+    setBlockedUserIds(nextBlockSets.blockedUserIds);
+    setExcludedUserIds(nextBlockSets.excludedUserIds);
+
+    await loadBabysitters(nextBlockSets.excludedUserIds);
     void loadMyPosts(uid);
     void loadFavorites(uid);
 
@@ -809,21 +864,35 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
           )
         : (requestsRes.data as Record<string, unknown>[]);
 
-      const mergedRequests = await mergeParentProfileDetailsIntoRequests(filteredRows, 'parent');
+      const visibleRows = filteredRows.filter(row => {
+        const counterpartUserId =
+          ((row.babysitter_profile as { user_id?: string | null } | null)?.user_id as string | null) ??
+          null;
+        return !counterpartUserId || !nextBlockSets.excludedUserIds.has(counterpartUserId);
+      });
+
+      const mergedRequests = await mergeParentProfileDetailsIntoRequests(visibleRows, 'parent');
+      const visibleRequestIds = new Set(mergedRequests.map(request => request.id));
+      const visibleConversations = loadedConversations.filter(conversation =>
+        visibleRequestIds.has(conversation.requestId)
+      );
       const withLatestMessages = await attachLatestMessagesToRequests(
         mergedRequests,
-        loadedConversations
+        visibleConversations
       );
       setRequests(
         normalizeVisibleRequests(withLatestMessages).filter(
           request => !pendingHiddenRequestIdsRef.current.has(request.id)
         )
       );
+      setConversations(visibleConversations);
+      return;
     }
-    setConversations(loadedConversations);
+    setRequests([]);
+    setConversations([]);
   }
 
-  async function loadFamilies() {
+  async function loadFamilies(blockedUsers = excludedUserIds) {
     setFamiliesLoading(true);
 
     try {
@@ -853,14 +922,18 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
         return;
       }
 
-      setFamilies((data ?? []).map(row => rowToFamilyPreview(row as Record<string, unknown>)));
+      setFamilies(
+        (data ?? [])
+          .map(row => rowToFamilyPreview(row as Record<string, unknown>))
+          .filter(family => !blockedUsers.has(family.userId))
+      );
     } finally {
       setFamiliesLoading(false);
     }
   }
 
   // Posts visible to babysitters — all active posts from all parents
-  async function loadPosts() {
+  async function loadPosts(blockedUsers = excludedUserIds) {
     setPostsLoading(true);
     try {
       let query = supabase
@@ -874,7 +947,10 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
 
       const { data, error } = await query;
       if (error) console.error('loadPosts error:', error.message);
-      if (data) setPosts(await mergeParentProfileDetailsIntoPosts(data as Record<string, unknown>[]));
+      if (data) {
+        const mergedPosts = await mergeParentProfileDetailsIntoPosts(data as Record<string, unknown>[]);
+        setPosts(mergedPosts.filter(post => !blockedUsers.has(post.parentId)));
+      }
     } finally {
       setPostsLoading(false);
     }
@@ -912,7 +988,15 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
   }
 
   async function loadBabysitterData(uid: string) {
-    await Promise.all([loadFamilies(), loadPosts(), loadSavedPosts(uid)]);
+    const nextBlockSets = await loadUserBlockSets(uid);
+    setBlockedUserIds(nextBlockSets.blockedUserIds);
+    setExcludedUserIds(nextBlockSets.excludedUserIds);
+
+    await Promise.all([
+      loadFamilies(nextBlockSets.excludedUserIds),
+      loadPosts(nextBlockSets.excludedUserIds),
+      loadSavedPosts(uid),
+    ]);
 
     const { data: profile } = await supabase
       .from('babysitter_profiles')
@@ -952,21 +1036,32 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
         pendingHiddenRequestIdsRef.current
       );
 
+      const visibleRows = (requestsRes.data as Record<string, unknown>[]).filter(
+        row => !nextBlockSets.excludedUserIds.has(row.parent_id as string)
+      );
+
       const mergedRequests = await mergeParentProfileDetailsIntoRequests(
-        requestsRes.data as Record<string, unknown>[],
+        visibleRows,
         'babysitter'
+      );
+      const visibleRequestIds = new Set(mergedRequests.map(request => request.id));
+      const visibleConversations = loadedConversations.filter(conversation =>
+        visibleRequestIds.has(conversation.requestId)
       );
       const withLatestMessages = await attachLatestMessagesToRequests(
         mergedRequests,
-        loadedConversations
+        visibleConversations
       );
       setRequests(
         normalizeVisibleRequests(withLatestMessages).filter(
           request => !pendingHiddenRequestIdsRef.current.has(request.id)
         )
       );
+      setConversations(visibleConversations);
+      return;
     }
-    setConversations(loadedConversations);
+    setRequests([]);
+    setConversations([]);
   }
 
   async function refreshParentData() {
@@ -977,6 +1072,38 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
   async function refreshBabysitterData() {
     if (!userId) return;
     await loadBabysitterData(userId);
+  }
+
+  const isUserExcluded = useCallback(
+    (targetUserId: string) => excludedUserIds.has(targetUserId),
+    [excludedUserIds]
+  );
+
+  async function blockUser(targetUserId: string): Promise<{ success: boolean; errorMessage?: string }> {
+    if (!userId || !userRole) {
+      return { success: false, errorMessage: 'missing-user' };
+    }
+
+    if (!targetUserId || targetUserId === userId) {
+      return { success: false, errorMessage: 'invalid-target' };
+    }
+
+    const { error } = await supabase.rpc('block_user', {
+      p_blocked_user_id: targetUserId,
+    });
+
+    if (error) {
+      console.error('blockUser error:', error.message);
+      return { success: false, errorMessage: error.message };
+    }
+
+    if (userRole === 'parent') {
+      await loadParentData(userId);
+    } else {
+      await loadBabysitterData(userId);
+    }
+
+    return { success: true };
   }
 
   async function saveCurrentRoleCoordinates(coordinates: Coordinates) {
@@ -1140,6 +1267,8 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
           ? 'daily-limit'
           : requestErrorMatches(error, 'conversation-exists')
             ? 'conversation-exists'
+            : requestErrorMatches(error, 'user-blocked')
+              ? 'user-blocked'
             : requestErrorMatches(error, 'declined-block')
               ? 'declined-block'
               : error.message;
@@ -1560,12 +1689,15 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
         sentRequests,
         chatThreads,
         conversations,
+        blockedUserIds,
         currentUserId: userId ?? '',
         currentBabysitterProfileId: babysitterProfileIdState,
         favoriteBabysitterIds,
         toggleFavorite,
         savedPostIds,
         toggleSavedPost,
+        blockUser,
+        isUserExcluded,
         updateRequestStatus,
         hideRequest,
         addRequest,

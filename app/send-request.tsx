@@ -42,6 +42,7 @@ export default function SendRequestScreen() {
     conversations,
     currentUserId,
     currentBabysitterProfileId,
+    isUserExcluded,
     posts,
     sentRequests,
     refreshParentData,
@@ -62,7 +63,7 @@ export default function SendRequestScreen() {
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [blockedReason, setBlockedReason] = useState<'conversation-exists' | null>(null);
+  const [blockedReason, setBlockedReason] = useState<'conversation-exists' | 'user-blocked' | null>(null);
 
   const areaRef = useRef<TextInput>(null);
   const selectedBabysitter = useMemo(
@@ -89,6 +90,11 @@ export default function SendRequestScreen() {
   const recipientPhotoUrl = selectedBabysitter?.profilePhotoUrl ?? selectedParentPost?.parentProfilePhotoUrl;
   const recipientHourlyRate = selectedBabysitter?.hourlyRate ?? null;
   const recipientHasVerification = Boolean(selectedBabysitter?.isVerified);
+  const targetUserId =
+    normalizedTargetRole === 'babysitter'
+      ? selectedBabysitter?.userId ?? ''
+      : selectedParentPost?.parentId ?? (typeof id === 'string' ? id : '');
+  const isTargetExcluded = targetUserId !== '' && isUserExcluded(targetUserId);
 
   const pairParentId = isParent ? currentUserId : (typeof id === 'string' ? id : '');
   const pairBabysitterId = isParent
@@ -125,7 +131,9 @@ export default function SendRequestScreen() {
   // Find the requestId for the existing conversation so we can open the chat
   const existingRequestId = existingConversation?.requestId ?? null;
   const effectiveBlockedReason =
-    existingConversation
+    isTargetExcluded
+      ? 'user-blocked'
+      : existingConversation
       ? 'conversation-exists'
       : blockedReason;
 
@@ -226,6 +234,11 @@ export default function SendRequestScreen() {
   }
 
   async function handleSubmit() {
+    if (effectiveBlockedReason === 'user-blocked') {
+      setBlockedReason('user-blocked');
+      return;
+    }
+
     if (!validate()) return;
 
     setSubmitting(true);
@@ -263,6 +276,10 @@ export default function SendRequestScreen() {
         setBlockedReason(result.errorMessage);
         return;
       }
+      if (result.errorMessage === 'user-blocked') {
+        setBlockedReason('user-blocked');
+        return;
+      }
       setError(result.errorMessage === 'missing-user' ? strings.authErrorGeneric : strings.requestSubmitError);
     }
   }
@@ -287,7 +304,9 @@ export default function SendRequestScreen() {
     );
   }
 
-  if (effectiveBlockedReason === 'conversation-exists') {
+  if (effectiveBlockedReason) {
+    const isConversationBlocked = effectiveBlockedReason === 'conversation-exists';
+
     return (
       <AppShell
         title={name ?? ''}
@@ -308,17 +327,17 @@ export default function SendRequestScreen() {
             >
               <Ionicons name="chatbubbles-outline" size={56} color={roleTheme.filterAccent} />
               <AppText variant="h2" weight="800" style={[styles.centeredTitle, { color: roleTheme.title }]}>
-                {strings.alreadyChattingTitle}
+                {isConversationBlocked ? strings.alreadyChattingTitle : strings.userBlockedTitle}
               </AppText>
               <AppText style={[styles.centeredSubtitle, { color: roleTheme.subtitle }]}>
-                {strings.alreadyChattingBody}
+                {isConversationBlocked ? strings.alreadyChattingBody : strings.userBlockedBody}
               </AppText>
-              {name ? (
+              {isConversationBlocked && name ? (
                 <AppText style={[styles.centeredName, { color: roleTheme.subtitle }]}>
                   {name}
                 </AppText>
               ) : null}
-              {existingRequestId ? (
+              {isConversationBlocked && existingRequestId ? (
                 <AppButton
                   label={strings.alreadyChattingCta}
                   size="lg"

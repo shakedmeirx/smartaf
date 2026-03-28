@@ -23,15 +23,15 @@ export default function WelcomeScreen() {
   const footerLinks = [
     {
       label: strings.authWelcomeTerms,
-      onPress: () => router.push('/legal-terms?origin=welcome'),
+      onPress: () => router.push('/terms?origin=welcome'),
     },
     {
       label: strings.authWelcomePrivacy,
-      onPress: () => router.push('/legal-privacy?origin=welcome'),
+      onPress: () => router.push('/privacy?origin=welcome'),
     },
     {
       label: strings.authWelcomeContact,
-      onPress: () => router.push('/legal-contact?origin=welcome'),
+      onPress: () => router.push('/contact?origin=welcome'),
     },
   ];
 

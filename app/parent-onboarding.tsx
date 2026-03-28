@@ -1211,7 +1211,7 @@ export default function ParentOnboardingScreen() {
             <View style={styles.formTrustRow}>
               <MaterialIcons name="lock" size={18} color={BabyCityPalette.textTertiary} />
               <AppText variant="caption" tone="muted" style={styles.formTrustText}>
-                {'ב-Smartaf המידע שלך מאובטח ויוצג רק למטפלות מאושרות.'}
+                {'נציג רק את המידע שבחרתם לשתף, בהתאם להגדרות החשבון ולפיצ׳רים שבהם תשתמשו.'}
               </AppText>
             </View>
           </ScrollView>
