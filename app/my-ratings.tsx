@@ -216,7 +216,7 @@ export default function MyRatingsScreen() {
 
                 <AppCard backgroundColor={BabyCityPalette.surfaceLow} style={styles.emptyInfoCard}>
                   <View style={styles.emptyInfoIconWrap}>
-                    <MaterialIcons name="verified-user" size={22} color={BabyCityPalette.primary} />
+                    <MaterialIcons name="task-alt" size={22} color={BabyCityPalette.primary} />
                   </View>
                   <View style={styles.emptyInfoTextWrap}>
                     <AppText variant="body" weight="700" style={styles.emptyInfoTitle}>

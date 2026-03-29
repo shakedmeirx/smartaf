@@ -173,12 +173,17 @@ export default function AppShell({
         return;
       }
 
-      setDrawerPhotoUrl(
-        role === 'parent' ? getParentPhotoUrl(photoPath) : getBabysitterPhotoUrl(photoPath)
-      );
+      const photoUrl =
+        role === 'parent'
+          ? await getParentPhotoUrl(photoPath)
+          : await getBabysitterPhotoUrl(photoPath);
+
+      if (!cancelled) {
+        setDrawerPhotoUrl(photoUrl || null);
+      }
     }
 
-    loadDrawerPhoto();
+    void loadDrawerPhoto();
 
     return () => {
       cancelled = true;
@@ -547,15 +552,6 @@ export default function AppShell({
                           </AppText>
                         </View>
                       )}
-                      {/* Verified badge */}
-                      <LinearGradient
-                        colors={[BabyCityPalette.primary, '#6411d5']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.drawerVerifiedBadge}
-                      >
-                        <MaterialIcons name="verified" size={12} color="#ffffff" />
-                      </LinearGradient>
                     </View>
                     <AppText variant="h2" weight="800" style={styles.drawerUserName}>
                       {drawerDisplayName}

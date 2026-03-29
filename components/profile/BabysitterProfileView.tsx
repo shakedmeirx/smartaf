@@ -118,7 +118,6 @@ export default function BabysitterProfileView({
     specialNeeds,
     superpowers,
     personalityTags,
-    isVerified,
     hasReferences,
     availability,
     extras,
@@ -200,13 +199,12 @@ export default function BabysitterProfileView({
   }[];
 
   const trustChips = [
-    isVerified ? { key: 'verified', label: strings.verifiedBadge, tone: 'success' as const } : null,
     hasReferences ? { key: 'references', label: strings.referencesBadge, tone: 'accent' as const } : null,
     hasFirstAid ? { key: 'firstAid', label: strings.firstAidBadge, tone: 'accent' as const } : null,
     hasCar ? { key: 'car', label: strings.hasCarBadge, tone: 'primary' as const } : null,
     specialNeeds ? { key: 'specialNeeds', label: strings.specialNeedsBadge, tone: 'warning' as const } : null,
     ...personalityTags.slice(0, 3).map(tag => ({ key: `tag-${tag}`, label: tag, tone: 'muted' as const })),
-  ].filter(Boolean) as { key: string; label: string; tone: 'success' | 'accent' | 'primary' | 'warning' | 'muted' }[];
+  ].filter(Boolean) as { key: string; label: string; tone: 'accent' | 'primary' | 'warning' | 'muted' }[];
 
   const statItems = [
     {
@@ -298,12 +296,6 @@ export default function BabysitterProfileView({
 
             <View style={styles.heroContent}>
               <View style={styles.heroBadgeRow}>
-                {isVerified ? (
-                  <View style={styles.heroVerifiedBadge}>
-                    <MaterialIcons name="verified" size={14} color="#ffffff" />
-                    <AppText style={styles.heroVerifiedText}>{strings.verifiedBadge}</AppText>
-                  </View>
-                ) : null}
                 {hasReferences ? (
                   <View style={styles.heroSubBadge}>
                     <MaterialIcons name="fact-check" size={14} color="#ffffff" />

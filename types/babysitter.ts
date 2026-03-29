@@ -2,6 +2,7 @@ export type Babysitter = {
   id: string;
   userId: string;   // references User.id
   name: string;
+  profilePhotoPath?: string | null;
   profilePhotoUrl?: string;
   galleryPhotoUrls?: string[];
   age: number | null;
@@ -20,7 +21,6 @@ export type Babysitter = {
   specialNeeds: boolean;
   superpowers: string[];
   personalityTags: string[];
-  isVerified: boolean;
   hasReferences: boolean;
   availability: string[];
   extras: string[];

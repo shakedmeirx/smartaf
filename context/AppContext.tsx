@@ -7,16 +7,17 @@ import { ChatThread, Conversation } from '@/types/chat';
 import { FamilyPreview } from '@/types/family';
 import { ParentPost, PostDraft } from '@/types/post';
 import { calculateAgeFromBirthDate } from '@/lib/birthDate';
-import { getBabysitterPhotoUrl } from '@/lib/babysitterPhotos';
+import { getBabysitterPhotoUrls } from '@/lib/babysitterPhotos';
 import { formatAvailabilitySlotLabel } from '@/lib/babysitterAvailability';
-import { rowToBabysitter } from '@/lib/babysitterProfile';
+import { attachBabysitterPhotoUrls, rowToBabysitter } from '@/lib/babysitterProfile';
 import { Coordinates } from '@/lib/location';
 import {
-  resolveParentPhotoUrl,
+  attachParentProfilePhotoUrls,
   rowToFamilyPreview,
   rowToParentPost,
   rowToParentProfileSummary,
 } from '@/lib/parentProfile';
+import { getParentPhotoUrls } from '@/lib/parentPhotos';
 import { normalizeRequestDate, normalizeRequestTime } from '@/lib/requestFormat';
 import { supabase } from '@/lib/supabase';
 import { sendPushToUser } from '@/lib/pushNotifications';
@@ -51,7 +52,10 @@ function requestErrorMatches(
 function rowToRequest(
   row: Record<string, unknown>,
   viewerRole: UserRole,
-  counterpartPhotoUrl?: string
+  photoUrls?: {
+    parentPhotoUrl?: string;
+    babysitterPhotoUrl?: string;
+  }
 ): Request {
   const parentUserRow = joinedName(row.parent_user ?? row.users);
   const babysitterProfileRow =
@@ -61,9 +65,6 @@ function rowToRequest(
     } | null;
   const babysitterName = joinedName(babysitterProfileRow?.user);
   const initiatedBy = row.initiated_by as RequestInitiator;
-  const babysitterPhotoUrl = babysitterProfileRow?.profile_photo_path
-    ? getBabysitterPhotoUrl(babysitterProfileRow.profile_photo_path)
-    : undefined;
 
   return {
     id:            row.id as string,
@@ -80,7 +81,8 @@ function rowToRequest(
     note:          row.note as string,
     createdAt:     row.created_at as string,
     counterpartName: viewerRole === 'parent' ? babysitterName : parentUserRow,
-    counterpartPhotoUrl: viewerRole === 'parent' ? babysitterPhotoUrl : counterpartPhotoUrl,
+    counterpartPhotoUrl:
+      viewerRole === 'parent' ? photoUrls?.babysitterPhotoUrl : photoUrls?.parentPhotoUrl,
   };
 }
 
@@ -382,11 +384,13 @@ async function mergeParentProfileDetailsIntoPosts(rows: Record<string, unknown>[
     return rows.map(row => rowToParentPost(row));
   }
 
+  const hydratedProfiles = await attachParentProfilePhotoUrls(
+    (profileRows ?? []).map(profileRow =>
+      rowToParentProfileSummary(profileRow as Record<string, unknown>)
+    )
+  );
   const profilesByUserId = new Map(
-    (profileRows ?? []).map(profileRow => [
-      profileRow.user_id as string,
-      rowToParentProfileSummary(profileRow as Record<string, unknown>),
-    ])
+    hydratedProfiles.map(profileRow => [profileRow.userId, profileRow])
   );
 
   return rows.map(row => rowToParentPost(row, profilesByUserId.get(row.parent_id as string)));
@@ -420,6 +424,7 @@ type AppState = {
   savedPostIds: Set<string>;
   toggleSavedPost: (postId: string) => Promise<void>;
   blockUser: (targetUserId: string) => Promise<{ success: boolean; errorMessage?: string }>;
+  unblockUser: (targetUserId: string) => Promise<{ success: boolean; errorMessage?: string }>;
   isUserExcluded: (targetUserId: string) => boolean;
 
   // Actions
@@ -481,7 +486,23 @@ async function mergeParentProfileDetailsIntoRequests(
   viewerRole: UserRole
 ) {
   if (viewerRole === 'parent') {
-    return rows.map(row => rowToRequest(row, viewerRole));
+    const babysitterPaths = rows
+      .map(
+        row =>
+          ((row.babysitter_profile as { profile_photo_path?: string | null } | null)
+            ?.profile_photo_path as string | null) ?? ''
+      )
+      .filter(Boolean);
+    const babysitterUrlByPath = await getBabysitterPhotoUrls(babysitterPaths);
+
+    return rows.map(row => {
+      const photoPath =
+        ((row.babysitter_profile as { profile_photo_path?: string | null } | null)
+          ?.profile_photo_path as string | null) ?? '';
+      return rowToRequest(row, viewerRole, {
+        babysitterPhotoUrl: photoPath ? babysitterUrlByPath.get(photoPath) : undefined,
+      });
+    });
   }
 
   const parentIds = [...new Set(rows.map(row => row.parent_id as string).filter(Boolean))];
@@ -500,16 +521,22 @@ async function mergeParentProfileDetailsIntoRequests(
     return rows.map(row => rowToRequest(row, viewerRole));
   }
 
+  const parentPaths = (profileRows ?? [])
+    .map(profileRow => (profileRow.profile_photo_path as string | null) ?? '')
+    .filter(Boolean);
+  const photoByPath = await getParentPhotoUrls(parentPaths);
   const photoByUserId = new Map(
     (profileRows ?? []).map(profileRow => [
       profileRow.user_id as string,
-      resolveParentPhotoUrl((profileRow.profile_photo_path as string | null) ?? null),
+      (profileRow.profile_photo_path as string | null)
+        ? photoByPath.get(profileRow.profile_photo_path as string)
+        : undefined,
     ])
   );
 
   return rows.map(row => {
     const parentPhotoUrl = photoByUserId.get(row.parent_id as string);
-    return rowToRequest(row, viewerRole, parentPhotoUrl);
+    return rowToRequest(row, viewerRole, { parentPhotoUrl });
   });
 }
 
@@ -769,7 +796,7 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
         .from('babysitter_profiles')
         .select(`
           id, user_id, city, latitude, longitude, bio, hourly_rate, years_experience, age, birth_date,
-          has_car, has_first_aid, special_needs, is_verified, has_references,
+          has_car, has_first_aid, special_needs, has_references,
           profile_photo_path, extras, preferred_location,
           users!user_id ( name ),
           babysitter_languages ( language ),
@@ -788,11 +815,10 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
 
       const { data, error } = await query;
       if (data) {
-        setBabysitters(
-          data
-            .map(row => rowToBabysitter(row as Record<string, unknown>))
-            .filter(babysitter => !blockedUsers.has(babysitter.userId))
-        );
+        const visibleBabysitters = data
+          .map(row => rowToBabysitter(row as Record<string, unknown>))
+          .filter(babysitter => !blockedUsers.has(babysitter.userId));
+        setBabysitters(await attachBabysitterPhotoUrls(visibleBabysitters));
       }
       if (error) console.error('loadBabysitters error:', error.message);
     } finally {
@@ -1094,6 +1120,35 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
 
     if (error) {
       console.error('blockUser error:', error.message);
+      return { success: false, errorMessage: error.message };
+    }
+
+    if (userRole === 'parent') {
+      await loadParentData(userId);
+    } else {
+      await loadBabysitterData(userId);
+    }
+
+    return { success: true };
+  }
+
+  async function unblockUser(targetUserId: string): Promise<{ success: boolean; errorMessage?: string }> {
+    if (!userId || !userRole) {
+      return { success: false, errorMessage: 'missing-user' };
+    }
+
+    if (!targetUserId || targetUserId === userId) {
+      return { success: false, errorMessage: 'invalid-target' };
+    }
+
+    const { error } = await supabase
+      .from('user_blocks')
+      .delete()
+      .eq('blocker_user_id', userId)
+      .eq('blocked_user_id', targetUserId);
+
+    if (error) {
+      console.error('unblockUser error:', error.message);
       return { success: false, errorMessage: error.message };
     }
 
@@ -1697,6 +1752,7 @@ export function AppProvider({ children, userId, userRole }: AppProviderProps) {
         savedPostIds,
         toggleSavedPost,
         blockUser,
+        unblockUser,
         isUserExcluded,
         updateRequestStatus,
         hideRequest,

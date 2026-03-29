@@ -46,18 +46,16 @@ export default function BabysitterCard({
     languages,
     hasCar,
     hasFirstAid,
-    isVerified,
     hasReferences,
     profilePhotoUrl,
     yearsExperience,
   } = babysitter;
 
   const trustItems = [
-    isVerified ? { label: strings.verifiedBadge, tone: 'success' as const } : null,
     hasFirstAid ? { label: strings.firstAidBadge, tone: 'accent' as const } : null,
     hasCar ? { label: strings.hasCarBadge, tone: 'primary' as const } : null,
     hasReferences ? { label: strings.referencesBadge, tone: 'muted' as const } : null,
-  ].filter(Boolean) as { label: string; tone: 'success' | 'accent' | 'primary' | 'muted' }[];
+  ].filter(Boolean) as { label: string; tone: 'accent' | 'primary' | 'muted' }[];
 
   if (variant === 'saved') {
     const savedTags = [
@@ -360,7 +358,7 @@ export default function BabysitterCard({
             <TouchableOpacity
               onPress={async e => {
                 e.stopPropagation?.();
-                const url = `babysitconnect:///babysitter-profile?id=${babysitter.id}`;
+                const url = `smartaf:///babysitter-profile?id=${babysitter.id}`;
                 await Share.share({ message: `${strings.shareBabysitterText}\n${url}` });
               }}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}

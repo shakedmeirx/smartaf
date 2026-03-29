@@ -218,7 +218,7 @@ export default function Step3Experience({ data, onChange, errors = {} }: Props) 
 
       <View style={styles.editorialCard}>
         <View style={styles.editorialImage}>
-          <MaterialIcons name="verified-user" size={28} color={BabyCityPalette.primary} />
+          <MaterialIcons name="auto-awesome" size={28} color={BabyCityPalette.primary} />
         </View>
         <View style={styles.editorialBody}>
           <AppText variant="body" weight="700" style={styles.editorialQuote}>

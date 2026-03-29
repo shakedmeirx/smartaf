@@ -11,8 +11,7 @@ import { BabyCityPalette, getRoleTheme } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { strings } from '@/locales';
 
-const ABOUT_DECORATIVE_IMAGE_URL =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAtTkCywLobSy5g_UR8vrI2ecAB-C0LBr5lBiQ7KbCPF4DlpXKjnigvm5LlWT65PDUESymp_9uFF4P4Bqh2qpGRPzokXHLo65hRdG8oT9Cly3dyClwbRPWOfBgm5lLwAXol9vuJwzar6qwCe1NRtJ2vVnJY0Y-SXIaP0p6S1BQlIRxgCdSSzok5hIlsOU_GOD4WqqwPNwhMaa9KMYvc0ylnBdOLJBzfU8BO5z1GXJwYpFPSvqQFZazy1NHunRnIbQpQWDMppB6zYfaq';
+const ABOUT_DECORATIVE_IMAGE = require('../.stitch/designs/about-screen.png');
 
 type AboutLinkItem = {
   key: string;
@@ -198,7 +197,7 @@ export default function AboutScreen() {
               {strings.aboutVersion} {version}
             </AppText>
             <Image
-              source={{ uri: ABOUT_DECORATIVE_IMAGE_URL }}
+              source={ABOUT_DECORATIVE_IMAGE}
               style={styles.footerImage}
               resizeMode="contain"
             />

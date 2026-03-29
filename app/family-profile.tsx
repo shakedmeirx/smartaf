@@ -24,6 +24,7 @@ import AvatarCircle from '@/components/ui/AvatarCircle';
 import { strings } from '@/locales';
 import { useAppState } from '@/context/AppContext';
 import {
+  attachParentProfilePhotoUrls,
   rowToParentPost,
   rowToParentProfileDetails,
   rowToParentProfileSummary,
@@ -83,9 +84,9 @@ export default function FamilyProfileScreen() {
       return;
     }
 
-    const familySummary: ParentProfileSummary = rowToParentProfileSummary(
-      data as Record<string, unknown>
-    );
+    const [familySummary] = await attachParentProfilePhotoUrls([
+      rowToParentProfileSummary(data as Record<string, unknown>),
+    ]);
 
     const { data: postsData, error: postsError } = await supabase
       .from('parent_posts')
@@ -113,7 +114,13 @@ export default function FamilyProfileScreen() {
       rowToParentPost(row as Record<string, unknown>, familySummary)
     );
 
-    setFamily(rowToParentProfileDetails(data as Record<string, unknown>, posts));
+    setFamily(
+      rowToParentProfileDetails(
+        data as Record<string, unknown>,
+        posts,
+        familySummary?.profilePhotoUrl
+      )
+    );
     setLoading(false);
   }, [id]);
 

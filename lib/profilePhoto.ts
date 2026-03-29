@@ -77,7 +77,7 @@ export async function selectAndUploadParentProfilePhoto(
 
   return {
     path,
-    url: getParentPhotoUrl(path),
+    url: await getParentPhotoUrl(path),
   };
 }
 
@@ -95,7 +95,7 @@ export async function selectAndUploadBabysitterProfilePhoto(
 
   return {
     path,
-    url: getBabysitterPhotoUrl(path),
+    url: await getBabysitterPhotoUrl(path),
   };
 }
 

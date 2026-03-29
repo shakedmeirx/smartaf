@@ -37,14 +37,12 @@ type Filters = {
   maxRate: number;
   minExperienceYears: number;
   hasCar: boolean;
-  verifiedOnly: boolean;
 };
 
 const EMPTY_FILTERS: Filters = {
   maxRate: 0,
   minExperienceYears: 0,
   hasCar: false,
-  verifiedOnly: false,
 };
 
 function getExperienceFloor(value: string) {
@@ -117,7 +115,6 @@ export default function ParentScreen() {
                   ? saved.filters.minExperienceYears
                   : getExperienceFloor(saved.filters.experience ?? ''),
               hasCar: Boolean(saved.filters.hasCar),
-              verifiedOnly: Boolean(saved.filters.verifiedOnly),
             });
           }
           if (typeof saved.searchQuery === 'string') setSearchQuery(saved.searchQuery);
@@ -145,7 +142,6 @@ export default function ParentScreen() {
     filters.maxRate > 0,
     filters.minExperienceYears > 0,
     filters.hasCar,
-    filters.verifiedOnly,
     selectedRadiusKm > 0,
   ].filter(Boolean).length;
 
@@ -158,7 +154,6 @@ export default function ParentScreen() {
       }
       if (filters.maxRate > 0 && b.hourlyRate > filters.maxRate) return false;
       if (filters.hasCar && !b.hasCar) return false;
-      if (filters.verifiedOnly && !b.isVerified) return false;
       if (filters.minExperienceYears > 0 && getExperienceFloor(b.yearsExperience) < filters.minExperienceYears) return false;
       if (selectedRadiusKm > 0) {
         if (!viewerCoordinates || !hasCoordinates(b)) return false;
@@ -632,14 +627,6 @@ export default function ParentScreen() {
                         variant="filter"
                         selected={filters.hasCar}
                         onPress={() => updateFilter('hasCar', !filters.hasCar)}
-                        size="sm"
-                      />
-                      <AppChip
-                        label={strings.filterVerified}
-                        tone="success"
-                        variant="filter"
-                        selected={filters.verifiedOnly}
-                        onPress={() => updateFilter('verifiedOnly', !filters.verifiedOnly)}
                         size="sm"
                       />
                     </View>

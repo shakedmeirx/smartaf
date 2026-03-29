@@ -1,11 +1,9 @@
-import { useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { strings } from '@/locales';
-import { useAuth } from '@/context/AuthContext';
 import {
   BabyCityPalette,
   BabyCityShadows,
@@ -13,13 +11,9 @@ import {
 import AppText from '@/components/ui/AppText';
 import SmartafWordmark from '@/components/ui/SmartafWordmark';
 
-const HERO_IMAGE_URL =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDDjLoJaZF8Rnq81jFHFA1sWD-nn88luWiYrtBrmLNrsJHPRZ9cS8nKIK52Zy5JyIKSu_v6bjcgJvpVpCsY8uaD21P7mbN9Hhkvj-TnqNNjdJD2PMF2GKTNLDx0st2M42Zv8YkQvCEedyc6SieiHkOzfSBfmHQYhqvVv5aZ0r4OZ7X2PO37tujBOW8pIXG44mQH9EgAs0EgbwqIVPEBt_Fe-d_1mKsWRxKqYM2goPePqbu1Ns7zdWrqVjNe24ZYbrwJeas4cJBZZt_R';
+const HERO_IMAGE = require('../.stitch/designs/welcome-refined.png');
 
 export default function WelcomeScreen() {
-  const { signInWithApple, signInWithGoogle } = useAuth();
-  const [socialLoading, setSocialLoading] = useState<'google' | 'apple' | null>(null);
-  const [socialError, setSocialError] = useState('');
   const footerLinks = [
     {
       label: strings.authWelcomeTerms,
@@ -37,25 +31,6 @@ export default function WelcomeScreen() {
 
   function handleContinue() {
     router.push('/auth');
-  }
-
-  async function handleSocialSignIn(provider: 'google' | 'apple') {
-    if (socialLoading) return;
-
-    setSocialError('');
-    setSocialLoading(provider);
-
-    try {
-      if (provider === 'google') {
-        await signInWithGoogle();
-      } else {
-        await signInWithApple();
-      }
-    } catch {
-      setSocialError(strings.authErrorGeneric);
-    } finally {
-      setSocialLoading(null);
-    }
   }
 
   return (
@@ -83,7 +58,7 @@ export default function WelcomeScreen() {
 
         <View style={styles.heroBanner}>
           <Image
-            source={{ uri: HERO_IMAGE_URL }}
+            source={HERO_IMAGE}
             style={styles.heroImage}
             resizeMode="cover"
           />
@@ -137,58 +112,6 @@ export default function WelcomeScreen() {
                 {strings.authWelcomeSecondaryAction}
               </AppText>
             </TouchableOpacity>
-
-            <View style={styles.dividerRow}>
-              <View style={styles.dividerLine} />
-              <AppText variant="caption" tone="muted" style={styles.dividerText}>
-                {strings.authWelcomeDivider}
-              </AppText>
-              <View style={styles.dividerLine} />
-            </View>
-
-            <View style={styles.socialGrid}>
-              <TouchableOpacity
-                activeOpacity={0.88}
-                style={styles.socialGoogleButton}
-                onPress={() => void handleSocialSignIn('google')}
-                disabled={socialLoading !== null}
-              >
-                {socialLoading === 'google' ? (
-                  <ActivityIndicator color={BabyCityPalette.textPrimary} />
-                ) : (
-                  <>
-                    <Ionicons name="logo-google" size={18} color={BabyCityPalette.textPrimary} />
-                    <AppText variant="body" weight="600" style={styles.socialGoogleText}>
-                      {'Google'}
-                    </AppText>
-                  </>
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                activeOpacity={0.88}
-                style={styles.socialAppleButton}
-                onPress={() => void handleSocialSignIn('apple')}
-                disabled={socialLoading !== null}
-              >
-                {socialLoading === 'apple' ? (
-                  <ActivityIndicator color="#ffffff" />
-                ) : (
-                  <>
-                    <Ionicons name="logo-apple" size={18} color="#ffffff" />
-                    <AppText variant="body" weight="600" style={styles.socialAppleText}>
-                      {'Apple'}
-                    </AppText>
-                  </>
-                )}
-              </TouchableOpacity>
-            </View>
-
-            {socialError ? (
-              <AppText variant="body" tone="error" align="center" style={styles.socialErrorText}>
-                {socialError}
-              </AppText>
-            ) : null}
           </View>
 
         </View>
@@ -196,7 +119,7 @@ export default function WelcomeScreen() {
         <View style={styles.featureRow}>
           <View style={styles.featureCard}>
             <View style={styles.featureCardIcon}>
-              <MaterialIcons name="verified-user" size={24} color={BabyCityPalette.primary} />
+              <MaterialIcons name="shield" size={24} color={BabyCityPalette.primary} />
             </View>
             <View style={styles.featureCardText}>
               <AppText variant="bodyLarge" weight="700" style={styles.featureTitle}>
@@ -369,55 +292,6 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: '#1e293b',
-  },
-  dividerRow: {
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-    gap: 12,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: 'rgba(162, 173, 196, 0.25)',
-  },
-  dividerText: {
-    color: BabyCityPalette.textSecondary,
-    letterSpacing: 0.4,
-  },
-  socialGrid: {
-    flexDirection: 'row-reverse',
-    gap: 12,
-  },
-  socialGoogleButton: {
-    flex: 1,
-    minHeight: 54,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: 'rgba(162, 173, 196, 0.18)',
-    backgroundColor: BabyCityPalette.surfaceLowest,
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  socialGoogleText: {
-    color: BabyCityPalette.textPrimary,
-  },
-  socialAppleButton: {
-    flex: 1,
-    minHeight: 54,
-    borderRadius: 999,
-    backgroundColor: '#000000',
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  socialAppleText: {
-    color: '#ffffff',
-  },
-  socialErrorText: {
-    marginTop: 2,
   },
   featureRow: {
     flexDirection: 'row-reverse',

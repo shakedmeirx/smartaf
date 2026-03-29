@@ -36,6 +36,7 @@ import {
   BABYSITTER_PHOTOS_BUCKET,
   getBabysitterGalleryPhotoPath,
   getBabysitterPhotoUrl,
+  getBabysitterPhotoUrls,
 } from '@/lib/babysitterPhotos';
 import {
   galleryRowsToPhotos,
@@ -59,10 +60,8 @@ const JOIN_TABLES = {
   availability: 'babysitter_availability',
 } as const;
 
-const SITTER_INTRO_ILLUSTRATION_URL =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDFLrrxcowQ-gdCTSHn5sIkMhnEgW1CrRGQXCkLdGWKfayWjIYuSf3Kmlu8DwogFiEA9oWn6YylohpvxXsM-6yNddcR7lNZ24EXa0SbPa0AJPkE5WW4pZLix4XXFfBdK2aq4nZqNrbKYbGTel0n3dF2-nTvkAVXXiZPq28lmN_VVM3uy9_nm4HC7Cau0_RUxIiX_owiC6O6PlTwf4gdYIlFXMNcBKCJKlyj0PurfgevpJ5zHWV0TgDaoJwAJZgAgF5GH-8ySv_flvUK';
-const SITTER_INTRO_COMMUNITY_URL =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBZfN8MlrYSX68UBBvZmP0UFV0_6uLhopXkXaLQgBWopv4rP5AdnmbKuWnAmM0ABqv1GGhiBwZ5H6JW_JpTWEFVkfM-flAMC3IqjshCs0sOvIOtkUv0gCDvkJSNZC5c1iOcQRmAXsXw54AFVFPcd0Pkb0NM4UM4ZiNf_b-VA3v34Sal7vq8Zc-W7o49qjLWpGm985AhtRArs76exR0P58_r_-UVFV_38zTLtoRrAiLlCAyFtLTkodf5N8ohpcE2DBw9-YsNpRx8O92c';
+const SITTER_INTRO_ILLUSTRATION = require('../.stitch/designs/sitter-onboarding-intro.png');
+const SITTER_INTRO_COMMUNITY = require('../.stitch/designs/sitter-onboarding-skills.png');
 
 export default function BabysitterOnboarding() {
   const { edit } = useLocalSearchParams<{ edit?: string }>();
@@ -166,6 +165,16 @@ export default function BabysitterOnboarding() {
           .order('position', { ascending: true }),
       ]);
 
+      const profilePhotoPath = (profile.profile_photo_path as string | null) ?? '';
+      const galleryRows = (galleryPhotosRes.data ?? []) as Record<string, unknown>[];
+      const galleryPaths = galleryRows.map(row => row.storage_path as string);
+      const photoUrlMap = await getBabysitterPhotoUrls(
+        [profilePhotoPath, ...galleryPaths].filter(Boolean)
+      );
+      const profilePhotoUrl = profilePhotoPath
+        ? photoUrlMap.get(profilePhotoPath) ?? ''
+        : '';
+
       setData(
         rowToBabysitterOnboardingData(profile as Record<string, unknown>, {
           dbUserName: dbUser?.name ?? '',
@@ -175,10 +184,8 @@ export default function BabysitterOnboarding() {
           superpowers: (superpowersRes.data ?? []).map(row => row.superpower as string),
           personalityTags: (personalityTagsRes.data ?? []).map(row => row.tag as string),
           availability: (availabilityRes.data ?? []).map(row => row.slot as string),
-          galleryPhotos: galleryRowsToPhotos(
-            (galleryPhotosRes.data ?? []) as Record<string, unknown>[]
-          ),
-        })
+          galleryPhotos: galleryRowsToPhotos(galleryRows, photoUrlMap),
+        }, profilePhotoUrl)
       );
       setIsLoading(false);
     }
@@ -275,7 +282,7 @@ export default function BabysitterOnboarding() {
           ...data.galleryPhotos,
           {
             path: photoPath,
-            url: getBabysitterPhotoUrl(photoPath),
+            url: await getBabysitterPhotoUrl(photoPath),
             position: data.galleryPhotos.length,
           },
         ],
@@ -599,7 +606,7 @@ export default function BabysitterOnboarding() {
                 <AppText variant="caption" tone="muted" weight="600">{strings.babysitterOnboardingCompleteVerified}</AppText>
                 <View style={styles.completeTrustIcons}>
                   <View style={[styles.completeTrustIcon, { backgroundColor: '#ff8eac33' }]}>
-                    <MaterialIcons name="verified-user" size={14} color="#64042d" />
+                    <MaterialIcons name="shield" size={14} color="#64042d" />
                   </View>
                   <View style={[styles.completeTrustIcon, { backgroundColor: '#e9def5' }]}>
                     <MaterialIcons name="medical-services" size={14} color="#564f61" />
@@ -697,7 +704,7 @@ export default function BabysitterOnboarding() {
               <View style={styles.welcomeIllustrationGlow} />
               <View style={styles.welcomeIllustrationFrame}>
                 <Image
-                  source={{ uri: SITTER_INTRO_ILLUSTRATION_URL }}
+                  source={SITTER_INTRO_ILLUSTRATION}
                   style={styles.welcomeIllustrationImage}
                   resizeMode="cover"
                 />
@@ -721,7 +728,7 @@ export default function BabysitterOnboarding() {
 
               <View style={styles.welcomeBenefitCard}>
                 <View style={styles.welcomeBenefitIconWrap}>
-                  <MaterialIcons name="verified-user" size={24} color="#7c3aed" />
+                  <MaterialIcons name="shield" size={24} color="#7c3aed" />
                 </View>
                 <View style={styles.welcomeBenefitText}>
                   <AppText variant="bodyLarge" weight="700" style={styles.welcomeBenefitTitle}>
@@ -736,7 +743,7 @@ export default function BabysitterOnboarding() {
               <View style={styles.welcomeBenefitCard}>
                 <View style={styles.welcomeBenefitAvatarWrap}>
                   <Image
-                    source={{ uri: SITTER_INTRO_COMMUNITY_URL }}
+                    source={SITTER_INTRO_COMMUNITY}
                     style={styles.welcomeBenefitAvatar}
                     resizeMode="cover"
                   />
@@ -752,24 +759,6 @@ export default function BabysitterOnboarding() {
               </View>
             </View>
 
-            <View style={styles.welcomeSocialBlock}>
-              <View style={styles.welcomeSocialStack}>
-                {['#ede9f5', '#ddd6fe', '#c4b5fd'].map((backgroundColor, index) => (
-                  <View
-                    key={backgroundColor}
-                    style={[
-                      styles.welcomeSocialChip,
-                      { backgroundColor, marginRight: index === 0 ? 0 : -10 },
-                    ]}
-                  >
-                    <MaterialIcons name="person" size={16} color="#7c3aed" />
-                  </View>
-                ))}
-              </View>
-              <AppText variant="caption" weight="700" align="center" style={styles.welcomeSocialLabel}>
-                {strings.babysitterOnboardingWelcomeSocialProof}
-              </AppText>
-            </View>
           </View>
         </ScrollView>
 
@@ -923,7 +912,7 @@ export default function BabysitterOnboarding() {
             <AppCard role="babysitter" style={styles.formCard}>
               <View style={styles.sectionHeader}>
                 <View style={[styles.sectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
-                  <MaterialIcons name="verified-user" size={20} color={BabyCityPalette.primary} />
+                  <MaterialIcons name="shield" size={20} color={BabyCityPalette.primary} />
                 </View>
                 <AppText variant="bodyLarge" weight="700">{strings.step6Title}</AppText>
               </View>
@@ -935,7 +924,7 @@ export default function BabysitterOnboarding() {
 
             <View style={styles.formTrustCard}>
               <View style={styles.formTrustIconWrap}>
-                <MaterialIcons name="verified-user" size={28} color={BabyCityPalette.primary} />
+                <MaterialIcons name="shield" size={28} color={BabyCityPalette.primary} />
               </View>
               <View style={styles.formTrustBody}>
                 <AppText variant="bodyLarge" weight="800" style={styles.formTrustTitle}>
@@ -1143,29 +1132,6 @@ const styles = StyleSheet.create({
   welcomeBenefitBody: {
     lineHeight: 20,
     opacity: 0.72,
-  },
-  welcomeSocialBlock: {
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 8,
-  },
-  welcomeSocialStack: {
-    flexDirection: 'row-reverse',
-    alignItems: 'center',
-  },
-  welcomeSocialChip: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    borderWidth: 2,
-    borderColor: '#ffffff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  welcomeSocialLabel: {
-    color: '#7a8699',
-    fontSize: 13,
-    lineHeight: 18,
   },
   welcomeFooter: {
     position: 'absolute',

@@ -24,7 +24,7 @@ export type PushPermissionState = 'granted' | 'denied' | 'blocked';
 async function ensureAndroidNotificationChannel() {
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('default', {
-      name: 'BabysitConnect',
+      name: 'Smartaf',
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#7C6FE0',

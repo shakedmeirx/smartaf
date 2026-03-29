@@ -188,6 +188,8 @@ export default function RootLayout() {
 	                    <Stack.Screen name="terms"             options={{ headerShown: false }} />
 	                    <Stack.Screen name="contact"           options={{ headerShown: false }} />
 	                    <Stack.Screen name="account-deletion"  options={{ headerShown: false }} />
+	                    <Stack.Screen name="delete-account"    options={{ headerShown: false }} />
+	                    <Stack.Screen name="blocked-users"     options={{ headerShown: false }} />
 	                    <Stack.Screen name="legal-privacy"     options={{ headerShown: false }} />
 	                    <Stack.Screen name="legal-terms"       options={{ headerShown: false }} />
 	                    <Stack.Screen name="legal-contact"     options={{ headerShown: false }} />

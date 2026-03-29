@@ -391,7 +391,7 @@ export default function BabysitterAvailabilityScreen() {
 
               <View style={styles.trustBanner}>
                 <MaterialIcons
-                  name="verified-user"
+                  name="shield"
                   size={20}
                   color={BabyCityPalette.primary}
                   style={styles.trustIcon}

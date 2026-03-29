@@ -2,16 +2,14 @@
 
 Paste and customize this before submission.
 
-## Apple / Google reviewer notes
+## Store reviewer notes
 
 Smartaf is a marketplace app that connects parents and babysitters.
 
 ### App access
 - Core features require login.
-- Please use one of the following review methods:
-  - Phone auth: `<review phone flow>`
-  - Google login: `<review Google account>`
-  - Apple login: `<review Apple account>`
+- Please use the review phone flow:
+  - Phone auth: `<review phone flow / OTP instructions>`
 
 ### Optional permissions
 - Photos are only requested when the user uploads profile/gallery media.

@@ -1,13 +1,13 @@
 import { calculateAgeFromBirthDate } from '@/lib/birthDate';
 import { formatAvailabilitySlotLabel } from '@/lib/babysitterAvailability';
-import { getBabysitterPhotoUrl } from '@/lib/babysitterPhotos';
+import { getBabysitterPhotoUrls } from '@/lib/babysitterPhotos';
 import { supabase } from '@/lib/supabase';
 import { Babysitter } from '@/types/babysitter';
 import { GalleryPhoto, OnboardingData } from '@/types/onboarding';
 
 export const BABYSITTER_PROFILE_SELECT = `
   id, user_id, city, latitude, longitude, bio, hourly_rate, years_experience, age, birth_date,
-  has_car, has_first_aid, special_needs, is_verified, has_references,
+  has_car, has_first_aid, special_needs, has_references,
   profile_photo_path, extras, preferred_location,
   users!user_id ( name ),
   babysitter_languages ( language ),
@@ -51,7 +51,10 @@ function stringArrayValue<T extends string>(
     .filter((value): value is T => value !== '');
 }
 
-export function rowToBabysitter(row: Record<string, unknown>): Babysitter {
+export function rowToBabysitter(
+  row: Record<string, unknown>,
+  profilePhotoUrl?: string
+): Babysitter {
   const userRow = row.users as { name?: string } | null;
   const profilePhotoPath = nullableStringValue(row.profile_photo_path);
   const birthDate = nullableStringValue(row.birth_date) ?? undefined;
@@ -68,7 +71,8 @@ export function rowToBabysitter(row: Record<string, unknown>): Babysitter {
     id: row.id as string,
     userId: row.user_id as string,
     name: userRow?.name ?? '',
-    profilePhotoUrl: profilePhotoPath ? getBabysitterPhotoUrl(profilePhotoPath) : undefined,
+    profilePhotoPath,
+    profilePhotoUrl,
     galleryPhotoUrls: [],
     age: calculateAgeFromBirthDate(birthDate) ?? ((row.age as number | null) ?? null),
     birthDate,
@@ -86,7 +90,6 @@ export function rowToBabysitter(row: Record<string, unknown>): Babysitter {
     specialNeeds: Boolean(row.special_needs),
     superpowers,
     personalityTags,
-    isVerified: Boolean(row.is_verified),
     hasReferences: Boolean(row.has_references),
     availability,
     extras: ((row.extras as string[] | null) ?? []).filter(Boolean),
@@ -94,11 +97,14 @@ export function rowToBabysitter(row: Record<string, unknown>): Babysitter {
   };
 }
 
-export function galleryRowsToPhotos(rows: Record<string, unknown>[]): GalleryPhoto[] {
+export function galleryRowsToPhotos(
+  rows: Record<string, unknown>[],
+  urlByPath: Map<string, string> = new Map()
+): GalleryPhoto[] {
   return rows.map(row => ({
     id: (row.id as string | null) ?? undefined,
     path: row.storage_path as string,
-    url: getBabysitterPhotoUrl(row.storage_path as string),
+    url: urlByPath.get(row.storage_path as string) ?? '',
     position: (row.position as number | null) ?? 0,
   }));
 }
@@ -129,7 +135,8 @@ type BabysitterOnboardingHydrationInput = {
 
 export function rowToBabysitterOnboardingData(
   row: Record<string, unknown>,
-  input: BabysitterOnboardingHydrationInput
+  input: BabysitterOnboardingHydrationInput,
+  profilePhotoUrl = ''
 ): OnboardingData {
   const profilePhotoPath = nullableStringValue(row.profile_photo_path) ?? '';
   const preferenceFields = rowToBabysitterPreferenceFields(row);
@@ -155,7 +162,7 @@ export function rowToBabysitterOnboardingData(
     preferredLocation: preferenceFields.preferredLocation,
     hasCar: preferenceFields.hasCar,
     profilePhotoPath,
-    profilePhotoUrl: profilePhotoPath ? getBabysitterPhotoUrl(profilePhotoPath) : '',
+    profilePhotoUrl,
     galleryPhotos: input.galleryPhotos,
     hasFirstAid: Boolean(row.has_first_aid),
     hasReferences: Boolean(row.has_references),
@@ -183,9 +190,21 @@ export async function loadBabysitterProfileById(profileId: string): Promise<Baby
     return { babysitter: null, galleryPhotoUrls: [], notFound: true };
   }
 
+  const profilePhotoPath =
+    nullableStringValue((profileRes.data as Record<string, unknown>).profile_photo_path) ?? '';
+  const galleryPaths = (galleryRes.data ?? []).map(photo => photo.storage_path as string);
+  const urlByPath = await getBabysitterPhotoUrls(
+    [profilePhotoPath, ...galleryPaths].filter(Boolean)
+  );
+
   return {
-    babysitter: rowToBabysitter(profileRes.data as Record<string, unknown>),
-    galleryPhotoUrls: (galleryRes.data ?? []).map(photo => getBabysitterPhotoUrl(photo.storage_path)),
+    babysitter: rowToBabysitter(
+      profileRes.data as Record<string, unknown>,
+      profilePhotoPath ? urlByPath.get(profilePhotoPath) : undefined
+    ),
+    galleryPhotoUrls: galleryPaths
+      .map(path => urlByPath.get(path) ?? '')
+      .filter(Boolean),
     notFound: false,
   };
 }
@@ -202,4 +221,17 @@ export async function loadBabysitterProfileByUserId(userId: string): Promise<Bab
   }
 
   return loadBabysitterProfileById(profile.id as string);
+}
+
+export async function attachBabysitterPhotoUrls(babysitters: Babysitter[]) {
+  const urlByPath = await getBabysitterPhotoUrls(
+    babysitters.map(babysitter => babysitter.profilePhotoPath ?? '')
+  );
+
+  return babysitters.map(babysitter => ({
+    ...babysitter,
+    profilePhotoUrl: babysitter.profilePhotoPath
+      ? urlByPath.get(babysitter.profilePhotoPath) || babysitter.profilePhotoUrl
+      : babysitter.profilePhotoUrl,
+  }));
 }

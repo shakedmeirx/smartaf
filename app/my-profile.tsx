@@ -19,6 +19,7 @@ import { loadBabysitterProfileByUserId } from '@/lib/babysitterProfile';
 import { getParentProfilePhotoPath } from '@/lib/parentPhotos';
 import { getBabysitterProfilePhotoPath } from '@/lib/babysitterPhotos';
 import {
+  attachParentProfilePhotoUrls,
   rowToParentPost,
   rowToParentProfileDetails,
   rowToParentProfileSummary,
@@ -134,7 +135,11 @@ export default function MyProfileScreen() {
           } as Record<string, unknown>)
         : null;
       const parentProfileSummary: ParentProfileSummary | null = baseProfileRow
-        ? rowToParentProfileSummary(baseProfileRow)
+        ? (
+            await attachParentProfilePhotoUrls([
+              rowToParentProfileSummary(baseProfileRow),
+            ])
+          )[0] ?? null
         : null;
       const posts: ParentPost[] = (postsRows ?? []).map(row =>
         rowToParentPost(row as Record<string, unknown>, parentProfileSummary ?? undefined)
@@ -142,7 +147,11 @@ export default function MyProfileScreen() {
 
       setParentProfile(
         baseProfileRow
-          ? rowToParentProfileDetails(baseProfileRow, posts)
+          ? rowToParentProfileDetails(
+              baseProfileRow,
+              posts,
+              parentProfileSummary?.profilePhotoUrl
+            )
           : null
       );
       setBabysitterProfile(null);
@@ -440,9 +449,6 @@ export default function MyProfileScreen() {
 
   if (activeRole === 'babysitter' && babysitterProfile) {
     const babysitterHeroBadges = [
-      babysitterProfile.isVerified
-        ? { label: strings.verifiedBadge, tone: 'success' as const }
-        : null,
       babysitterProfile.hasFirstAid
         ? { label: strings.firstAidBadge, tone: 'accent' as const }
         : null,
@@ -592,18 +598,14 @@ export default function MyProfileScreen() {
             <AppCard role="babysitter" variant="panel" style={styles.infoCard}>
               <View style={styles.cardSectionHeader}>
                 <View style={[styles.cardSectionIconChip, { backgroundColor: `${BabyCityPalette.primary}0d` }]}>
-                  <MaterialIcons name="verified-user" size={20} color={BabyCityPalette.primary} />
+                  <MaterialIcons name="shield" size={20} color={BabyCityPalette.primary} />
                 </View>
                 <AppText variant="bodyLarge" weight="700">{strings.trustLabel}</AppText>
               </View>
-              {babysitterProfile.isVerified ||
-              babysitterProfile.hasFirstAid ||
+              {babysitterProfile.hasFirstAid ||
               babysitterProfile.hasReferences ||
               babysitterProfile.hasCar ? (
                 <View style={styles.ageGroupRow}>
-                  {babysitterProfile.isVerified ? (
-                    <AppChip label={strings.verifiedBadge} tone="success" size="sm" />
-                  ) : null}
                   {babysitterProfile.hasFirstAid ? (
                     <AppChip label={strings.firstAidBadge} tone="accent" size="sm" />
                   ) : null}

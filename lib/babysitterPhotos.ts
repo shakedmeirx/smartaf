@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { getSignedStorageUrl, getSignedStorageUrlMap } from '@/lib/storageSignedUrl';
 
 export const BABYSITTER_PHOTOS_BUCKET = 'babysitter-photos';
 
@@ -11,11 +11,9 @@ export function getBabysitterGalleryPhotoPath(userId: string, fileName: string) 
 }
 
 export function getBabysitterPhotoUrl(path: string) {
-  if (!path) return '';
+  return getSignedStorageUrl(BABYSITTER_PHOTOS_BUCKET, path);
+}
 
-  const { data } = supabase.storage
-    .from(BABYSITTER_PHOTOS_BUCKET)
-    .getPublicUrl(path);
-
-  return data.publicUrl ? `${data.publicUrl}?t=${Date.now()}` : '';
+export function getBabysitterPhotoUrls(paths: string[]) {
+  return getSignedStorageUrlMap(BABYSITTER_PHOTOS_BUCKET, paths);
 }

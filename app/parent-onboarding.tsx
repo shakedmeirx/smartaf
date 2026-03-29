@@ -32,6 +32,7 @@ import {
   deriveChildAgeGroupsFromBirthDates,
 } from '@/lib/parentChildren';
 import { calculateAgeFromBirthDate } from '@/lib/birthDate';
+import { getParentPhotoUrl } from '@/lib/parentPhotos';
 import { normalizeParentOnboardingDraft } from '@/lib/parentProfile';
 import {
   isProfilePhotoPermissionError,
@@ -45,10 +46,8 @@ import { initialParentOnboardingData, ParentOnboardingData } from '@/types/paren
 
 const MAX_CHILDREN = 12;
 const MAX_FAMILY_NOTE_LENGTH = 200;
-const PARENT_WELCOME_IMAGE_URL =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuB5wfqxzhnrq9X-rWgu93gAkoCCF6Slk7LPdDPHyxoUb5XQ7FeWinBlNQ1b1jovjfnqz_gnk1BpggjfyM4AB7Hfj2mOAjowhr7QXqdCcJftoRY2iAmU-WEIhinLjNsIyzjKrj_IIDPQGDgLqO71oY4FRYpaohir7eFEU73qcLVQ5L9ae1CWoOicMwZ-MPVsAVJsQKH78RP1duR2SVTJumpJwgwSaUBP8v7HoAubImaKo4TWsCGCNGoXP472KsNluUysQ7vTTPguPfpq';
-const PARENT_CHILDREN_IMAGE_URL =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuA7JoQg8rU89L6fmSsbxLR90iA4ElUL43NOQwP4pjgbOhVcY3rlDET_LawuGBoiYkLC21wY5ghf0eNrJuZaXiYTJCvd8fGQy8cm537WKmjq8JmkYrhlGPqTXLYSOxgHBsz1V3uLgZ-GZPNgfS8bqtJT3Lh66X5XwL0sWmYGNaBwSn3oo5UActeKirOssJopmWCEvWw1Vpc-MttDX57S_URixLWa02FgSOJ2RWUdZ4K_wN9v65ITI1s6rEK6LXcH-ReOgkYMNgim45Xs';
+const PARENT_WELCOME_IMAGE = require('../.stitch/designs/parent-onboarding-intro.png');
+const PARENT_CHILDREN_IMAGE = require('../.stitch/designs/parent-children-details.png');
 
 const PET_OPTIONS = [strings.parentPetDog, strings.parentPetCat, strings.parentPetOther];
 
@@ -205,7 +204,11 @@ export default function ParentOnboardingScreen() {
       if (draftValue) {
         try {
           const parsedDraft = JSON.parse(draftValue) as Partial<ParentOnboardingData>;
-          setData(normalizeParentData(parsedDraft, fallbackName));
+          const nextData = normalizeParentData(parsedDraft, fallbackName);
+          if (nextData.profilePhotoPath) {
+            nextData.profilePhotoUrl = await getParentPhotoUrl(nextData.profilePhotoPath);
+          }
+          setData(nextData);
           setHydrated(true);
           return;
         } catch {
@@ -235,7 +238,12 @@ export default function ParentOnboardingScreen() {
           }
         : {};
 
-      setData(normalizeParentData(fromProfile, fallbackName));
+      const nextData = normalizeParentData(fromProfile, fallbackName);
+      if (nextData.profilePhotoPath) {
+        nextData.profilePhotoUrl = await getParentPhotoUrl(nextData.profilePhotoPath);
+      }
+
+      setData(nextData);
       setHydrated(true);
     }
 
@@ -521,7 +529,7 @@ export default function ParentOnboardingScreen() {
 
               <View style={styles.welcomeHeroImageWrap}>
                 <Image
-                  source={{ uri: PARENT_WELCOME_IMAGE_URL }}
+                  source={PARENT_WELCOME_IMAGE}
                   style={styles.welcomeHeroImage}
                   resizeMode="cover"
                 />
@@ -529,7 +537,7 @@ export default function ParentOnboardingScreen() {
 
               <View style={styles.welcomeTrustBadge}>
                 <View style={styles.welcomeTrustIcon}>
-                  <MaterialIcons name="verified" size={20} color="#64042d" />
+                  <MaterialIcons name="shield" size={20} color="#64042d" />
                 </View>
                 <View style={styles.welcomeTrustText}>
                   <AppText variant="caption" weight="700" style={styles.welcomeTrustTitle}>
@@ -622,7 +630,7 @@ export default function ParentOnboardingScreen() {
             <View style={styles.reviewHeroIconWrap}>
               <View style={styles.reviewHeroBlur} />
               <View style={styles.reviewHeroCircle}>
-                <MaterialIcons name="verified-user" size={64} color={BabyCityPalette.primary} />
+                <MaterialIcons name="task-alt" size={64} color={BabyCityPalette.primary} />
               </View>
               <View style={styles.reviewHeroBadge}>
                 <MaterialIcons name="celebration" size={20} color="#ffeff1" />
@@ -825,7 +833,7 @@ export default function ParentOnboardingScreen() {
                 {'ספרו לנו על המשפחה שלכם'}
               </AppText>
               <AppText variant="body" tone="muted" style={styles.formIntroSubtitle}>
-                {'המידע יעזור לנו ב-Smartaf למצוא עבורכם את המטפלת המושלמת שמתאימה בדיוק לצרכים של המשפחה שלכם.'}
+                {'המידע יעזור לנו ב-Smartaf להציג עבורכם התאמות רלוונטיות יותר לפי הצרכים של המשפחה שלכם.'}
               </AppText>
             </View>
 
@@ -1020,7 +1028,7 @@ export default function ParentOnboardingScreen() {
             >
               <View style={styles.childrenCardBadge}>
                 <View style={styles.childrenCardBadgeRing}>
-                  <Image source={{ uri: PARENT_CHILDREN_IMAGE_URL }} style={styles.childrenCardBadgeImage} />
+                  <Image source={PARENT_CHILDREN_IMAGE} style={styles.childrenCardBadgeImage} />
                 </View>
               </View>
 
@@ -1088,7 +1096,7 @@ export default function ParentOnboardingScreen() {
                       >
                         <View style={styles.childEditorBadge}>
                           <View style={styles.childEditorBadgeRing}>
-                            <Image source={{ uri: PARENT_CHILDREN_IMAGE_URL }} style={styles.childEditorBadgeImage} />
+                            <Image source={PARENT_CHILDREN_IMAGE} style={styles.childEditorBadgeImage} />
                           </View>
                         </View>
 

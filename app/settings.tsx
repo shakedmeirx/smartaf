@@ -86,11 +86,14 @@ export default function SettingsScreen() {
         return;
       }
 
-      setProfilePhotoUrl(
+      const photoUrl =
         activeRole === 'babysitter'
-          ? getBabysitterPhotoUrl(photoPath)
-          : getParentPhotoUrl(photoPath)
-      );
+          ? await getBabysitterPhotoUrl(photoPath)
+          : await getParentPhotoUrl(photoPath);
+
+      if (!cancelled) {
+        setProfilePhotoUrl(photoUrl || undefined);
+      }
     }
 
     void loadProfilePhoto();
@@ -148,7 +151,7 @@ export default function SettingsScreen() {
   }
 
   function handleOpenDeleteAccountRequest() {
-    router.push('/account-deletion?origin=settings');
+    router.push('/delete-account');
   }
 
   const accountItems: SettingsRowItem[] = [
@@ -174,6 +177,12 @@ export default function SettingsScreen() {
         : strings.settingsSwitchRoleFallback,
       icon: 'swap-horizontal-outline',
       onPress: handleSwitchRole,
+    },
+    {
+      key: 'blocked-users',
+      label: strings.settingsBlockedUsers,
+      icon: 'ban-outline',
+      onPress: () => router.push('/blocked-users'),
     },
     {
       key: 'delete-account-request',

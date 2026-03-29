@@ -18,12 +18,12 @@
 
 ## Must finish before App Store / Google Play submission
 
-### 1. OAuth provider setup
-- Enable `Google` in Supabase Authentication -> Providers.
-- Enable `Apple` in Supabase Authentication -> Providers.
-- Add the provider credentials from Google Cloud / Apple Developer.
-- Verify the mobile redirect is still:
-  - `babysitconnect://auth`
+### 1. Phone auth verification
+- Confirm Supabase phone auth is enabled in Authentication -> Providers.
+- Confirm production SMS delivery works for Israeli phone numbers.
+- Prepare a reviewer-safe phone login path:
+  - test number / OTP instructions, or
+  - a live review number that can receive OTPs during review
 
 ### 2. EAS / push setup
 - Create or link the EAS project.
@@ -44,9 +44,7 @@
 
 ### 4. Reviewer access
 - Prepare working reviewer access:
-  - test phone auth flow, or
-  - Google reviewer account, or
-  - Apple reviewer account
+  - test phone auth flow / OTP instructions
 - Make sure the reviewer account only sees clean demo-safe content.
 
 ### 5. Seed/demo content cleanup
@@ -63,7 +61,6 @@
 - Document who handles reports and expected response time.
 
 ## Apple-specific checks
-- Confirm `Sign in with Apple` works on iOS if Google sign-in is offered.
 - Verify the iOS permission prompt copy is acceptable for review.
 - Confirm account deletion can be initiated inside the app without requiring the Mail app.
 - Confirm the built app shows the correct display name: `Smartaf`.
@@ -77,8 +74,7 @@
 - `npx tsc --noEmit`
 - iOS production build succeeds
 - Android production build succeeds
-- Google login works
-- Apple login works
+- phone OTP login works
 - support/privacy/delete/safety request form inserts rows successfully
 - notification permission prompt appears only after explicit user action
 - no broken footer legal links while logged out

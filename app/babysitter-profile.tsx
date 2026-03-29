@@ -132,7 +132,7 @@ export default function BabysitterProfileScreen() {
 
   async function handleShare() {
     if (!id || !babysitter) return;
-    const url = `babysitconnect:///babysitter-profile?id=${id}`;
+    const url = `smartaf:///babysitter-profile?id=${id}`;
     await Share.share({ message: `${strings.shareBabysitterText}\n${url}` });
   }
 

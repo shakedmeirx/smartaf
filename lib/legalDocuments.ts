@@ -100,7 +100,7 @@ const TERMS_DOCUMENTS: Record<AppLanguage, LegalDocument> = {
         title: '9. דין חל ויצירת קשר',
         paragraphs: [
           'תנאים אלה כפופים לדין החל במדינת ישראל, מבלי לגרוע מזכויות צרכניות או זכויות קוגנטיות אחרות שאינן ניתנות לוויתור.',
-          'לשאלות, פניות פרטיות, בקשות מחיקת חשבון או דיווחי בטיחות ניתן לפנות דרך מסך "צור קשר" באפליקציה או במייל support@babysitconnect.app.',
+          'לשאלות, פניות פרטיות, בקשות מחיקת חשבון או דיווחי בטיחות ניתן לפנות דרך מסך "צור קשר" באפליקציה. משתמשים מחוברים יכולים למחוק חשבון גם דרך מסך המחיקה הייעודי בהגדרות, ובמידת הצורך אפשר לפנות גם במייל support@babysitconnect.app.',
         ],
       },
     ],
@@ -175,7 +175,7 @@ const TERMS_DOCUMENTS: Record<AppLanguage, LegalDocument> = {
         title: '9. Governing law and contact',
         paragraphs: [
           'These terms are governed by the applicable laws of the State of Israel, without limiting any non-waivable consumer or statutory rights.',
-          'Questions, privacy requests, account deletion requests, and safety reports can be submitted through the in-app contact page or by email at support@babysitconnect.app.',
+          'Questions, privacy requests, account deletion requests, and safety reports can be submitted through the in-app contact page. Signed-in users can also use the dedicated delete-account screen in settings, and email support remains available at support@babysitconnect.app when needed.',
         ],
       },
     ],
@@ -209,7 +209,7 @@ const PRIVACY_DOCUMENTS: Record<AppLanguage, LegalDocument> = {
       {
         title: '3. למה אנחנו משתמשים במידע',
         bullets: [
-          'ליצור ולנהל את החשבון שלך, לאפשר התחברות מאובטחת ולהציג את השירות בשפה ובתפקיד המתאימים.',
+          'ליצור ולנהל את החשבון שלך, לאפשר התחברות באמצעות קוד אימות ולהציג את השירות בשפה ובתפקיד המתאימים.',
           'להתאים חיפושים, להציג פרופילים ומודעות רלוונטיים, ולאפשר שליחת בקשות, צ׳אטים ותיאומי טיפול.',
           'לשלוח עדכונים, התראות דחיפה, הודעות שירות ומידע תפעולי על פניות או התאמות.',
           'לבצע בקרה, מניעת הונאה, אבטחת מידע, אכיפת תנאים, טיפול בדיווחים ותמיכה למשתמשים.',
@@ -221,7 +221,6 @@ const PRIVACY_DOCUMENTS: Record<AppLanguage, LegalDocument> = {
         bullets: [
           'עם משתמשים אחרים, בהתאם למה שבחרת לפרסם או לשלוח בפרופיל, בבקשה, במודעה או בצ׳אט.',
           'עם ספקי שירות טכנולוגיים שמסייעים לנו להפעיל את האפליקציה, כגון תשתיות backend, אחסון, אימות או התראות.',
-          'עם Apple, Google או ספקי התחברות אחרים כאשר את/ה בוחר/ת להשתמש בהתחברות דרכם.',
           'עם רשויות מוסמכות, כאשר קיימת חובה חוקית, צו מחייב, צורך למנוע נזק, או צורך להגן על הזכויות, הביטחון והאכיפה של Smartaf ומשתמשיה.',
         ],
       },
@@ -236,7 +235,7 @@ const PRIVACY_DOCUMENTS: Record<AppLanguage, LegalDocument> = {
         title: '6. שמירה, מחיקה וזכויות',
         paragraphs: [
           'אנו שומרים מידע כל עוד החשבון פעיל ולמשך תקופה סבירה לאחר מכן לצורכי אבטחה, מניעת הונאה, טיפול במחלוקות, גיבוי, אכיפה או עמידה בדרישות חוק.',
-          'ניתן לבקש מחיקת חשבון ונתונים דרך מסך הקשר/מחיקה באפליקציה או דרך מסך ההגדרות. במקרים מסוימים ייתכן שנידרש לשמור נתונים מסוימים מסיבות חוקיות, רגולטוריות, אבטחתיות או ראייתיות.',
+          'ניתן למחוק חשבון ונתונים דרך מסך המחיקה באפליקציה או לפתוח פנייה רשמית דרך מסך "צור קשר". במקרים מסוימים ייתכן שנידרש לשמור נתונים מסוימים מסיבות חוקיות, רגולטוריות, אבטחתיות או ראייתיות.',
           'לפי הדין החל, ובפרט בהתאם לזכויות עיון ותיקון מידע לפי סעיפים 13–14 לחוק הגנת הפרטיות, ניתן לפנות אלינו כדי לעיין במידע, לבקש תיקון, ולעיתים גם לבקש מחיקה או הגבלת שימוש.',
         ],
       },
@@ -249,7 +248,7 @@ const PRIVACY_DOCUMENTS: Record<AppLanguage, LegalDocument> = {
       {
         title: '8. יצירת קשר',
         paragraphs: [
-          'לשאלות פרטיות, בקשות עיון/תיקון/מחיקה, דיווחי בטיחות ופניות כלליות ניתן לפנות דרך מסך "צור קשר" באפליקציה או במייל support@babysitconnect.app.',
+          'לשאלות פרטיות, בקשות עיון/תיקון/מחיקה, דיווחי בטיחות ופניות כלליות ניתן לפנות דרך מסך "צור קשר" באפליקציה. משתמשים מחוברים יכולים למחוק חשבון גם מתוך ההגדרות, ובמידת הצורך אפשר לפנות גם במייל support@babysitconnect.app.',
         ],
       },
     ],
@@ -292,7 +291,6 @@ const PRIVACY_DOCUMENTS: Record<AppLanguage, LegalDocument> = {
         bullets: [
           'Other users, to the extent you choose to publish or send information in a profile, request, post, or chat.',
           'Technology service providers that help us operate the app, such as backend, hosting, authentication, or notification vendors.',
-          'Apple, Google, or other sign-in providers when you choose to authenticate through them.',
           'Competent authorities where required by law, binding request, safety needs, or the legitimate protection of Smartaf and its users.',
         ],
       },
@@ -307,7 +305,7 @@ const PRIVACY_DOCUMENTS: Record<AppLanguage, LegalDocument> = {
         title: '6. Retention, deletion, and rights',
         paragraphs: [
           'We keep data while your account is active and for a reasonable period afterward for security, fraud prevention, dispute handling, backup, enforcement, or legal compliance.',
-          'You can request account and data deletion from the in-app contact/deletion flow or from settings. In some cases, we may need to retain limited data for legal, regulatory, security, or evidentiary reasons.',
+          'You can delete your account from the in-app delete-account screen or open a formal request from the in-app contact page. In some cases, we may need to retain limited data for legal, regulatory, security, or evidentiary reasons.',
           'Subject to applicable law, including privacy rights of access and correction, you may contact us to access your data, request correction, and in some cases request deletion or restriction of processing.',
         ],
       },
@@ -320,7 +318,7 @@ const PRIVACY_DOCUMENTS: Record<AppLanguage, LegalDocument> = {
       {
         title: '8. Contact',
         paragraphs: [
-          'For privacy questions, access/correction/deletion requests, safety reports, or general support, contact us through the in-app contact page or by email at support@babysitconnect.app.',
+          'For privacy questions, access/correction/deletion requests, safety reports, or general support, contact us through the in-app contact page. Signed-in users can also use the delete-account screen in settings, and email support remains available at support@babysitconnect.app when needed.',
         ],
       },
     ],

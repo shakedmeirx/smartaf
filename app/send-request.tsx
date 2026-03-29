@@ -89,7 +89,6 @@ export default function SendRequestScreen() {
   const recipientCity = selectedBabysitter?.city ?? selectedParentPost?.parentCity ?? '';
   const recipientPhotoUrl = selectedBabysitter?.profilePhotoUrl ?? selectedParentPost?.parentProfilePhotoUrl;
   const recipientHourlyRate = selectedBabysitter?.hourlyRate ?? null;
-  const recipientHasVerification = Boolean(selectedBabysitter?.isVerified);
   const targetUserId =
     normalizedTargetRole === 'babysitter'
       ? selectedBabysitter?.userId ?? ''
@@ -522,14 +521,6 @@ export default function SendRequestScreen() {
                         size={64}
                         tone="muted"
                       />
-                      {recipientHasVerification ? (
-                        <View style={styles.recipientBadge}>
-                          <Ionicons name="checkmark-circle" size={12} color="#ffffff" />
-                          <AppText variant="caption" weight="700" style={styles.recipientBadgeText}>
-                            {strings.verifiedBadge}
-                          </AppText>
-                        </View>
-                      ) : null}
                     </View>
 
                     <View style={styles.recipientDetails}>

@@ -1,5 +1,5 @@
 import { deriveChildAgesFromBirthDates } from '@/lib/parentChildren';
-import { getParentPhotoUrl } from '@/lib/parentPhotos';
+import { getParentPhotoUrl, getParentPhotoUrls } from '@/lib/parentPhotos';
 import type { FamilyPreview } from '@/types/family';
 import type { ParentOnboardingData } from '@/types/parent';
 import type { ParentProfileDetails, ParentProfileSummary } from '@/types/parent';
@@ -42,11 +42,14 @@ export function buildParentFullName(
   return [firstName.trim(), lastName.trim()].filter(Boolean).join(' ') || fallbackName.trim();
 }
 
-export function resolveParentPhotoUrl(profilePhotoPath?: string | null) {
+export async function resolveParentPhotoUrl(profilePhotoPath?: string | null) {
   return profilePhotoPath ? getParentPhotoUrl(profilePhotoPath) : undefined;
 }
 
-export function rowToParentProfileSummary(row: Record<string, unknown>): ParentProfileSummary {
+export function rowToParentProfileSummary(
+  row: Record<string, unknown>,
+  profilePhotoUrl?: string
+): ParentProfileSummary {
   const firstName = stringValue(row.first_name);
   const lastName = stringValue(row.last_name);
   const fallbackName = joinedName(row.users ?? row.user);
@@ -67,7 +70,7 @@ export function rowToParentProfileSummary(row: Record<string, unknown>): ParentP
     latitude: numberValue(row.latitude),
     longitude: numberValue(row.longitude),
     profilePhotoPath,
-    profilePhotoUrl: resolveParentPhotoUrl(profilePhotoPath),
+    profilePhotoUrl,
     childrenCount: numberValue(row.children_count),
     childNames,
     childBirthDates,
@@ -81,10 +84,11 @@ export function rowToParentProfileSummary(row: Record<string, unknown>): ParentP
 
 export function rowToParentProfileDetails(
   row: Record<string, unknown>,
-  posts: ParentPost[] = []
+  posts: ParentPost[] = [],
+  profilePhotoUrl?: string
 ): ParentProfileDetails {
   return {
-    ...rowToParentProfileSummary(row),
+    ...rowToParentProfileSummary(row, profilePhotoUrl),
     posts,
   };
 }
@@ -148,7 +152,7 @@ export function normalizeParentOnboardingDraft(
     city: stringValue(value.city),
     profilePhotoPath: stringValue(value.profilePhotoPath),
     profilePhotoUrl:
-      stringValue(value.profilePhotoUrl) || resolveParentPhotoUrl(value.profilePhotoPath) || '',
+      stringValue(value.profilePhotoUrl) || '',
     childrenCount: stringValue(value.childrenCount),
     childNames: Array.isArray(value.childNames)
       ? value.childNames.map(item => stringValue(item))
@@ -163,4 +167,19 @@ export function normalizeParentOnboardingDraft(
       ? value.postDrafts.map(item => stringValue(item))
       : [],
   };
+}
+
+export async function attachParentProfilePhotoUrls<
+  T extends { profilePhotoPath?: string | null; profilePhotoUrl?: string }
+>(profiles: T[]): Promise<T[]> {
+  const urlByPath = await getParentPhotoUrls(
+    profiles.map(profile => profile.profilePhotoPath ?? '')
+  );
+
+  return profiles.map(profile => ({
+    ...profile,
+    profilePhotoUrl: profile.profilePhotoPath
+      ? urlByPath.get(profile.profilePhotoPath) || profile.profilePhotoUrl
+      : profile.profilePhotoUrl,
+  }));
 }
